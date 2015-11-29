@@ -1,168 +1,158 @@
 \select@language {french}
 \select@language {french}
-\chapterbegin 
-\chapterbegin 
-\contentsline {paragraph}{Mots cl^^e9s~ :}{v}
-\chapterbegin 
+\contentsline {paragraph}{Mots clés~:}{v}
 \contentsline {paragraph}{Keywords:}{vii}
-\chapterbegin 
-\chapterbegin 
-\chapterbegin 
-\chapterbegin 
-\chapterbegin 
 \contentsline {starchapter}{Introduction}{1}
 \contentsline {part}{I\hspace {1em}G{\'e}om{\'e}trie discr{\`e}te et objets discrets}{5}
 \contentsline {xpart}{G{\'e}om{\'e}trie discr{\`e}te et objets discrets}{7}
 \contentsline {chapter}{\numberline {1}Notions de base}{7}
 \contentsline {section}{\numberline {1.1}Introduction}{8}
-\contentsline {section}{\numberline {1.2}Espace discret et connexit^^e9}{8}
+\contentsline {section}{\numberline {1.2}Espace discret et connexité}{8}
 \contentsline {section}{\numberline {1.3}Objets, courbes, surfaces et hyper-surfaces}{10}
-\contentsline {subsection}{\numberline {1.3.1}Notions de topologie discr^^e8te}{11}
-\contentsline {subsubsection}{\numberline {1.3.1.1}Approche bas^^e9e sur les points discrets}{12}
-\contentsline {subsubsection}{\numberline {1.3.1.2}Approche bas^^e9e sur les ^^e9l^^e9ments de surface}{13}
-\contentsline {section}{\numberline {1.4}Codage et propri^^e9t^^e9s du codage des courbes discr^^e8tes}{14}
-\contentsline {section}{\numberline {1.5}Processus de discr^^e9tisation}{17}
-\contentsline {subsection}{\numberline {1.5.1}Discr^^e9tisations classiques}{17}
-\contentsline {subsection}{\numberline {1.5.2}Discr^^e9tisation de simplexes}{18}
-\contentsline {section}{\numberline {1.6}Conclusion}{19}
+\contentsline {subsection}{\numberline {1.3.1}Notions de topologie discrète}{11}
+\contentsline {subsubsection}{\numberline {1.3.1.1}Approche basée sur les points discrets}{12}
+\contentsline {subsubsection}{\numberline {1.3.1.2}Approche basée sur les éléments de surface}{13}
+\contentsline {section}{\numberline {1.4}Codage et propriétés du codage des courbes discrètes}{14}
+\contentsline {section}{\numberline {1.5}Processus de discrétisation}{16}
+\contentsline {subsection}{\numberline {1.5.1}Discrétisations classiques}{17}
+\contentsline {subsection}{\numberline {1.5.2}Discrétisation de simplexes}{17}
+\contentsline {section}{\numberline {1.6}Conclusion}{18}
 \contentsline {chapter}{\numberline {2}Droites et Plans discrets}{21}
-\contentsline {section}{\numberline {2.1}Introduction}{23}
-\contentsline {section}{\numberline {2.2}Droites discr{\`e}tes 2D}{23}
-\contentsline {subsection}{\numberline {2.2.1}D^^e9finitions et propri^^e9t^^e9s}{23}
-\contentsline {subsubsection}{\numberline {2.2.1.1}Caract^^e9risation}{24}
-\contentsline {subsubsection}{\numberline {2.2.1.2}Droites discr^^e8tes arithm^^e9tiques}{28}
-\contentsline {subsubsection}{\numberline {2.2.1.3}Quelles {\it droites} choisir ?}{33}
-\contentsline {subsubsection}{\numberline {2.2.1.4}Trac^^e9 de droites discr^^e8tes}{33}
-\contentsline {subsection}{\numberline {2.2.2}Reconnaissance et segmentation}{35}
-\contentsline {subsubsection}{\numberline {2.2.2.1}Approche bas^^e9e sur la structure du dual}{36}
-\contentsline {subsubsection}{\numberline {2.2.2.2}Approche arithm^^e9tique}{45}
-\contentsline {subsubsection}{\numberline {2.2.2.3}Comparaisons entre approche arithm^^e9tique et approche duale}{49}
-\contentsline {subsubsection}{\numberline {2.2.2.4}Bilan des algorithmes de reconnaissance pr^^e9sent^^e9s}{51}
-\contentsline {subsubsection}{\numberline {2.2.2.5}De la reconnaissance ^^e0 la segmentation de courbe}{51}
-\contentsline {section}{\numberline {2.3}Droites discr{\`e}tes 3D}{53}
-\contentsline {subsection}{\numberline {2.3.1}Caract^^e9risation et propri^^e9t^^e9s des droites discr^^e8tes 3D}{53}
-\contentsline {subsection}{\numberline {2.3.2}Trac^^e9 de droites discr^^e8tes 3D}{55}
-\contentsline {subsection}{\numberline {2.3.3}Reconnaissance et segmentation}{60}
-\contentsline {section}{\numberline {2.4}Plans Discrets}{63}
-\contentsline {subsection}{\numberline {2.4.1}D^^e9finitions et propri^^e9t^^e9s}{63}
+\contentsline {section}{\numberline {2.1}Introduction}{22}
+\contentsline {section}{\numberline {2.2}Droites discr{\`e}tes 2D}{22}
+\contentsline {subsection}{\numberline {2.2.1}Définitions et propriétés}{22}
+\contentsline {subsubsection}{\numberline {2.2.1.1}Caractérisation}{23}
+\contentsline {subsubsection}{\numberline {2.2.1.2}Droites discrètes arithmétiques}{26}
+\contentsline {subsubsection}{\numberline {2.2.1.3}Quelles {\it droites} choisir ?}{32}
+\contentsline {subsubsection}{\numberline {2.2.1.4}Tracé de droites discrètes}{32}
+\contentsline {subsection}{\numberline {2.2.2}Reconnaissance et segmentation}{34}
+\contentsline {subsubsection}{\numberline {2.2.2.1}Approche basée sur la structure du dual}{35}
+\contentsline {subsubsection}{\numberline {2.2.2.2}Approche arithmétique}{43}
+\contentsline {subsubsection}{\numberline {2.2.2.3}Comparaisons entre approche arithmétique et approche duale}{47}
+\contentsline {subsubsection}{\numberline {2.2.2.4}Bilan des algorithmes de reconnaissance présentés}{49}
+\contentsline {subsubsection}{\numberline {2.2.2.5}De la reconnaissance à la segmentation de courbe}{49}
+\contentsline {section}{\numberline {2.3}Droites discr{\`e}tes 3D}{51}
+\contentsline {subsection}{\numberline {2.3.1}Caractérisation et propriétés des droites discrètes 3D}{51}
+\contentsline {subsection}{\numberline {2.3.2}Tracé de droites discrètes 3D}{53}
+\contentsline {subsection}{\numberline {2.3.3}Reconnaissance et segmentation}{57}
+\contentsline {section}{\numberline {2.4}Plans Discrets}{61}
+\contentsline {subsection}{\numberline {2.4.1}Définitions et propriétés}{61}
 \contentsline {subsection}{\numberline {2.4.2}Reconnaissance et facettisation d'objets discrets}{70}
-\contentsline {subsubsection}{\numberline {2.4.2.1}Approches de \citeauthor {Kim84f}, \citeauthor {veelaert} et \citeauthor {debledthese}}{72}
-\contentsline {subsubsection}{\numberline {2.4.2.2}Approche bas^^e9e sur la structure du dual}{74}
-\contentsline {subsubsection}{\numberline {2.4.2.3}Vers une structure compl^^e8te du domaine dans l'espace dual}{76}
-\contentsline {subsubsection}{\numberline {2.4.2.4}Facettisation d'objets discrets}{82}
-\contentsline {section}{\numberline {2.5}Statistique pour la reconnaissance de droites et plans discrets}{86}
-\contentsline {section}{\numberline {2.6}Conclusion}{92}
-\contentsline {chapter}{\numberline {3}Le cercle discret}{93}
-\contentsline {section}{\numberline {3.1}Introduction}{94}
-\contentsline {section}{\numberline {3.2}Synth^^e8se et analyse du cercle discret}{94}
-\contentsline {section}{\numberline {3.3}Reconnaissance et segmentation}{97}
-\contentsline {subsection}{\numberline {3.3.1}^^c9tat de l'art}{97}
-\contentsline {subsection}{\numberline {3.3.2}Approche bas^^e9e sur l'analyse des paraboles discr^^e8tes}{99}
-\contentsline {subsection}{\numberline {3.3.3}Le probl^^e8me de s^^e9paration par arc}{102}
-\contentsline {subsection}{\numberline {3.3.4}Quelques optimisations au calcul de l'$acd$}{104}
-\contentsline {paragraph}{R^^e9duction de $S$}{104}
-\contentsline {paragraph}{R^^e9duction de $T$}{104}
-\contentsline {subsection}{\numberline {3.3.5}Approche arithm^^e9tique pour la reconnaissance de cercle discret}{105}
-\contentsline {subsubsection}{\numberline {3.3.5.1}Ligne polygonale quasi-circulaire dans $\@mathbb {Z}^2$}{105}
-\contentsline {subsubsection}{\numberline {3.3.5.2}Cercle discret et quasi-circularit^^e9}{109}
-\contentsline {subsubsection}{\numberline {3.3.5.3}Algorithmes de reconnaissance et segmentation}{110}
-\contentsline {paragraph}{Enveloppe convexe arithm^^e9tique}{111}
-\contentsline {paragraph}{Reconnaissance globale de cercle}{114}
-\contentsline {paragraph}{Segmentation en arcs de cercle}{114}
-\contentsline {subsubsection}{\numberline {3.3.5.4}Analyse de complexit^^e9}{115}
-\contentsline {paragraph}{Reconnaissance globale}{116}
-\contentsline {paragraph}{Segmentation en arcs de cercles}{116}
-\contentsline {subsection}{\numberline {3.3.6}Quelques r^^e9sultats}{116}
-\contentsline {subsection}{\numberline {3.3.7}Comparaison avec \atgM {c}{kovalevsky_arc}}{117}
-\contentsline {section}{\numberline {3.4}Conclusion}{118}
-\contentsline {part}{II\hspace {1em}Analyse d'objets et mesures}{121}
-\contentsline {xpart}{Analyse d'objets et mesures}{123}
-\contentsline {chapter}{\numberline {4}M^^e9triques discr^^e8tes}{123}
-\contentsline {section}{\numberline {4.1}Introduction}{125}
-\contentsline {section}{\numberline {4.2}Transform^^e9e en distance}{125}
-\contentsline {subsection}{\numberline {4.2.1}M^^e9triques de chanfrein}{126}
-\contentsline {subsection}{\numberline {4.2.2}Transform^^e9e en distance euclidienne}{127}
-\contentsline {subsubsection}{\numberline {4.2.2.1}Approche par d^^e9placements sign^^e9s}{127}
-\contentsline {subsubsection}{\numberline {4.2.2.2}Approche multi-dimensionnelle de \citeauthor {SaitTori}}{128}
-\contentsline {subsection}{\numberline {4.2.3}Diagramme de Vorono^^ef et transform^^e9e en distance euclidienne}{130}
-\contentsline {subsubsection}{\numberline {4.2.3.1}Diagramme de Vorono^^ef et triangulation de Delaunay en g^^e9om^^e9trie algorithmique}{130}
-\contentsline {subsubsection}{\numberline {4.2.3.2}Diagramme de Vorono^^ef, triangulation de Delaunay en g^^e9om^^e9trie discr^^e8te et EDT}{131}
-\contentsline {subsection}{\numberline {4.2.4}EDT en dimension 2 bas^^e9e sur le diagramme de Vorono^^ef discret}{132}
-\contentsline {subsection}{\numberline {4.2.5}EDT en dimension 3 bas^^e9e sur le diagramme de Vorono^^ef discret}{136}
-\contentsline {subsection}{\numberline {4.2.6}EDT en dimension $n$ bas^^e9e sur le diagramme de Vorono^^ef discret}{140}
-\contentsline {subsubsection}{\numberline {4.2.6.1}Analyse th^^e9orique}{140}
-\contentsline {subsubsection}{\numberline {4.2.6.2}Description de l'algorithme}{145}
-\contentsline {subsection}{\numberline {4.2.7}Analyse exp^^e9rimentale}{145}
-\contentsline {subsection}{\numberline {4.2.8}Diagramme de Vorono^^ef discret et transform^^e9e en distance sur des grilles non-cubiques}{146}
-\contentsline {subsection}{\numberline {4.2.9}Conclusion et perspectives}{155}
-\contentsline {section}{\numberline {4.3}Squelette de forme et axe m^^e9dian}{157}
-\contentsline {subsection}{\numberline {4.3.1}Axe m^^e9dian et squelette en g^^e9om^^e9trie discr^^e8te}{157}
-\contentsline {subsection}{\numberline {4.3.2}Squelette $n-$dimensionnel bas^^e9 sur le diagramme de Vorono^^ef discret}{159}
-\contentsline {subsection}{\numberline {4.3.3}Conclusion et discussion}{163}
-\contentsline {section}{\numberline {4.4}Visibilit^^e9 et g^^e9od^^e9siques discr^^e8tes}{165}
-\contentsline {subsection}{\numberline {4.4.1}Visibilit^^e9 dans des domaines discrets}{168}
-\contentsline {subsubsection}{\numberline {4.4.1.1}Notations et d^^e9finitions}{168}
-\contentsline {subsubsection}{\numberline {4.4.1.2}Domaine de visibilit^^e9}{170}
-\contentsline {subsubsection}{\numberline {4.4.1.3}Algorithme de calcul de visibilit^^e9}{173}
-\contentsline {subsection}{\numberline {4.4.2}Plus court chemin discret et m^^e9trique g^^e9od^^e9sique discr^^e8te}{177}
-\contentsline {subsubsection}{\numberline {4.4.2.1}D^^e9finitions et ^^e9tat de l'art}{177}
-\contentsline {subsubsection}{\numberline {4.4.2.2}Algorithme d'^^e9tiquetage en distance g^^e9od^^e9sique}{178}
-\contentsline {subsection}{\numberline {4.4.3}Analyse exp^^e9rimentale et discussion}{179}
-\contentsline {subsection}{\numberline {4.4.4}Vers une extension en 3D}{182}
-\contentsline {subsection}{\numberline {4.4.5}Conclusion et perspectives}{184}
-\contentsline {section}{\numberline {4.5}Conclusion sur ce chapitre}{184}
-\contentsline {chapter}{\numberline {5}Mesures sur des objets discrets}{189}
-\contentsline {section}{\numberline {5.1}Introduction}{191}
-\contentsline {section}{\numberline {5.2}Contexte th^^e9orique : la convergence asymptotique}{191}
-\contentsline {section}{\numberline {5.3}Tangentes et normales}{194}
-\contentsline {subsection}{\numberline {5.3.1}Tangentes et normales discr^^e8tes d'un contour 2D}{194}
-\contentsline {subsection}{\numberline {5.3.2}Normales d'une surface discr^^e8te}{196}
-\contentsline {subsubsection}{\numberline {5.3.2.1}Approches volumiques}{197}
-\contentsline {subsubsection}{\numberline {5.3.2.2}Approches surfaciques}{204}
-\contentsline {subsubsection}{\numberline {5.3.2.3}Estimateur optimal en temps avec convergence asymptotique}{208}
-\contentsline {section}{\numberline {5.4}Longueur et aire}{209}
-\contentsline {subsection}{\numberline {5.4.1}Longueur d'une courbe discr^^e8te 2D}{209}
-\contentsline {subsubsection}{\numberline {5.4.1.1}Approches bas^^e9es sur des m^^e9triques locales}{210}
-\contentsline {subsubsection}{\numberline {5.4.1.2}Approches bas^^e9es sur des approximations polygonales}{210}
-\contentsline {subsubsection}{\numberline {5.4.1.3}Approches bas^^e9es sur l'int^^e9gration des normales discr^^e8tes}{213}
-\contentsline {subsubsection}{\numberline {5.4.1.4}^^c9valuation comparative}{217}
-\contentsline {subsubsection}{\numberline {5.4.1.5}Remarques sur la plate-forme de tests}{219}
-\contentsline {subsection}{\numberline {5.4.2}Longueur d'une courbe discr^^e8te 3D}{223}
-\contentsline {subsection}{\numberline {5.4.3}Aire d'une surface discr^^e8te}{227}
-\contentsline {subsubsection}{\numberline {5.4.3.1}Solutions existantes}{227}
-\contentsline {subsubsection}{\numberline {5.4.3.2}Estimation d'aire de surface discr^^e8te par int^^e9gration de normales}{228}
-\contentsline {subsubsection}{\numberline {5.4.3.3}Analyse exp^^e9rimentale}{230}
-\contentsline {subsubsection}{\numberline {5.4.3.4}Conclusion sur l'estimation d'aire d'une surface discr^^e8te}{233}
-\contentsline {section}{\numberline {5.5}Courbures d'objets discrets}{233}
-\contentsline {subsection}{\numberline {5.5.1}Quelques d^^e9finitions math^^e9matiques}{233}
-\contentsline {subsection}{\numberline {5.5.2}Courbure de courbes discr^^e8tes}{237}
-\contentsline {subsubsection}{\numberline {5.5.2.1}^^c9tat de l'art}{237}
-\contentsline {subsubsection}{\numberline {5.5.2.2}Estimation du cercle osculateur discret}{239}
-\contentsline {subsubsection}{\numberline {5.5.2.3}Estimation de courbure avec convergence asymptotique}{243}
-\contentsline {subsubsection}{\numberline {5.5.2.4}Courbures de courbes discr^^e8tes 3D}{245}
-\contentsline {subsection}{\numberline {5.5.3}Courbures de surfaces discr^^e8tes}{247}
-\contentsline {subsubsection}{\numberline {5.5.3.1}Courbure Moyenne}{247}
-\contentsline {subsubsection}{\numberline {5.5.3.2}Courbure Gaussienne}{251}
-\contentsline {section}{\numberline {5.6}Conclusion}{257}
-\chapterbegin 
-\contentsline {starchapter}{Conclusions et perspectives}{261}
-\contentsline {part}{III\hspace {1em}Annexes}{265}
-\contentsline {xpart}{Annexes}{267}
-\contentsline {chapter}{\numberline {A}Applications}{269}
-\contentsline {section}{\numberline {A.1}Introduction}{270}
-\contentsline {section}{\numberline {A.2}Extraction de primitives pour la classification de profils de st^^e8les fun^^e9raires}{270}
-\contentsline {section}{\numberline {A.3}Analyse microscopique d'^^e9chantillon de neige}{275}
-\contentsline {section}{\numberline {A.4}Mod^^e8le d^^e9formable discret}{278}
-\contentsline {section}{\numberline {A.5}Conclusion}{279}
-\contentsline {chapter}{\numberline {B}Preuves de convergence asymptotique}{281}
-\contentsline {section}{\numberline {B.1}Introduction}{282}
-\contentsline {section}{\numberline {B.2}Courbes en dimension $d$~ : approche par {\it tube}}{282}
-\contentsline {subsection}{\numberline {B.2.1}Estimation de longueur}{282}
-\contentsline {subsection}{\numberline {B.2.2}Estimation de normales}{287}
-\contentsline {subsection}{\numberline {B.2.3}Estimation de la courbure}{287}
-\contentsline {section}{\numberline {B.3}Surfaces~ : aire et normales}{289}
-\contentsline {subsection}{\numberline {B.3.1}Estimation de normales surfaciques}{289}
-\contentsline {subsection}{\numberline {B.3.2}Estimation d'aire de surfaces discr^^e8tes}{290}
-\contentsline {chapter}{\numberline {C}Programmation lin^^e9aire~ : algorithme de \citeauthor {P16}}{295}
-\contentsline {chapter}{\numberline {D}Index des auteurs cit^^e9s}{299}
-\chapterbegin 
+\contentsline {subsubsection}{\numberline {2.4.2.1}Approches de \citeauthor {Kim84f}, \citeauthor {veelaert} et \citeauthor {debledthese}}{70}
+\contentsline {subsubsection}{\numberline {2.4.2.2}Approche basée sur la structure du dual}{72}
+\contentsline {subsubsection}{\numberline {2.4.2.3}Vers une structure complète du domaine dans l'espace dual}{74}
+\contentsline {subsubsection}{\numberline {2.4.2.4}Facettisation d'objets discrets}{80}
+\contentsline {section}{\numberline {2.5}Statistique pour la reconnaissance de droites et plans discrets}{84}
+\contentsline {section}{\numberline {2.6}Conclusion}{90}
+\contentsline {chapter}{\numberline {3}Le cercle discret}{91}
+\contentsline {section}{\numberline {3.1}Introduction}{92}
+\contentsline {section}{\numberline {3.2}Synthèse et analyse du cercle discret}{92}
+\contentsline {section}{\numberline {3.3}Reconnaissance et segmentation}{95}
+\contentsline {subsection}{\numberline {3.3.1}État de l'art}{95}
+\contentsline {subsection}{\numberline {3.3.2}Approche basée sur l'analyse des paraboles discrètes}{97}
+\contentsline {subsection}{\numberline {3.3.3}Le problème de séparation par arc}{99}
+\contentsline {subsection}{\numberline {3.3.4}Quelques optimisations au calcul de l'$acd$}{102}
+\contentsline {paragraph}{Réduction de $S$}{102}
+\contentsline {paragraph}{Réduction de $T$}{102}
+\contentsline {subsection}{\numberline {3.3.5}Approche arithmétique pour la reconnaissance de cercle discret}{102}
+\contentsline {subsubsection}{\numberline {3.3.5.1}Ligne polygonale quasi-circulaire dans $\mathbb {Z}^2$}{103}
+\contentsline {subsubsection}{\numberline {3.3.5.2}Cercle discret et quasi-circularité}{107}
+\contentsline {subsubsection}{\numberline {3.3.5.3}Algorithmes de reconnaissance et segmentation}{108}
+\contentsline {paragraph}{Enveloppe convexe arithmétique}{109}
+\contentsline {paragraph}{Reconnaissance globale de cercle}{111}
+\contentsline {paragraph}{Segmentation en arcs de cercle}{111}
+\contentsline {subsubsection}{\numberline {3.3.5.4}Analyse de complexité}{112}
+\contentsline {paragraph}{Reconnaissance globale}{113}
+\contentsline {paragraph}{Segmentation en arcs de cercles}{113}
+\contentsline {subsection}{\numberline {3.3.6}Quelques résultats}{114}
+\contentsline {subsection}{\numberline {3.3.7}Comparaison avec \atgM {c}{kovalevsky_arc}}{115}
+\contentsline {section}{\numberline {3.4}Conclusion}{115}
+\contentsline {part}{II\hspace {1em}Analyse d'objets et mesures}{119}
+\contentsline {xpart}{Analyse d'objets et mesures}{121}
+\contentsline {chapter}{\numberline {4}Métriques discrètes}{121}
+\contentsline {section}{\numberline {4.1}Introduction}{122}
+\contentsline {section}{\numberline {4.2}Transformée en distance}{122}
+\contentsline {subsection}{\numberline {4.2.1}Métriques de chanfrein}{123}
+\contentsline {subsection}{\numberline {4.2.2}Transformée en distance euclidienne}{124}
+\contentsline {subsubsection}{\numberline {4.2.2.1}Approche par déplacements signés}{124}
+\contentsline {subsubsection}{\numberline {4.2.2.2}Approche multi-dimensionnelle de \citeauthor {SaitTori}}{125}
+\contentsline {subsection}{\numberline {4.2.3}Diagramme de Voronoï et transformée en distance euclidienne}{126}
+\contentsline {subsubsection}{\numberline {4.2.3.1}Diagramme de Voronoï et triangulation de Delaunay en géométrie algorithmique}{127}
+\contentsline {subsubsection}{\numberline {4.2.3.2}Diagramme de Voronoï, triangulation de Delaunay en géométrie discrète et EDT}{128}
+\contentsline {subsection}{\numberline {4.2.4}EDT en dimension 2 basée sur le diagramme de Voronoï discret}{129}
+\contentsline {subsection}{\numberline {4.2.5}EDT en dimension 3 basée sur le diagramme de Voronoï discret}{133}
+\contentsline {subsection}{\numberline {4.2.6}EDT en dimension $n$ basée sur le diagramme de Voronoï discret}{137}
+\contentsline {subsubsection}{\numberline {4.2.6.1}Analyse théorique}{138}
+\contentsline {subsubsection}{\numberline {4.2.6.2}Description de l'algorithme}{141}
+\contentsline {subsection}{\numberline {4.2.7}Analyse expérimentale}{142}
+\contentsline {subsection}{\numberline {4.2.8}Diagramme de Voronoï discret et transformée en distance sur des grilles non-cubiques}{145}
+\contentsline {subsection}{\numberline {4.2.9}Conclusion et perspectives}{152}
+\contentsline {section}{\numberline {4.3}Squelette de forme et axe médian}{152}
+\contentsline {subsection}{\numberline {4.3.1}Axe médian et squelette en géométrie discrète}{153}
+\contentsline {subsection}{\numberline {4.3.2}Squelette $n-$dimensionnel basé sur le diagramme de Voronoï discret}{155}
+\contentsline {subsection}{\numberline {4.3.3}Conclusion et discussion}{159}
+\contentsline {section}{\numberline {4.4}Visibilité et géodésiques discrètes}{161}
+\contentsline {subsection}{\numberline {4.4.1}Visibilité dans des domaines discrets}{164}
+\contentsline {subsubsection}{\numberline {4.4.1.1}Notations et définitions}{164}
+\contentsline {subsubsection}{\numberline {4.4.1.2}Domaine de visibilité}{165}
+\contentsline {subsubsection}{\numberline {4.4.1.3}Algorithme de calcul de visibilité}{169}
+\contentsline {subsection}{\numberline {4.4.2}Plus court chemin discret et métrique géodésique discrète}{171}
+\contentsline {subsubsection}{\numberline {4.4.2.1}Définitions et état de l'art}{173}
+\contentsline {subsubsection}{\numberline {4.4.2.2}Algorithme d'étiquetage en distance géodésique}{174}
+\contentsline {subsection}{\numberline {4.4.3}Analyse expérimentale et discussion}{175}
+\contentsline {subsection}{\numberline {4.4.4}Vers une extension en 3D}{177}
+\contentsline {subsection}{\numberline {4.4.5}Conclusion et perspectives}{179}
+\contentsline {section}{\numberline {4.5}Conclusion sur ce chapitre}{180}
+\contentsline {chapter}{\numberline {5}Mesures sur des objets discrets}{185}
+\contentsline {section}{\numberline {5.1}Introduction}{186}
+\contentsline {section}{\numberline {5.2}Contexte théorique : la convergence asymptotique}{186}
+\contentsline {section}{\numberline {5.3}Tangentes et normales}{189}
+\contentsline {subsection}{\numberline {5.3.1}Tangentes et normales discrètes d'un contour 2D}{189}
+\contentsline {subsection}{\numberline {5.3.2}Normales d'une surface discrète}{191}
+\contentsline {subsubsection}{\numberline {5.3.2.1}Approches volumiques}{192}
+\contentsline {subsubsection}{\numberline {5.3.2.2}Approches surfaciques}{198}
+\contentsline {subsubsection}{\numberline {5.3.2.3}Estimateur optimal en temps avec convergence asymptotique}{202}
+\contentsline {section}{\numberline {5.4}Longueur et aire}{203}
+\contentsline {subsection}{\numberline {5.4.1}Longueur d'une courbe discrète 2D}{203}
+\contentsline {subsubsection}{\numberline {5.4.1.1}Approches basées sur des métriques locales}{204}
+\contentsline {subsubsection}{\numberline {5.4.1.2}Approches basées sur des approximations polygonales}{204}
+\contentsline {subsubsection}{\numberline {5.4.1.3}Approches basées sur l'intégration des normales discrètes}{207}
+\contentsline {subsubsection}{\numberline {5.4.1.4}Évaluation comparative}{210}
+\contentsline {subsubsection}{\numberline {5.4.1.5}Remarques sur la plate-forme de tests}{216}
+\contentsline {subsection}{\numberline {5.4.2}Longueur d'une courbe discrète 3D}{216}
+\contentsline {subsection}{\numberline {5.4.3}Aire d'une surface discrète}{221}
+\contentsline {subsubsection}{\numberline {5.4.3.1}Solutions existantes}{221}
+\contentsline {subsubsection}{\numberline {5.4.3.2}Estimation d'aire de surface discrète par intégration de normales}{222}
+\contentsline {subsubsection}{\numberline {5.4.3.3}Analyse expérimentale}{224}
+\contentsline {subsubsection}{\numberline {5.4.3.4}Conclusion sur l'estimation d'aire d'une surface discrète}{227}
+\contentsline {section}{\numberline {5.5}Courbures d'objets discrets}{227}
+\contentsline {subsection}{\numberline {5.5.1}Quelques définitions mathématiques}{227}
+\contentsline {subsection}{\numberline {5.5.2}Courbure de courbes discrètes}{231}
+\contentsline {subsubsection}{\numberline {5.5.2.1}État de l'art}{231}
+\contentsline {subsubsection}{\numberline {5.5.2.2}Estimation du cercle osculateur discret}{233}
+\contentsline {subsubsection}{\numberline {5.5.2.3}Estimation de courbure avec convergence asymptotique}{237}
+\contentsline {subsubsection}{\numberline {5.5.2.4}Courbures de courbes discrètes 3D}{239}
+\contentsline {subsection}{\numberline {5.5.3}Courbures de surfaces discrètes}{241}
+\contentsline {subsubsection}{\numberline {5.5.3.1}Courbure Moyenne}{242}
+\contentsline {subsubsection}{\numberline {5.5.3.2}Courbure Gaussienne}{245}
+\contentsline {section}{\numberline {5.6}Conclusion}{252}
+\contentsline {starchapter}{Conclusions et perspectives}{255}
+\contentsline {part}{III\hspace {1em}Annexes}{259}
+\contentsline {xpart}{Annexes}{261}
+\contentsline {chapter}{\numberline {A}Applications}{265}
+\contentsline {section}{\numberline {A.1}Introduction}{266}
+\contentsline {section}{\numberline {A.2}Extraction de primitives pour la classification de profils de stèles funéraires}{266}
+\contentsline {section}{\numberline {A.3}Analyse microscopique d'échantillon de neige}{271}
+\contentsline {section}{\numberline {A.4}Modèle déformable discret}{274}
+\contentsline {section}{\numberline {A.5}Conclusion}{275}
+\contentsline {chapter}{\numberline {B}Preuves de convergence asymptotique}{277}
+\contentsline {section}{\numberline {B.1}Introduction}{278}
+\contentsline {section}{\numberline {B.2}Courbes en dimension $d$~: approche par {\it tube}}{278}
+\contentsline {subsection}{\numberline {B.2.1}Estimation de longueur}{278}
+\contentsline {subsection}{\numberline {B.2.2}Estimation de normales}{283}
+\contentsline {subsection}{\numberline {B.2.3}Estimation de la courbure}{283}
+\contentsline {section}{\numberline {B.3}Surfaces~: aire et normales}{284}
+\contentsline {subsection}{\numberline {B.3.1}Estimation de normales surfaciques}{285}
+\contentsline {subsection}{\numberline {B.3.2}Estimation d'aire de surfaces discrètes}{285}
+\contentsline {chapter}{\numberline {C}Programmation linéaire~: algorithme de \citeauthor {P16}}{289}
+\contentsline {chapter}{\numberline {D}Index des auteurs cités}{293}
