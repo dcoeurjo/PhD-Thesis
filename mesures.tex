@@ -1,0 +1,3090 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Mesures sur des objets discrets}\label{chap-mesuresa}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Dans ce  chapitre, nous nous    plaçons dans  le  cadre de   l'analyse
+d'objets basée sur le calcul de mesures euclidiennes sur les contours.
+En effet, une approche  classique de reconnaissance  de formes se base
+sur  l'association, au contour  de l'objet, d'un vecteur contenant des
+informations numériques (longueur, aire, graphe de courbure\ldots). On
+parle alors de la {\it signature} du contour.
+
+Dans ce qui suit, nous nous intéressons à la création d'un tel vecteur
+d'attributs dans le cas  des courbes et des  surfaces discrètes.  Nous
+présentons donc des algorithmes permettant d'estimer la longueur d'une
+courbe discrète ou  l'aire d'une surface  discrète,  la normale en  un
+point d'une courbe ou d'une surface et enfin les différentes courbures
+associées à ces objets.
+
+Ces différents   estimateurs seront évalués,  à la  fois numériquement
+dans des analyses  expérimentales, mais  aussi  sur le plan  théorique
+avec    la notion de  convergence  asymptotique.    Pour une meilleure
+lisibilité de ce chapitre, nous avons placé les preuves de convergence
+asymptotique dans l'annexe \ref{chap:annexe_multi}.
+
+Après avoir  présenté ce cadre  théorique, nous décrivons tout d'abord
+les différents  estimateurs pour le calcul   des normales.  Remarquons
+que  la logique  voudrait que  l'on commence   par les estimateurs  de
+longueur ou d'aire, ensuite  ceux de normales  et enfin les calculs de
+courbure.  Cependant, nous verrons en  quoi l'estimation des  normales
+est  primordiale pour le calcul  de  longueur d'une courbe discrète ou
+d'aire d'une surface.
+
+Afin de faciliter  la lecture de  ce chapitre, les différentes preuves
+de      convergence  asymptotique   sont     données    dans  l'annexe
+\ref{chap:annexe_multi}.
+
+
+
+\section{Contexte théorique : la convergence asymptotique}
+
+Lorsqu'un estimateur   d'une mesure euclidienne   est  proposé sur une
+donnée  discrète, la justification de celui-ci  peut se  faire de deux
+manières différentes~: la  première justification consiste à montrer la
+cohérence de l'estimateur par  rapport aux propriétés  déjà existantes
+dans  le  modèle.   Une  autre  justification  consiste à   prouver la
+convergence asymptotique de l'estimateur.   Dans ce  cas, l'estimateur
+est   comparé à la mesure  euclidienne   approximée par  le biais d'un
+processus de   discrétisation sur une grille   dont la résolution tend
+vers  l'infini.   Un  estimateur aura   alors la  propriété   de  {\it
+convergence asymptotique} si l'erreur  commise entre la mesure estimée
+et la mesure euclidienne tend vers 0 quand  la résolution de la grille
+augmente.
+
+
+Plus formellement et dans le cas  bidimensionnel, nous considérons une
+courbe  euclidienne $\gamma :   [0,1] \rightarrow \R^2$  et une grille
+orthogonale dans  le plan euclidien $\R^2$ dont  la distance entre les
+points est donnée   par $0  <\theta \leq   1$.  Nous appelons  $r$  la
+résolution de  la  grille donnée  par $r=1/\theta$, on  parle alors de
+$r$-grille.  Étant  donné un processus  de discrétisation de la courbe
+$\gamma$ sur la grille,  noté $D_r(\gamma)$, nous définissons ainsi un
+objet  multi-grille     paramétré par $r$.    Soit   $\mathcal{F}$  un
+descripteur sur    la  courbe euclidienne $\gamma$    (la longueur par
+exemple) et un estimateur $\mathcal{E}$ de la  même mesure mais sur le
+discrétisé $D_r(\gamma)$, nous avons~:
+
+\begin{defi}[Convergence asymptotique]
+   L'estimateur     $\mathcal{E}$   converge  asymptotiquement    vers
+   $\mathcal{F}$ si et seulement si :
+\begin{displaymath}
+    |\mathcal{E}(D_r(\gamma)) - \mathcal{F}(\gamma)| \leq \epsilon(r)\quad\text{avec }\quad lim_{r \to \infty} \epsilon(r) = 0    
+\end{displaymath}
+
+L'ordre $O(1/\epsilon(r))$ correspond à la  vitesse de la convergence.
+\end{defi}
+
+L'intérêt d'une telle propriété est double~:
+\begin{itemize}
+\item sur le plan théorique, cette propriété nous permet une
+  comparaison formelle entre une mesure continue et une estimation
+  discrète~;
+\item  d'un point de  vue  pratique, cette  convergence nous permet de
+garantir   de bons résultats  numériques  quelque  soit la taille  de
+l'objet discret  analysé, ce qui est  très important dans une approche
+multi-échelle par exemple.
+\end{itemize}
+
+
+
+
+ 
+Une illustration historique  de cette validation  remonte aux grecs de
+l'antiquité :   \aut{Archimède} et  \aut{Liu   Hui} (voir  par exemple
+\citealt{VAN_1983})  cherchaient à  estimer le périmètre  d'un cercle,
+l'objectif principal étant en fait  l'estimation du nombre $\pi$.  Ils
+utilisaient une approximation basée sur des  polygones réguliers à $n$
+côtés  avec $n_m=3,6,12,24,48,96,\ldots$  (voir   figure \ref{archi}).
+Plus précisément, on   suppose que $\rho$ est  le  rayon du cercle  et
+$n_m=3\times2^m$ avec $m \ge 0$. Nous considérons le polygone régulier
+interne $P_{n_m}$,  possédant  $n_m$ arêtes.  La longueur  $p_m$ d'une
+arête est donnée par la formule de récurrence~:
+
+\begin{displaymath}
+       p_{m+1}= \rho \sqrt{2 {\rho}^2 - \rho\sqrt{4 {\rho}^2 - p_m^2}} 
+\end{displaymath}
+
+Ainsi, le périmètre de $P_{n_m}$ est égal à $n_m \cdot p_m$ et donc~:
+
+\begin{displaymath}
+       \kappa(n_m)=|n_m \cdot p_m - 2\pi \rho| \approx {\textstyle{
+{2 \pi \rho} \over n_m}}
+       \;, \quad \mbox{pour} \quad m \ge 1\;.
+       \label{equ:kappa_pi}
+\end{displaymath}
+
+La  fonction   $\kappa(n_m)$  définit  la   vitesse de  convergence de
+l'estimation  du périmètre  du cercle  de rayon  $\rho$ en fonction du
+nombre  de côtés du polygone  régulier.   Dans ce cas, l'estimation du
+périmètre   d'un    cercle par   des   polygones    réguliers converge
+asymptotiquement avec une  vitesse en  $O(\frac{1}{n_m})$ (voir figure
+\ref{archi}).
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=10cm]{liuhui}
+  \caption{({\it gauche}) Polygones réguliers interne et externe d'un
+    cercle pour $n_m=6$,
+     ({\it droite}) pourcentage d'erreur de l'estimation du périmètre avec le
+    polygone régulier interne pour $n$ croissant.}
+  \label{archi}
+\end{figure}
+
+Pour revenir au problème d'estimation du nombre $\pi$, cette technique
+a permis d'obtenir les bornes suivantes pour $n_m=96$~:
+\begin{displaymath}
+  223/71 < \pi <220/70
+\end{displaymath}
+
+
+
+
+En plus de la preuve formelle de  la convergence d'un estimateur, nous
+souhaitons   avoir     une  analyse  expérimentale    de  comportement
+d'algorithme  implémentant  l'estimateur.   Pour   cela,  nous  devons
+considérer  une famille  d'objets  multi-grilles   la plus  hétérogène
+possible.    Bien évidemment, il faut   que nous puissions calculer la
+mesure euclidienne  $\mathcal{F}(\gamma)$   sur  chacun    des  objets
+proposés.
+
+Par exemple, la  figure \ref{shapes}  présente  les différents  objets
+multi-grilles pris en compte pour  l'estimation de longueur de courbes
+discrètes (voir paragraphe   \ref{sec:longueur}).  Ces objets ont  été
+choisis car   ils  illustrent   beaucoup de  cas    concrets~: courbes
+polygonales convexes, courbes  euclidiennes non-convexes etc\ldots. La
+discrétisation de  ces formes sur  une grille de taille variable ainsi
+que la prise en  compte de rotations de ces  objets sur la grille nous
+permettent d'avoir un jeu de tests assez complet.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=13cm]{shapes}
+    \caption{Objets multi-grilles proposés dans \cite{kletteyip} pour
+      l'analyse d'estimateurs de longueurs.}
+    \label{shapes}
+  \end{center}
+\end{figure}
+
+
+Dans le cas tridimensionnel, d'autres objets sont considérés comme nous
+le verrons dans le paragraphe \ref{sec:aire-dune-surface}.
+
+Dans ce   qui suit,  nous   proposons plusieurs estimateurs en  2D  et
+3D. Nous essayons, autant que possible, de vérifier formellement la
+propriété  de  convergence asymptotique.     Dans  le cas  de  mesures
+ponctuelles  comme les   normales  ou   la  courbure,  on   dira qu'un
+estimateur est convergent asymptotique    si il  y a   convergence  de
+l'estimation en tout point.
+
+\section{Tangentes et normales}
+\label{sec:tangentes-normales}
+
+\subsection{Tangentes et normales discrètes d'un contour 2D}
+\label{sec:tang}
+Nous considérons dans ce paragraphe le problème  de l'estimation de la
+tangente et de la normale en un point d'une courbe discrète 2D.
+
+Dans    une    utilisation      directe   de       ces   informations,
+\cite{vialard,vialardthese} propose  l'utilisation  de la tangente  en
+tout  point pour le  calcul du chemin  euclidien associé  à une courbe
+discrète~: ce  chemin correspond à  un  lissage réversible  du contour
+discret. Plus précisément, chaque sommet initial du contour discret va
+engendrer  un  sommet du chemin  euclidien,   contenu dans un  carré de
+taille   1 centré      sur      le    sommet     discret.       Ainsi,
+\citeauthor{vialardthese} propose  l'utilisation d'une   notion     de
+tangente  discrète pour  le    positionnement des sommets du    chemin
+euclidien. 
+
+Ce  calcul   de  tangente   permet  aussi  la   construction  d'autres
+estimateurs  de  mesures euclidiennes  sur  des courbes discrètes.  De
+manière intuitive, si  nous dérivons la  fonction de variation d'angle
+des  tangentes, nous  obtenons  un estimateur  de courbure  et si nous
+intégrons cette information,  nous  pouvons définir  un  estimateur de
+longueur de la courbe discrète considérée.  Nous reviendrons plus tard
+sur ces estimateurs.
+
+D'un point de vue bibliographique, la définition de tangente discrète
+a été proposée initialement par \cite{Troesch}  mais a ensuite été
+formalisée et analysée par \cite{vialard,vialardthese,vialard_GMIP}~:
+
+\begin{defi}[Tangente discrète]
+La tangente discrète en un point
+ $p$ d'une courbe discrète est le plus
+long segment de droite discrète qu'il est possible de reconnaître, centré en
+$p$.
+\end{defi}
+
+Remarquons que la définition précédente est valide quel que soit le
+type de courbe discrète considérée (ensemble de pixels ou approche
+cellulaire), il suffit d'adapter la définition de  droite discrète au
+type de courbe manipulé.
+
+Nous pouvons définir très simplement la notion de normale discrète en
+un point d'une courbe~:
+
+\begin{defi}[Normale discrète]
+La normale discrète en un point
+ $p$ d'une courbe discrète est le vecteur orthogonal à la tangente
+ discrète en $p$ dont le sens est donné par une orientation de la
+ courbe discrète.
+\end{defi}
+
+
+D'un point de vue algorithmique, le calcul de  la tangente en un point
+se   fait  grâce,  par exemple,  à   l'algorithme \ref{alg:debled}  de
+reconnaissance  de            droite   discrète       modifié      par
+\citeauthor{vialardthese}. L'idée  est ici  de tester l'appartenance à
+une droite discrète en ajoutant symétriquement des  pixels à gauche et
+à  droite (voir  illustration  figure \ref{fig:tangente}).  C'est pour
+effectuer  cet  ajout   symétrique que   \cite{vialardthese} a  modifié
+l'algorithme initial de \cite{debledthese}.
+
+ \begin{figure}[htbp]
+   \centering
+   \includegraphics[width=6cm]{tangente}
+   \caption{Calcul de la tangente discrète par ajout symétrique de
+     pixels et test d'appartenance à une droite discrète. Les pixels
+     colorés  terminent la tangente.}
+   \label{fig:tangente}
+ \end{figure}
+
+
+Si nous   implémentons directement cet algorithme   pour le calcul des
+tangentes discrètes en tout point de la courbe discrète, la complexité
+obtenue est en $O(n^2)$ où $n$ est le  nombre de points discrets de la
+courbe.
+
+Cependant, \cite{laurefab} ont  proposé  un  algorithme  permettant de
+réduire  le coût en  un  temps linéaire, ce  qui  est optimal pour  le
+problème.  L'idée  principale  est  d'utiliser  les paramètres   de la
+tangente   discrète  en un    point de la  courbe    pour calculer les
+paramètres de la tangente des points adjacents.
+
+La figure \ref{fig:tang_opt}  illustre le  c\oe ur de cet   algorithme~:
+supposons connus les paramètres  de la tangente  en $p$ et soit $q$ le
+premier point à droite rejeté  lors de la reconnaissance symétrique de
+segment discret.  Calculons ensuite  le  plus long  segment  de droite
+discrète  à partir de  $q$ vers $p$, nous  notons $l$ le premier point
+rejeté de ce processus et $m$  le milieu du segment $[lq]$\footnote{si
+le segment $[lq]$  contient un nombre  pair de pixels, $m$ est  choisi
+tel qu'il soit plus proche de  $q$ que de $l$}. Ainsi, \cite{laurefab}
+prouvent que,  pour tous  les pixels compris   entre $p$  et $m$  ($m$
+exclu), les  paramètres des tangentes  seront exactement les mêmes que
+ceux de $p$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=14cm]{tangente_laurefab}
+  \caption{Illustration de l'algorithme de \cite{laurefab} pour le
+    calcul en temps optimal des tangentes discrètes.}
+  \label{fig:tang_opt}
+\end{figure}
+
+Ainsi,   basé   sur  cette propriété,    ils   proposent un algorithme
+incrémental permettant de mettre à jour  les positions des points $q$,
+$l$ et $m$ lorsque l'on passe du point $p$ au point à  sa droite.  Les
+auteurs montrent que  cette mise à jour se  fait en  temps constant ce
+qui permet de calculer toutes les tangentes discrètes en tout point de
+la courbe en  $O(n)$ où $n$ est  le nombre de  points  de cette courbe
+discrète. Cet algorithme permet une construction  des normales en tout
+point avec la même complexité.
+
+En ce qui concerne la convergence asymptotique, nous avons le théorème
+suivant~:
+\begin{theo}
+\label{theo:conv_normales}
+ Soit $\Gamma$ la  famille des courbes   $C^2$ dans $\R^2$ à  courbure
+ bornée   (plus  quelques   hypothèses  techniques).  L'estimateur  de
+ normales  discrètes basé  sur   la  notion  de tangente  discrète  de
+ \aut{Vialard} converge asymptotiquement.
+\end{theo}
+
+La  preuve  de      ce   théorème    est    donnée   dans     l'annexe
+\ref{chap:annexe_multi} (théorème \ref{preuve_vialard}).
+
+
+Pour conclure ce paragraphe, nous avons présenté un calcul de normales
+d'une courbe  discrète qui a  la propriété de convergence asymptotique
+et dont  l'algorithme d'estimation est optimal  en temps. Nous verrons
+par la suite  que ce résultat est  primordial pour  de nombreux autres
+estimateurs.
+
+
+\subsection{Normales d'une surface discrète}
+\label{sec:norm-dune-surf}
+
+
+L'estimation   des vecteurs normaux  associés à   une  surface  est un
+problème très important en géométrie  discrète.  Une des  applications
+privilégiées  est la visualisation de  volumes binaires. L'idée est de
+représenter la  surface d'un objet discret  sous forme {\it  lisse} en
+utilisant des techniques d'ombrage se basant sur les normales (ombrage
+de \aut{Gouraud} ou de \aut{Phong} par exemple).
+
+Par la suite, nous verrons  comment utiliser ces normales  surfaciques
+pour le  calcul de  nombreux autres estimateurs  comme  par exemple le
+calcul  de l'aire  d'une surface  discrète  ou le calcul  de courbures
+surfaciques (Gaussienne et Moyenne).
+ 
+Dans ce qui suit,  nous allons présenter  les différentes approches de
+calcul   de normales existantes dans  la  littérature, ainsi que notre
+contribution à ce problème.
+
+Pour présenter l'état de l'art du calcul de normales, nous reformulons
+la   classification proposée  par  \cite{yagel}.   Ainsi, nous pouvons
+distinguer deux grandes classes d'algorithmes~:
+\begin{description}
+\item[Approches volumiques]~: ces méthodes utilisent des informations
+  volumiques comme la transformée en distance ou encore la
+  configuration des voxels de l'objet dans un certain voisinage. 
+\item[Approches surfaciques]~: dans ce  cas, seuls des  traitements sur
+les voxels  de la surface sont  considérés. Sur le plan algorithmique,
+ces approches ont l'avantage  de manipuler une  surface discrète
+plutôt qu'un volume.
+\end{description}
+
+Dans cette bibliographie, nous ne détaillerons pas les approches
+utilisant des informations de niveaux de gris d'une image non
+segmentée pour estimer la normale (voir \citealt{inria} par exemple). 
+
+Quelle que soit l'approche  choisie, l'estimation  des normales peut  se
+décomposer en deux grandes étapes \citep{yagel}~:
+\begin{enumerate}
+\item  Construction des {\it contextes}~:    en  chaque voxel de  la
+surface  discrète,  on appelle {\it  contexte} le  voisinage autour du
+voxel qui ne contient pas de discontinuités $C^1$.
+\item Estimation des normales à partir des contextes~: une fois les
+  contextes calculés en chaque voxel, une approximation de la normale
+  est construite à partir des différentes informations contenues dans
+  ce contexte.
+\end{enumerate}
+
+Le problème réside  principalement  dans le  calcul de  ces contextes.
+Pour certains  algorithmes que nous  présentons dans  la suite  et que
+nous  appelons {\it locaux}, le contexte  en un point est un voisinage
+de taille fixe.   D'autres algorithmes, dits {\it globaux},  proposent
+un calcul adaptatif  de  ce contexte.   Enfin, des approches  hybrides
+existent, par  exemple un processus adaptatif   peut être utilisé pour
+estimer la normale à partir du contexte de taille fixe.
+
+\subsubsection{Approches volumiques}
+\label{secnormales_CEN}
+
+Dans ces approches, le volume discret est utilisé pour localiser les
+différentes discontinuités afin de construire les contextes.
+
+Une  première  approche  que   nous  présentons  a été   proposée  par
+\cite{thurmer98}.  Cet algorithme  considère un contexte donné  par le
+parallélépipède centré autour du voxel considéré de taille $n_s$ et un
+masque de   poids $w$  de taille  $n_s$.  L'estimation de  la  normale
+$(n_x,n_y,n_z)^T$est donnée par la formule~:
+
+\begin{align*}
+  n_x&=\sum_{i,j,k\in \{-n_s\ldots n_s\}} \frac{w(i,j,k) \sigma(i,j,k)
+    i}{\sqrt{i^2+j^2+k^2}}\\
+ n_y&=\sum_{i,j,k\in \{-n_s\ldots n_s\}} \frac{w(i,j,k) \sigma(i,j,k)
+    j}{\sqrt{i^2+j^2+k^2}}\\
+ n_z&=\sum_{i,j,k\in \{-n_s\ldots n_s\}} \frac{w(i,j,k) \sigma(i,j,k)
+    k}{\sqrt{i^2+j^2+k^2}}\\
+\end{align*}
+
+avec $\sigma(i,j,k)=1$ si le voxel $(i,j,k)$ est dans l'objet et $0$
+sinon. Le vecteur $(n_x,n_y,n_z)^T$ est par la suite normalisé.
+
+Cette  approche n'utilise pas   entièrement le volume  de l'objet mais
+uniquement une épaisseur   de  celui-ci donnée   par $n_s$. Pour   une
+estimation aussi précise que possible  des normales, il faut trouver à
+la fois la taille  de voisinage et le masque  des poids qui minimisent
+l'erreur  d'approximation   sur   un  ensemble    d'objets    discrets
+représentatifs de l'application.  Par
+exemple, \cite{thurmer98}  propose une analyse expérimentale basée sur
+une distribution de  plans discrets pour estimer  les paramètres de la
+formule précédente.
+
+
+Nous présentons une   solution un peu   particulière qui devrait  être
+classée parmi les approches surfaciques mais  qui constitue une base à
+de nombreuses approches  surfaciques.  Ainsi, \cite{gordon} se placent
+dans   le   cas  de la  visualisation   de   volume  discret  et cette
+approximation utilise la carte  des profondeurs ({\tt  Z-buffer}) pour
+estimer la  normale des  voxels visibles  depuis  un certain  point de
+vue.  Plus précisément, si nous notons  $z=f(x,y)$ la surface issue du
+{\tt Z-buffer}, la normale est donnée par le gradient~:
+\begin{displaymath}
+  \nabla z=\left ( \frac{\partial f}{\partial x}, \frac{\partial
+      f}{\partial y}, -1\right )
+\end{displaymath}
+
+Ainsi, une fois  le {\tt Z-buffer} calculé   à partir des voxels à  la
+surface de l'objet, on utilise des calculs de dérivées partielles pour
+extraire les normales associées aux voxels visibles.  Cette approche a
+cependant un problème majeur  lorsqu'il y a  des parties concaves dans
+l'objet  qui ne   se  retrouvent pas  dans  le  {\tt  Z-buffer}. Elles
+peuvent, en effet, engendrer des erreurs de calcul.
+
+Cependant,  cette approche  peut   aussi être vue  comme   une version
+simplifiée des calculs basés sur une analyse de  la carte de distance.
+L'idée est  la suivante~: nous  représentons la surface discrète comme
+une iso-potentielle $f(x,y,z)=0$ d'une certaine fonction $f$. Ensuite,
+si nous sommes capables de construire une telle fonction, la normale en
+tout point de la surface sera donnée par le gradient de $f$~:
+\begin{displaymath}
+  \nabla f = \left ( \frac{\partial f}{\partial x}, \frac{\partial
+      f}{\partial y}, \frac{\partial f}{\partial z} \right )
+\end{displaymath}
+
+Une manière simple de construire cette fonction est de considérer la
+transformée en distance de la surface discrète (voir illustration en
+2D figure \ref{fig:surf_implicite}).
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6.5cm]{forme_implicite}}
+  \subfigure[]{\includegraphics[width=6.5cm]{forme_implicite_circ}}
+  \caption[Analyse de la carte de distance pour l'estimation des
+    normales]{Analyse de  la  carte de distance pour  l'estimation des
+    normales~: $(a)$ bord d'un  objet discret 2D et  $(b)$ utilisation
+    de   la     transformée   en   distance   euclidienne  (algorithme
+    \ref{algglobal3D}).}
+  \label{fig:surf_implicite}
+\end{figure}
+
+
+Ainsi, une estimation de la normale basée sur ce principe se décompose
+en trois grandes étapes~:
+\begin{enumerate}
+\item calcul de la transformée en distance,
+\item application de filtres dérivatifs pour l'estimation des dérivées
+  partielles,
+\item construction de la normale sur cette carte de gradients.
+\end{enumerate}
+
+
+Cet   algorithme a été  implémenté par  \cite{fred}  avec un processus
+adaptatif  pour  construire les  normales à  partir du gradient  de la
+transformée en   distance (noté GTD   par  la suite).  L'idée   est de
+détecter   les discontinuités de  la   surface   dans cette carte   de
+distance. Pour cela, si nous considérons un certain voisinage $N$ dans
+la carte GTD interne à l'objet, la normale à la surface de l'objet est
+calculée par moyennage des vecteurs dans le voisinage $N$ de la GTD en
+maintenant trois critères~:
+\begin{itemize}
+\item un critère  d'angle afin de détecter  des discontinuités sur  la
+surface. Ce critère  se base sur  un écart angulaire, entre la normale
+estimée à un certain instant  et le vecteur de  GTD analysé, qui  doit
+être inférieur à $30\degre$   (cette valeur correspond aux  structures
+cristalines importantes    dans les   échantillons  de    neige,  voir
+paragraphe \ref{secneige}).
+\item Un  critère  de symétrie,   l'ensemble des vecteurs  de la   GTD
+utilisés devant être symétriques autour de la normale estimée.
+\item Un critère de connexité des points considérés dans le GTD.
+\end{itemize}
+
+
+
+Dans \cite{dcoeurjo_TFCV_surface}, nous avons évalué cet estimateur de
+normale.  Une première  validation  a  consisté  en un rendu  d'objets
+discrets dont la fonction  d'illumination est dirigée par les normales
+(ombrage de \aut{Gouraud}).  Ainsi, la  figure  \ref{Ngeom} permet  de
+comparer visuellement les rendus  entre notre algorithme et  l'approche
+classique            par       Marching-Cubes    (voir      paragraphe
+~\ref{sec:facett-dobj-discr}).  La   figure \ref{Ncrcdp}     présente
+quelques résultats de rendu d'un échantillon de neige (voir paragraphe
+\ref{secneige}).  Nous pouvons  remarquer  une bonne préservation des
+différentes discontinuités des objets.
+
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{c c c c}
+  \multicolumn{1}{c}{Cylindre} &
+  \multicolumn{1}{c}{Prisme à base} &
+  \multicolumn{1}{c}{Sphère} &
+  \multicolumn{1}{c}{Cube}\\
+  \multicolumn{1}{c}{} &
+  \multicolumn{1}{c}{hexagonale} &
+  \multicolumn{1}{c}{trouée} &
+  \multicolumn{1}{c}{tourné}\\
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Icyl_i3e.eps}} & %3.5cm
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Ihex_i3e.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Isspec_10_128.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Icubrot_7.eps}}\\
+  \multicolumn{4}{c}{Volumes discrets}\\
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Ncyl_i3eMCTEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Nhex_i3eMCTEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Nsspec_10_128MCTEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Ncubrot_7MCTEST.eps}}\\
+  \multicolumn{4}{c}{Rendu avec Marching Cubes}\\
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Ncyl_i3eTEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Nhex_i3eTEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Nsspec_10_128TEST.eps}} &
+  \multicolumn{1}{c}{\hfill\includegraphics[angle=0,width=3.5cm,draft=false]{Ncubrot_7TEST.eps}}\\
+  
+  \multicolumn{4}{c}{Rendu avec les normales calculées sur  le GTD}\\  
+\end{tabular}
+\caption{Comparaison entre les visualisations avec l'algorithme des
+  Marching Cubes et avec les normales basées sur le GTD sur des formes
+géométriques simples.}
+\label{Ngeom}
+\end{center}
+\end{figure}
+
+
+
+\begin{figure}[!hptb]
+  \begin{center}
+    \subfigure[]{\includegraphics[angle=0,width=6.5cm,draft=false]{NcrcdpMCTEST.eps}}
+    \subfigure[]{\includegraphics[angle=0,width=6.5cm,draft=false]{Ncrcdp450bis_150p10TEST.eps}}
+    \caption{Visualisation d'un échantillon de neige avec une estimation de
+      normales basée sur l'algorithme des Marching-Cubes $(a)$ et avec
+      l'estimateur basé sur le GTD $(b)$ (Images Météo-France CEN, ESRF,
+      voir les explications dans le paragraphe \ref{secneige}).}
+    \label{Ncrcdp}
+  \end{center}
+\end{figure}
+
+
+Cet  estimateur n'a   pas la  propriété    de convergence asymptotique
+puisqu'il  nécessite   une taille   de    voisinage comme   paramètre.
+Cependant, nous avons  évalué  expérimentalement  la mesure  d'erreur.
+Ainsi, dans  la figure \ref{res_norm_spheres},   nous avons estimé les
+normales  sur un ensemble de  sphères  discrètes de rayons croissants.
+Pour chaque  sphère,  nous traçons l'erreur moyenne  dans l'estimation
+des normales en degré ainsi que l'écart type de cette estimation.  Ces
+résultats  montrent un très  bon comportement  de cet estimateur local
+mais adaptatif basé sur le GTD.
+
+\begin{figure}[hptb]
+  \begin{center}
+    \includegraphics[angle=270,width=12cm,draft=false]{comp_norm_spheres}
+    \caption{Comparaison de l'estimation de la normale entre
+      l'algorithme basé sur  le GTD et  l'algorithme issu des Marching
+      Cubes sur des sphères de taille croissante.}
+    \label{res_norm_spheres}
+  \end{center}
+\end{figure}
+
+
+
+
+
+Enfin, nous pouvons proposer une nouvelle  approche dans laquelle nous
+utilisons directement le diagramme  de Voronoï discret présenté dans  l'algorithme
+\ref{algglobal3D}. En  effet, si nous  associons, à tout   point de
+l'objet,  le vecteur  unitaire vers le  site (point du fond) le  plus
+proche, nous obtenons directement une très  bonne estimation du GTD
+sans aucune application de   filtres dérivatifs toujours  difficiles  à
+paramétrer. La figure \ref{fig:voro_norm} illustre ce calcul.
+
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=4.2cm]{black}}
+  \subfigure[]{\includegraphics[width=4.2cm]{black_vor}}
+  \subfigure[]{\includegraphics[origin=lt,width=8cm,height=8cm,angle=270]{vector}}
+  \caption[Illustration 2D de l'utilisation du diagramme de Voronoï
+    discret pour   l'estimation  directe du  GTD]{Illustration  2D  de
+    l'utilisation du  diagramme de  Voronoï discret  pour l'estimation
+    directe du GTD~: $(a)$ contour d'un objet discret, $(b)$ diagramme
+    de Voronoï discret  de ce  contour et  $(c)$ association à  chaque
+    point  d'un vecteur  unitaire  vers le  point  du  contour le plus
+    proche.}
+  \label{fig:voro_norm}
+\end{figure}
+
+
+
+
+
+\clearpage
+\subsubsection{Approches surfaciques}
+
+
+Parmi les approches  surfaciques,  une des premières solutions   a été
+apportée par \cite{Chen}.   Celle-ci se base  sur une définition de la
+surface  par complexes cellulaires.  Dans ce  cas, la surface discrète
+est composée de surfels munis  d'une relation d'adjacence connue (voir
+paragraphe \ref{sec:approche-surfel}).  Ainsi, \cite{Chen} estiment la
+normale en un surfel $s$ en regardant les différentes orientations des
+surfels adjacents  à  $s$ (ceux partageant  une  arête avec $s$).  Ils
+introduisent donc  la     notion de {\it  normale   élémentaire}   qui
+correspond  au vecteur unitaire orthogonal  au surfel  $s$, centré sur
+celui-ci   et pointant  vers  l'extérieur    de l'objet (voir   figure
+\ref{fig:norm_elem}).  L'estimation de la normale  se base donc sur la
+normale    élémentaire en  $s$   ainsi que  sur   les  quatre normales
+élémentaires   des surfels  adjacents à  $s$.    Cette normale estimée
+correspond   à la moyenne de   ces  normales élémentaires (voir figure
+\ref{fig:chen}).  Étant donné  que  nous n'avons que six  orientations
+possibles de ces normales élémentaires, le nombre possible de normales
+estimées est assez faible.
+
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{normale_elem}
+  \caption{Illustration des normales élémentaires associées à un
+    morceau de surface discrète.}
+  \label{fig:norm_elem}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{normale_chen}
+  \caption{Approche de \cite{Chen} pour l'estimation de la normale basée
+    sur une décomposition cellulaire de la surface discrète.}
+  \label{fig:chen}
+\end{figure}
+
+
+Par  la suite,     \cite{papiertangente,papierthese}         proposent
+l'utilisation d'un    voisinage plus grand   pour  l'estimation  de la
+normale. En se basant sur une définition  topologique de ce voisinage (notion
+{\it d'ombrelle d'ordre $n$}), ils proposent un moyennage des normales
+élémentaires avec des pondérations de manière à favoriser l'apport des
+normales élémentaires proches de $s$ dans le calcul de la moyenne.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{normale_papier}
+  \caption[Approche de \cite{papierthese} pour l'estimation de la
+    normale]{Approche  de \cite{papierthese}  pour  l'estimation de la
+    normale~: l'estimation  est construite  en moyennant les  normales
+    élémentaires dans un   certain voisinage. Des  poids sont utilisés
+    (inversement proportionnels à la distance au surfel $s$ considéré)
+    pour favoriser l'apport des  normales élémentaires proches de  $s$
+    dans le calcul de la moyenne.}
+  \label{fig:papier}
+\end{figure}
+
+
+Cette  approche permet une bonne estimation  des normales mais souffre
+d'un problème  majeur introduit par le choix   du voisinage. En effet,
+celui-ci est purement  topologique et ne  permet pas de contrôler {\it
+l'isotropie} du moyennage.  Plus  précisément, si nous  considérons un
+plan parallèle à un axe   de la grille,   le voisinage topologique  de
+\citeauthor{papierthese} correspond   à  des rectangles  concentriques
+(propagation en distance $d_8$).
+
+
+Présentons  maintenant  une  nouvelle    version de  l'algorithme   de
+\cite{papierthese}   dont le   voisinage   se  base  sur la   métrique
+géodésique décrite dans le  paragraphe \ref{section3D}.  L'idée est de
+considérer  tous les surfels   qui  sont  à  une distance   géodésique
+inférieure à un  certain  seuil de $s$.   Cette approche  nous  permet
+d'avoir  un    processus  de  pondération   des normales  élémentaires
+isotropique sur  la surface. La figure  \ref{fig:norm_geodes} présente
+les résultats de ce calcul sur une sphère et  sur un cube tourné.  Les
+premières  mesures     d'erreur de   cet    estimateur  indiquent  une
+approximation  de la  normale un  peu   meilleure  que l'approche   de
+\cite{papierthese} mais de plus amples analyses expérimentales restent
+à effectuer.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=10cm]{global_sp15}}
+  \subfigure[]{\includegraphics[width=10cm]{global_icubrot}}
+  \caption[Exemple de calcul de normales basé sur une pondération de
+    normales élémentaires   avec un voisinage  géodésique]{Exemple  de
+    calcul  de   normales basé  sur    une  pondération   de   normales
+    élémentaires  avec un voisinage géodésique~:  $(a)$ sur une sphère
+    discrète et $(b)$ sur un cube tourné.}
+  \label{fig:norm_geodes}
+\end{figure}
+
+
+Le problème majeur avec  ce genre d'algorithmes reste  la construction
+du contexte qui ne correspond qu'à un  voisinage de taille fixe autour
+du point considéré. Récemment,  \cite{thurmer2001} a proposé un calcul
+de  contexte basé sur la   reconnaissance de plan  tangent discret. En
+fait, \citeauthor{thurmer2001} propose  un algorithme d'estimation des
+normales en  deux   étapes~: la première  consiste  en  une estimation
+locale   de celles-ci  avec  l'algorithme  de  \cite{thurmer98}  (voir
+ci-dessus) et  la seconde consiste en  un lissage de ces normales dans
+le contexte défini par le plan tangent discret. Or, comme nous l'avons
+vu précédemment, la reconnaissance de plan discret  ou de plan tangent
+discret    est    un  problème    assez    difficile    sur le    plan
+algorithmique.  Nous   voyons  ici  tout  l'intérêt   d'une estimation
+statistique de plan  tangent discret comme il  a été présenté  dans le
+paragraphe \ref{sec:statistique-pour-la}.   En effet,  si  par exemple
+nous pouvions stopper   le   processus de pondération   des   normales
+élémentaires par un test statistique d'appartenance à un plan discret,
+nous  pourrions ainsi construire  un estimateur très rapide et surtout
+adaptatif à la forme.
+
+
+Nous terminons avec  les approches  basées  sur une décomposition   en
+coupes   de l'objet discret.    Ce   type d'estimateur a  été   proposé
+initialement  par   \cite{lenoirbis,lenoirthese} puis  repris avec les
+notions de droites discrètes par \cite{DebledDGCI}.
+
+Une coupe selon l'axe $Oz$ de la grille d'indice $k$ correspond à
+l'ensemble des voxels $(x,y,k)$ de l'objet (avec $x,y\in\Z$). De la
+même manière, nous définissons les coupes selon l'axe $Ox$ et selon
+l'axe $Oy$ (voir illustration figure \ref{fig:coupe}).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{coupe_correcte}
+  \caption{Décomposition en coupes d'un volume selon les axes de la grille.}
+  \label{fig:coupe}
+\end{figure}
+Si nous considérons  une  surface  discrète  composée de
+surfels et  les bords  des  différentes  coupes 2D  comme des ensembles  de
+pointels et de lignels, nous avons la  propriété importante que chaque
+surfel engendre deux lignels dans deux coupes différentes (voir figure
+\ref{fig:slice}).
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{parc}}
+  \subfigure[]{\includegraphics[width=6cm]{3cercles}}
+  \caption[Décomposition en coupes d'une surface discrète composée de
+    surfels]{Décomposition en coupes d'une surface discrète composée de
+    surfels~: $(a)$ surface d'une sphère discrète et $(b)$ exemples de
+    coupes dans les trois axes de la grille.}
+  \label{fig:slice}
+\end{figure}
+Pour  estimer  la   normale   en  un   surfel  $s$   de    la surface,
+\cite{lenoirthese} propose le calcul  suivant~: dans un premier temps,
+nous estimons les tangentes $\vec{t}_1$  et $\vec{t}_2$ en dimension 2
+dans les deux coupes associées au surfel $s$. Ensuite, la normale en
+$s$ est calculée par la formule~:
+\begin{displaymath}
+  \vec{n}(s)= \vec{t}_1(s) \times \vec{t}_2(s)
+\end{displaymath}
+où $'\times'$ représente le produit vectoriel usuel.
+
+
+Ainsi, basé  sur  ce principe  de  décomposition du  problème en  deux
+problèmes  2D,   \cite{lenoirbis} proposent l'utilisation  d'un filtre
+Gaussien  récursif pour l'estimation  des tangentes 2D et construisent
+les  normales 3D grâce à  la   formule précédente.  Dans une  approche
+basée  sur   le calcul   de  tangentes  discrètes,   \cite{DebledDGCI}
+proposent un algorithme similaire pour l'estimation de la normale 3D.
+
+
+
+\subsubsection{Estimateur optimal en temps avec  convergence asymptotique}
+\label{sec:estim-optim-en}
+
+Dans ce  paragraphe nous proposons une extension  de ces approches par
+coupes   en   utilisant les résultats  précédents   sur  le  calcul de
+tangentes discrètes 2D et en analysant le comportement asymptotique de
+l'estimateur.
+
+Tout d'abord,  nous pouvons directement reprendre l'algorithme optimal
+de  \cite{laurefab} pour le calcul  des tangentes discrètes 2D. Ainsi,
+si nous notons $n$ le nombre de surfels composant la surface discrète,
+le calcul des tangentes  discrètes dans toutes les  coupes se fait  en
+temps  linéaire en le nombre   de surfels.  Finalement,  l'utilisation
+d'un    tel algorithme    nous  permet    l'écriture  d'un  algorithme
+d'estimation des  normales discrètes 3D  en $O(n)$  ce qui est optimal
+pour le problème.
+
+De plus, nous avons le théorème suivant~:
+
+\begin{theo}
+\label{theo:conv_normales_3D}
+Soit $\mathcal{S}$ une  surface  $C^2$ dans  $\R^3$ à  courbure bornée
+(avec quelques   hypothèses   techniques), l'estimation  des  normales
+surfaciques basée sur l'approche par coupes et utilisant les tangentes
+discrètes converge asymptotiquement.
+\end{theo}
+
+La   preuve    de    ce théorème     est    présentée dans    l'annexe
+\ref{chap:annexe_multi}   (théorème  \ref{preuve_normales3d}).      De
+manière informelle, si  les normales convergent  asymptotiquement dans
+chacune  des   coupes  (voir théorème  \ref{theo:conv_normales}),  le
+produit   vectoriel  aura   aussi  cette   propriété   de  convergence
+asymptotique.
+
+En  conclusion,   l'algorithme présenté  ci-dessus  est  non seulement
+optimal   en temps, mais      a aussi la   propriété   de  convergence
+asymptotique.      Une  perspective    à  ce     travail  consiste  en
+l'implémentation et en  l'évaluation de cet estimateur  sur un jeu  de
+tests significatifs pour  des applications concrètes.
+
+\section{Longueur et aire}
+\label{sec:longueur-et-aire}
+
+
+Lorsque l'on associe une {\it  signature} à un  contour discret (2D ou
+3D), la normalisation  des mesures présentes  dans cette signature est
+primordiale  avant  toute  comparaison    de  tels vecteurs  ou   plus
+généralement, avant  toute    utilisation de  cette   donnée dans   un
+processus d'apprentissage.
+
+Une    normalisation  classique des  mesures   se  base  sur un calcul
+préalable de la longueur ou l'aire  du contour. Ainsi, si l'estimateur
+de longueur ou d'aire n'est stable ou n'est  pas efficace, c'est toute
+la validité de la signature qui est remise en question.
+
+\subsection{Longueur d'une courbe discrète 2D}
+\label{sec:longueur}
+
+Dès     les     premières     analyses      de   contours     discrets
+(\citealt{Fre-encoding-agc} nous semble  être un des premiers articles
+traitant  du  sujet), le calcul  de  longueur d'un contour discret est
+apparu  comme   étant un  descripteur de    forme  fondamental  et des
+premières solutions furent proposées.  Depuis, de nombreux algorithmes
+ont vu  le jour pour estimer  cette  mesure euclidienne.  Certaines de
+ces approches se basent sur une  estimation de la métrique euclidienne
+par des   approches  locales  (distances de  chanfrein  par  exemple),
+d'autres considèrent une polygonalisation  de  la courbe discrète   en
+utilisant par  exemple  des algorithmes   de  segmentation en  droites
+discrètes ou de calcul du polygone interne de longueur minimale.
+
+Nous présentons une évaluation comparative des estimateurs de longueur
+les plus  récents. Cette évaluation porte, à  la fois sur  une analyse
+théorique basée sur la notion de convergence  asymptotique, et sur une
+analyse expérimentale.   Nous   présentons  aussi  un   estimateur  de
+longueur basé sur la notion d'intégration de normales discrètes.
+
+Cette partie a fait l'objet de l'article \cite{dcoeurjo_ICPR}.
+
+\subsubsection{Approches basées sur des métriques locales}
+
+
+
+Les estimateurs basés  sur des métriques  locales furent les premières
+solutions    proposées (voir  paragraphe    \ref{sec:metr-de-chanfr}).
+Rappelons   que  ces métriques locales    définissent  tout d'abord un
+ensemble de déplacements élémentaires et ensuite affectent des poids à
+ces déplacements.  Par   exemple,   un estimateur simple    consiste à
+affecter un poids  de   $1/r$  pour tout  déplacement  horizontal   ou
+vertical  sur une  $r-$grille   et  $\sqrt{2}/r$ pour un   déplacement
+diagonal.  Le calcul des poids  permettant l'estimation de la longueur
+se   base sur  le  principe  suivant~:  on considère  une distribution
+probabiliste de segments de droite discrète et on calcule les poids de
+telle    manière que l'erreur   d'estimation  de  la  longueur sur  la
+distribution des segments soit minimale \citep{Dorst,verwer}.
+
+Ainsi, en considérant les  déplacements diagonaux et  les déplacements
+parallèles  aux  axes   de    la grille,   \cite{Dorst}   définissent
+l'estimateur BLUE (Best  Linear Unbiased Estimator)  pour des segments
+discrets~:
+
+\begin{equation}
+  \label{blue}
+  \mathcal{E}_{BLUE}(D_r(\gamma))={\textstyle{1      \over    r}}\cdot
+  (0.948\cdot n_i+1.343\cdot n_d)
+\end{equation}
+
+où $n_i$ représente le nombre de déplacements isothétiques (parallèles
+aux axes de la grille) et $n_d$ le nombre de déplacements diagonaux du
+contour. Cet estimateur  a un intérêt  pratique très important du fait
+de   sa  simplicité.   Cependant,   celui-ci  n'est  pas    convergent
+asymptotiquement  dans le   cas    général  mais a   une   convergence
+super-linéaire   $O(r^{-1.5})$ dans  le  cas    de segments de   droite
+\citep{DOR_1991}.  En d'autres  termes, il ne  converge asymtotiquement
+que pour la classe des segments de droite discrétisés.
+
+Nous analysons    aussi un estimateur proposé   par \cite{VOSSE_1982},
+appelé {\it   Corner  count}.   Celui-ci  considère   un   déplacement
+élémentaire supplémentaire   $n_c$    qui  correspond au   nombre   de
+changements de codes pair-impair dans le codage de \aut{Freeman}.
+
+
+\begin{displaymath}
+      \label{cornercount}
+      {\mathcal{E}}_{CC}(D_r(\gamma))={\frac{1}{r}}\cdot (0.980\cdot
+n_i+1.406\cdot n_d-0.091\cdot n_c) 
+\end{displaymath}
+
+Ce dernier estimateur n'est pas non plus convergent asymptotiquement
+dans le cas général.
+
+\subsubsection{Approches basées sur des approximations polygonales}
+
+Dans cette catégorie, la courbe discrète est approximée par une courbe
+polygonale.  L'estimation  de  la longueur  de la  courbe discrète est
+ensuite donnée par la longueur de la courbe polygonale. 
+
+Dans  le chapitre \ref{chap-droites},  nous nous sommes intéressés aux
+droites discrètes ainsi  qu'aux   algorithmes de  segmentation   d'une
+courbe discrète en segments   discrets. Il est donc  normal d'utiliser
+ces algorithmes pour construire une approximation polygonale.
+
+Nous  définissons  donc  deux estimateurs  de  longueur basés  sur les
+droites discrètes~: le premier, noté $\mathcal{E}_{DR-DSS}$, correspond
+à  l'algorithme  de  segmentation   de \cite{DEB95}  (voir  paragraphe
+\ref{sec:de-la-reconnaissance}) sur des courbes de pixels.  Le second,
+noté $\mathcal{E}_{VK-DSS}$, correspond à l'algorithme de segmentation
+de \cite{kovalevsky_arc} sur   une courbe discrète  définie selon  une
+approche complexe  cellulaire  (voir chapitre \ref{chap-notions}).  La
+figure \ref{fig:dss_ex} illustre ces différentes approches.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{carre_nss_snap}}
+  \subfigure[]{\includegraphics[width=6cm]{carre_vkdss_snap}}
+  \caption[Illustration des algorithmes de segmentation en droites
+    discrètes]{Illustration des algorithmes de segmentation en droites
+    discrètes~: $(a)$ $\mathcal{E}_{DR-DSS}$ et $(b)$
+    $\mathcal{E}_{VK-DSS}$ sur un carré tourné.}
+  \label{fig:dss_ex}
+\end{figure}
+
+
+Pour ces approches, nous pouvons formellement prouver la convergence
+asymptotique~:
+
+\begin{theo}[\cite{klettePROOF}]
+  Soit $P$ un objet polygonal convexe $r-$compact de $\R^2$, il existe
+  une  résolution $r_0$  telle que    pour  tout $r\geq r_0$,    toute
+  polygonalisation par droite discrète de $D_r(\gamma)$ (avec $\gamma$
+  le bord de $P$) est un polygone dont le périmètre $p_r$ vérifie~:
+  \begin{displaymath}
+    \left| {{\mathcal L}(\gamma) - p_r} \right| \leq
+\kappa\frac{2\pi}{r}
+  \end{displaymath}
+\end{theo}
+$\kappa$ étant une constante dépendant de l'algorithme choisi.
+
+Considérant une classe plus large de courbes euclidiennes (non
+nécessairement convexes), nous proposons un autre théorème~:
+
+\begin{theo}
+Soit $\Gamma$ la  famille des  courbes  dans $\R^2$ à  courbure bornée
+(avec d'autres hypothèses  techniques), l'estimateur  de longueur basé
+sur une polygonalisation par droite discrète  de $\gamma \in \Gamma$ a
+la propriété de convergence asymptotique.
+\end{theo}
+
+La preuve de ce  théorème, présentée dans  \cite{3Dnss}, est donnée en
+annexe \ref{chap:annexe_multi} (théorème \ref{preuve_theo_longueur}).
+ 
+
+Une  autre approximation   polygonale,    qui  a  été  proposée    par
+\cite{SLO_1996}, consiste   en  un calcul   de   polygone de  longueur
+minimale  (MLP pour  {\it   minimum length polygon})  dans  une région
+englobant la courbe réelle $\gamma$.
+
+Plus formellement, nous considérons la courbe discrète $J_r^+(\gamma)$
+(resp.  $J_r^-(\gamma)$) qui   correspond  au bord de   Jordan interne
+(resp.  externe) à $\gamma$    (similaire à une   discrétisation  OBQ,
+resp. BBQ, de $\gamma$). Ainsi, l'approximation polygonale de $\gamma$
+consiste en le calcul  du   polygone de longueur minimale    compris dans
+l'anneau  défini par  $J_r^+(\gamma)/J_r^-(\gamma)$ (voir illustration
+figure \ref{fig:NSSMLP}).  Ce  polygone est unique  et nous  permet de
+définir l'estimateur de longueur $\mathcal{E}_{SZ-MLP}$.
+
+Nous utilisons l'algorithme de calcul de MLP proposé par
+\cite{kletteyip} dont la complexité est linéaire en la taille de la
+courbe discrète.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{NSSMLP.ps}
+  \caption{Notations pour le calcul de polygone de longueur minimale (MLP)}
+  \label{fig:NSSMLP}
+\end{figure}
+
+Cet estimateur  converge asymptotiquement~:
+
+\begin{theo}[\cite{sloboda1}]
+  Soit $P$ un objet polygonal convexe $r-$compact de
+  $\R^2$, il existe une résolution $r_0$ telle que pour tout
+  $r\geq r_0$, l'estimateur de longueur basé sur SZ-MLP converge
+  asymptotiquement.
+\end{theo}
+
+
+
+La figure \ref{fig:mlp_ex}-$(a)$ illustre cet algorithme sur un carré tourné.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{carre_mlp_snap}}
+  \subfigure[]{\includegraphics[width=6cm]{carre_asmlp_snap}}
+  \caption[Illustration des algorithmes SZ-MLP et AS-MLP]{Illustration
+    des algorithmes SZ-MLP et AS-MLP~: $(a)$ algorithme SZ-MLP avec
+    les courbes de Jordan $J_r^+(\gamma)$ et $J_r^-(\gamma)$, le
+    polygone solution est celui en noir. $(b)$ Approximation basée sur
+  l'algorithme AS-MLP avec $\delta=\frac{1}{4}$. Remarquons que les
+  sommets de la courbe polygonale noire ne sont plus discrets.}
+  \label{fig:mlp_ex}
+\end{figure}
+
+
+Finalement, nous  présentons  une dernière approximation  basée sur un
+calcul de  MLP  mais dans   un anneau  un  peu différent.   Dans cette
+approche proposée par \cite{ASA_2001},  il est introduit  un paramètre
+réel $\delta$  tel que $0<\delta<\frac{1}{2r}$.  Ainsi  deux nouvelles
+courbes  de  Jordan dans   lesquelles chaque sommet   $v_i$  peut être
+déplacé de $\delta$ sont définies  (voir figure \ref{fig:asmlp}).   Ce
+processus d'ajustement se fait en deux  parcours des sommets de chaque
+bord.  Enfin,  un calcul de    MLP classique est appliqué  dans  cet
+anneau.  Notons que   cette approche  n'est pas  entièrement  discrète
+puisque les  sommets de la polygonalisation  ne sont pas des points de
+la grille.  La  figure \ref{fig:mlp_ex}-$(b)$  présente un exemple  de
+calcul   de cette  approximation.   Dans  ce  qui  suit,  nous  notons
+$\mathcal{E}_{AS-MLP}$  l'estimateur   de   longueur basé   sur  cette
+approximation polygonale.
+
+Cette technique, qui effectue un {\it lissage} des courbes de Jordan et
+donc du MLP, est assez similaire à la définition du chemin euclidien
+proposé par \cite{vialardthese}.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{asmlp}
+  \caption{Approche AS-MLP~: les sommets des bords de Jordan sont
+    déplacés en fonction d'un paramètre $\delta$.}
+  \label{fig:asmlp}
+\end{figure}
+
+Une fois encore, nous avons le théorème suivant~:
+
+\begin{theo}[\cite{ASA_2001}]
+  Soit $P$ un objet polygonal convexe $r-$compact de
+  $\R^2$, il existe une résolution $r_0$ telle que pour tout
+  $r\geq r_0$, l'estimateur de longueur basé sur AS-MLP converge
+  asymptotiquement.
+\end{theo}
+
+Cet algorithme a aussi une complexité linéaire en la taille de la
+courbe discrète considérée.
+
+
+
+\subsubsection{Approches basées sur l'intégration des normales
+  discrètes}
+
+Nous proposons  une  approche basée  sur l'intégration d'un   champ de
+normales discrètes.  L'objectif  étant  de se  ramener  à  une version
+discrète de la formule classique en géométrie euclidienne~:
+\begin{equation}
+ \mathcal{L}(\gamma)=\int_{\gamma} \vec{n}(s)ds
+\end{equation} 
+
+Cette  idée de calcul de  longueur  par intégration {\it discrète} est
+assez ancienne. En effet, elle fut proposée pour  la première fois par
+\cite{ELL_1979} et par  \cite{lenoirthese} pour  le  calcul de  l'aire
+d'une surface discrète.
+ 
+
+L'idée est   de  remplacer  l'intégrale  par une somme   finie, le
+vecteur  normal par une  estimation de celui-ci, notée $\vec{n}^*(s)$, et
+le terme   $ds$ par un produit scalaire   avec  un vecteur élémentaire
+$\vec{n}_{el}$.  Dans une    représentation  cellulaire  du    contour
+(séquence  de  pointels et de  lignels), le  vecteur élémentaire en un
+lignel $s$ est un  vecteur  unitaire orthogonal  à $s$ pointant  vers
+l'intérieur de la forme (voir figure \ref{fig:vect_elem}).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{vect_elem}
+  \caption{Illustration des vecteurs élémentaires à une courbe discrète.}
+  \label{fig:vect_elem}
+\end{figure}
+
+Finalement, nous obtenons l'estimateur de longueur donné par la formule~:
+\begin{displaymath}
+  \mathcal{E}_{TAN}(D_r(\gamma))=\sum_{s \in D_r(\gamma)}
+  {\vec{n}}^*(s)\cdot
+\vec{n}_{el}(s)
+\end{displaymath}
+
+Ce processus de sommation de  produits scalaires entre ces deux vecteurs
+est appelé {\it processus d'intégration  discret}. L'idée intuitive de
+ce  processus   est   de  considérer l'apport   de   chaque   lignel à
+l'estimation de longueur de la courbe.
+
+Nous avons montré le théorème suivant~:
+
+\begin{theo}
+\label{theo:integration}
+Soit   $\Gamma$ la famille  des courbes  $C^2$  dans $\R^2$ à courbure
+bornée, l'estimateur de longueur  basée sur le processus d'intégration
+discret  des normales converge    asymptotiquement si et seulement  si
+l'estimation des normales a cette propriété de convergence.
+\end{theo}
+
+La     preuve   de   ce  théorème   est       présentée dans  l'annexe
+\ref{chap:annexe_multi} (corollaire  \ref{preuve_integration}).   Dans
+cette annexe, nous prouvons en fait le problème plus général du calcul
+d'aire     d'une    surface       discrète        (voir     paragraphe
+\ref{sec:aire-dune-surface}).  Ce   dernier problème se  ramène,  sans
+difficulté, au problème    de l'estimation de  longueur  d'une  courbe
+discrète.
+
+Or si nous utilisons l'estimateur de normale discrète 2D présenté
+précédemment, nous obtenons le corollaire suivant~:
+
+\begin{coro}
+  Soit  $\Gamma$ la famille des courbes $C^2$ à courbure bornée (plus
+  quelques hypothèses techniques), l'estimateur
+de longueur  $\mathcal{E}_{TAN}$ basé sur les normales discrètes du
+paragraphe \ref{sec:tangentes-normales} converge asymptotiquement.
+\end{coro}
+
+
+\begin{mapreuve}
+  Il suffit simplement de considérer les théorèmes
+  \ref{theo:integration} et \ref{theo:conv_normales}. Les hypothèses
+  techniques sont discutées dans l'annexe \ref{chap:annexe_multi}.
+\end{mapreuve}
+
+
+
+Dans le cas où la  courbe discrète manipulée est  donnée sous forme de
+séquence de pixels connectés,  nous pouvons proposer un  estimateur de
+longueur ayant les mêmes propriétés.  Dans ce  cas, l'estimation de la
+normale $\vec{n}^*$ est donnée en  chaque pixel $p$  et l'apport de ce
+pixel pour l'estimation de longueur est donnée par~:
+\begin{displaymath}
+  a(p)=\frac{\|\vec{n}^*(p)\|}{\max(|n^*_x(p)|,|n^*_y(p)|)}
+\end{displaymath}
+
+De manière intuitive, cette mesure quantifie l'écart entre le vecteur
+normal et l'axe de la grille le plus proche.
+
+
+Cet apport est donné par la longueur de l'intersection entre la
+tangente au point $p$ et le voxel considéré (voir figure
+\ref{fig:ratio}). Ainsi, pour ce type de courbe nous avons
+l'estimateur~:
+\begin{displaymath}
+  \mathcal{E}_{TAN\_PIX}(D_r(\gamma))=\sum_{p \in
+    D_r(\gamma)} a(p)
+\end{displaymath}
+
+
+Ce dernier a exactement les mêmes propriétés de convergence
+asymptotique que $\mathcal{E}_{TAN}$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{vect_pixel_ratio}
+  \caption{Calcul de l'apport d'un pixel dans l'estimation de longueur
+    par intersection entre le pixel et la tangente estimée en celui-ci.}
+  \label{fig:ratio}
+\end{figure}
+
+
+La figure \ref{fig:tan_ex} illustre les deux estimateurs précédents.
+
+\begin{figure}[htbp]
+  \centering
+   \subfigure[]{\includegraphics[width=6cm]{carre_int_crack_snap}}
+   \subfigure[]{\includegraphics[width=6cm]{carre_tangint_snap}}
+  \caption[Illustration des estimateurs de longueur basés sur
+    l'intégration des normales discrètes]{Illustration des estimateurs
+    de longueur basés sur l'intégration des normales discrètes~: $(a)$
+    estimateur $\mathcal{E}_{TAN}$,  à chaque  lignel est associé deux
+    vecteurs, l'estimation de la  normale et la normale  élémentaire~;
+    et   $(b)$  estimateur   $\mathcal{E}_{TAN\_PIX}$,  dans  ce  cas,
+    l'intensité  associée à chaque pixel  correspond à la mesure $a(p)$
+    (le dégradé du clair  au sombre correspond aux valeurs croissantes
+    de $a(p)$).}
+  \label{fig:tan_ex}
+\end{figure}
+
+
+En utilisant l'algorithme optimal en temps de
+\cite{laurefab}, les algorithmes implémentant les
+estimateurs $\mathcal{E}_{TAN}$ et $\mathcal{E}_{TAN\_PIX}$  ont une
+complexité linéaire en la taille de la courbe discrète.
+
+\subsubsection{Évaluation comparative}
+
+Nous présentons maintenant une  évaluation comparative des estimateurs
+de  longueurs présentés.  Cette   évaluation  s'effectue, sur le  plan
+théorique avec notamment la  propriété de convergence asymptotique, et
+sur le  plan  expérimental avec   des analyses  comportementales   des
+différentes méthodes sur des données réelles.
+
+D'un point de  vue théorique,  nous  évaluons les estimateurs sur  les
+propriétés suivantes~:
+\begin{description}
+\item[Convergence asymptotique] : est-ce que la mesure donnée par l'
+estimateur converge asymptotiquement vers la mesure euclidienne de
+l'objet continu sous-jacent à la discrétisation ?
+\item[Unicité]~: étant donné une courbe discrète, est-ce que
+l'estimation est unique ?
+\item[Calcul    discret]~: est-ce    que  l'algorithme    implémentant
+l'estimateur considéré est purement discret ? Plus précisément, est-ce
+que le calcul peut se faire en nombres entiers ?
+\item[Extension en 3D]~: est-il possible d'étendre l'estimateur aux
+courbes discrètes tridimensionnelles ? 
+\end{description}
+
+Cette dernière propriété sera reprise dans le paragraphe suivant.
+
+
+Le tableau \ref{tab:longueur_resume} illustre  le comportement de tous
+les      estimateurs      présentés  vis-à-vis     des      propriétés
+ci-dessus. Rappelons  cependant  que   tous les algorithmes   ont  une
+complexité linéaire en le nombre de pixels.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|p{2cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{2.2cm}|p{3cm}|}
+\hline
+Approche & Convergence asymptotique & Unicité & Discret & Extension 3D
+& Références principales\\
+\hline
+\hline
+Métriques locales & non & oui & cela dépend & \cite{beckers,JON_1998} & \cite{Dorst,verwer}\\
+\hline
+DR-DSS et VK-DSS & oui & non & oui & \cite{3Dnss} & \cite{DEB95,kovalevsky_arc}\\
+\hline
+SZ-MLP & oui & oui & oui & \cite{bulow} & \cite{SLO_1996,kletteyip}\\
+\hline
+AS-MLP & oui & oui pour $\delta$ fixé& non & - & \cite{ASA_2001}\\
+\hline
+TAN et TAN\_PIX & oui & oui & oui & - & \cite{ELL_1979,dcoeurjo_ICPR}\\
+\hline
+\end{tabular}
+\caption{Évaluation théorique des différents estimateurs et
+  principales références bibliographiques.}
+\label{tab:longueur_resume}
+\end{center}
+\end{table}
+
+
+Sur le  plan  expérimental, nous considérons  les  formes géométriques
+multi-grilles  présentées dans    la   figure  \ref{shapes} et    plus
+précisément  leurs   discrétisées   sur   des   grilles de plus en
+plus fines. De plus, pour une résolution donnée,  un certain nombre de
+rotations des formes sont prises  en compte. Finalement, nous évaluons
+tous les estimateurs sur l'ensemble des courbes discrètes obtenues.
+
+Lors de l'évaluation des  estimateurs, deux mesures sont analysées. La
+première  consiste en un calcul  d'erreur relative  en pourcentage par
+rapport à la longueur euclidienne exacte des formes. Cette mesure nous
+permet  d'évaluer  expérimentalement  la   propriété  de   convergence
+asymptotique. La seconde mesure  utilisée  n'est définie que sur   les
+approches polygonales. Celle-ci est donnée par  le produit entre l'erreur
+relative de  l'estimateur et   le nombre d'arêtes   de l'approximation
+polygonale.   Ce calcul  proposé   par   \cite{kletteyip}  permet
+d'évaluer l'efficacité de l'approche  polygonale pour l'estimation  de
+longueur.
+
+Dans notre  analyse,      nous avons  considéré   un    processus   de
+discrétisation des formes de la figure  \ref{shapes} sur une grille de
+résolution comprise entre $30$ et $1000$ pixels.   De plus pour chaque
+résolution,  les rotations d'angles  compris  entre $0$ et $90$ degrés
+par pas de 1 sont considérées.  Finalement, les mesures associées à un
+estimateur correspondent   à des moyennes    des mesures obtenues  sur
+toutes les formes et pour toutes  les rotations de celles-ci. De plus,
+un moyennage   sur une fenêtre  de taille   16  permet un  lissage des
+résultats et donc une meilleure lisibilité des courbes.
+
+La  figure  \ref{err}  présente l'analyse de  convergence asymptotique
+expérimentale basée sur l'erreur relative.  Comme nous l'avons vu dans
+l'analyse théorique, toutes les mesures d'erreur des estimateurs, sauf
+pour BLUE et CC, convergent vers 0 pour une résolution croissante. Les
+mesures d'erreur des estimateurs basés sur des métriques locales (BLUE
+et CC) semblent se stabiliser vers une erreur  de $2\%$. En détaillant
+un peu  plus les résultats,  nous  pouvons observer que  les meilleurs
+résultats sont obtenus par les  algorithmes de segmentation en droites
+discrètes,  par  l'algorithme  AS-MLP  ainsi   que   par  l'algorithme
+TAN.   Ensuite nous avons  l'approche SZ-MLP  et enfin les estimateurs
+locaux.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=12cm]{stat_global_moy}}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=12cm]{stat_global_moy_log}}
+    \caption[Convergence asymptotique expérimentale des estimateurs de
+longueur]{Convergence asymptotique expérimentale des estimateurs de
+longueur~: $(a)$ erreur relative en pourcent de chaque estimateur sur
+le jeu de test et $(b)$ mêmes résultats mais sur une échelle
+logarithmique en $y$ de manière à faciliter la lecture des courbes
+pour les valeurs proches de 0.}
+    \label{err}
+  \end{center}
+\end{figure}
+
+La figure \ref{to-err} présente la mesure d'efficacité de
+l'approximation polygonale pour les algorithmes VK-DSS, DR-DSS, SZ-MLP et
+AS-MLP. Une valeur faible de cette mesure indique un bon compromis
+entre l'estimation de longueur et la qualité, en nombre d'arêtes, de
+l'approximation polygonale. Les meilleurs résultats sont obtenus par
+les approches basées sur les droites discrètes.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[draft=false,angle=270,width=12cm]{stat_global_eff_moy}
+    \caption[Mesure d'efficacité de l'approximation polygonale pour
+      l'estimation de longueur]{Mesure d'efficacité de l'approximation polygonale pour
+      l'estimation de longueur~: en abscisse se trouve la résolution
+      de la grille et en ordonnée le produit entre le nombre d'arêtes
+      de l'approximation polygonale et l'erreur relative en pourcent.}
+    \label{to-err}
+  \end{center}
+\end{figure}
+
+
+Afin de  mieux analyser  le caractère anisotropique   des estimateurs,
+nous avons considéré l'estimation de longueur de différentes rotations
+d'un carré sur une grille de  taille fixe (voir figure \ref{rot-squ}).
+Comme nous   pouvions nous y attendre, les   estimateurs basés sur des
+métriques locales  ont de  très mauvais comportements  pour  ce type de
+tests.   En effet,  certaines      orientations de  la   grille   sont
+privilégiées ($45\degre$ pour BLUE  et  $0\degre$ et  $90\degre$  pour
+CC).
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[draft=false,angle=270,width=12cm]{stat_rot_square_smoothed}
+    \caption[Erreur relative sur un carré de taille fixe sur lequel
+      une rotation est effectuée]{Erreur relative sur un carré de taille fixe sur lequel
+      une rotation est effectuée~: en abscisse se trouve l'angle de
+      rotation entre $0$ et $90$ degrés et en ordonnée, l'erreur
+      relative des différents estimateurs.}
+    \label{rot-squ}
+  \end{center}
+\end{figure}
+
+
+Enfin, la figure \ref{res_time} montre les  différents temps de calcul
+des estimateurs. Nous pouvons alors remarquer  que la différence entre
+les estimateurs locaux et  les algorithmes utilisant  des outils de la
+géométrie discrète comme les droites discrètes est faible. 
+
+
+En conclusion, les estimateurs  basés sur des  métriques locales ne se
+justifient, ni sur  le plan théorique,  ni sur le plan  expérimental et
+même leur rapidité peut être discutable dans des cas pratiques.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[draft=false,angle=270,width=12cm]{stat_global_time}
+    \caption{Temps de calcul des différents estimateurs sur une station
+      Sparc Ultra 10.}
+    \label{res_time}
+  \end{center}
+\end{figure}
+
+\subsubsection{Remarques sur la plate-forme de tests}
+
+Toutes les analyses   expérimentales  présentées  dans le   paragraphe
+précédent ont  été obtenues sur une  plate-forme de tests implémentant
+tous les algorithmes sous une structure de classes C++.
+
+Cette plate-forme contient~:
+\begin{itemize}
+\item une    série de classes     implémentant les différentes formes
+multi-grilles de  la figure \ref{shapes}  en fonction de l'orientation
+de la grille et la résolution de cette dernière~;
+\item une série de classes implémentant les différents algorithmes~;
+\item  un système d'évaluation d'un estimateur  pour une courbe donnée
+basé sur la lecture de scripts, ce qui permet d'effectuer les tests de
+convergence asymptotique très facilement.
+\end{itemize}
+ 
+Toutes ces classes sont disponibles de manière libre  sur le site {\it
+Digital                            Geometry                        and
+Topology}\footnote{\url{http://http://www.citr.auckland.ac.nz/dgt}, un
+miroir              est    disponible       à                l'adresse
+\url{http://eric.univ-lyon2.fr/~dcoeurjo/download.html}}  maintenu par
+\aut{R. Klette}.
+
+Ce projet  a  démarré en  1999 à  l'initiative  de \aut{Ben   Yip}  et
+\aut{Reinhard  Klette}   du  laboratoire   CITR  de  l'université   de
+Nouvelle-Zélande    avec la  création   de  la  structure  globale  et
+l'implémentation des  algorithmes  SZ-MLP et   VK-DSS. Par la   suite,
+\aut{Tetsuo Asano} and \aut{Yasuyuki Kawamura} du laboratoire JAIST au
+Japon ont ajouté l'algorithme AS-MLP.
+
+Enfin, nous avons implémenté les algorithmes BLUE, CC, DR-DSS, TAN et
+TAN\_PIX, ainsi que les scripts permettant une analyse multi-grille
+efficace.
+
+
+\subsection{Longueur d'une courbe discrète 3D}
+\label{sec:longueur3D}
+
+Nous nous  intéressons  maintenant à l'estimation  de  la  longueur de
+courbes discrètes  tridimensionnelles.  Dans ce cas,  nous considérons
+une   courbe $\gamma: [0,1]\rightarrow   \R^3$    et un processus   de
+discrétisation multi-grille $D_r(\gamma)$ adapté.
+
+Comme nous l'avons présenté dans le tableau \ref{tab:longueur_resume},
+des extensions des  algorithmes précédents  existent pour l'estimation
+de  longueur  de courbes  discrètes 3D.   Ainsi, une première approche
+très simple  consiste en une généralisation  3D  des estimateurs basés
+sur des métriques locales.  Dans ce cas, les déplacements élémentaires
+considérés sont par exemple les 6-adjacences de voxels (notées $n_a$),
+les adjacences de voxels par lignels (notées  $n_b$) et les adjacences
+de voxels  par   pointels (notées  $n_c$). Les  poids   associés à ces
+déplacement sont calculés    de   manière à minimiser   l'erreur    de
+l'estimation de longueur  pour une distribution aléatoire  de segments
+de  droites  réelles.     Par  exemple,   \cite{beckers}   considèrent
+l'estimateur~:
+\begin{displaymath}
+  \mathcal{E}_{Beckers}(D_r(\gamma))=0.8875n_a + 1.34224n_b + 1.59772n_c
+\end{displaymath}
+
+Par  la  suite, \cite{JON_1998} proposent    des estimateurs basés sur
+d'autres déplacements élémentaires.
+
+En considérant des courbes discrètes 3D 6-connexes ({\it cube-curve}),
+\cite{bulow} proposent  une  approximation   polygonale basée   sur le
+polygone de longueur  minimale  inscrit dans  ce volume   (voir figure
+\ref{fig:mlp3d}). Ce polygone 3D se calcule en deux étapes~:
+\begin{itemize}
+\item dans un premier temps, des sommets {\it candidats} sont
+  initialisés sur des arêtes dites {\it critiques} (lignels
+  appartenant à trois voxels adjacents)~;
+\item  des optimisations locales  (suppression de sommets, déplacement
+le long des arêtes\ldots) sont  effectuées afin de réduire la longueur
+du polygone.
+\end{itemize}
+
+
+\begin{figure}[htbp]
+  \centering
+  {\includegraphics[width=14cm]{MLP3Dbis}}
+  \caption[Illustration du calcul du polygone de longueur minimale
+    associé à une courbe discrète 6-connexe]{Illustration du calcul du
+    polygone de   longueur  minimale associé   à  une courbe  discrète
+    6-connexe~: courbe discrète initiale, sélection des arêtes
+    critiques et calcul du polygone de longueur minimale.}
+  \label{fig:mlp3d}
+\end{figure}
+
+
+Cet  estimateur, noté  $\mathcal{E}_{3D-MLP}$ permet  l'estimation
+de longueur d'une courbe 3D mais de nombreux problèmes existent sur le
+plan algorithmique. En  effet, la phase d'optimisation de l'algorithme
+(seconde étape) est appliquée   jusqu'à ce qu'aucune  modification  ne
+réduise la longueur du polygone MLP. Or, étant donné que les sommets de
+ce polygone     peuvent se déplacer   sur  les  arêtes  critiques, non
+seulement  ce  calcul n'est plus  discret mais   en plus, l'algorithme
+permettant  de  trouver le  minimum  est exponentiel (l'algorithme est
+NP-complet) en temps.  Ainsi, \cite{bulow} ont introduit un $\tau$-MLP
+qui  correspond au polygone dont la  distance  diffère de l'optimal de
+$\tau$.  Enfin, les auteurs  proposent un algorithme non-linéaire pour
+calculer un tel polygone.
+
+Sur le plan de la convergence asymptotique, les problèmes de
+définition et de construction du polygone MLP en 3D ne permettent pas
+d'avoir de preuve de convergence.
+
+
+Dans \cite{3Dnss},  nous   avons proposé un  algorithme  de  calcul de
+longueur basé sur la segmentation de la courbe en droites discrètes 3D
+(voir algorithme  \ref{alg:debled_seg_3D}).  Ainsi, cet  estimateur se
+base sur l'approximation polygonale en  droites discrètes pour estimer
+la longueur de  la courbe  discrète (voir figure   \ref{fig:ex_seg_3D}
+pour  quelques  exemples    de segmentation).    Rappelons que   cet
+algorithme est totalement discret et  que le calcul de la segmentation
+s'effectue en $O(n)$ où $n$ est le nombre de voxels de la courbe discrète,
+ce qui est optimal pour le problème.
+
+D'un point de vue théorique, nous avons le théorème suivant~:
+
+\begin{theo}
+Soit  $\Gamma$ la  famille des courbes   dans $\R^3$ à courbure bornée
+(avec d'autres hypothèses techniques),  l'estimateur de longueur  basé
+sur une polygonalisation en  droites discrètes 3D de la discrétisation
+de $\gamma \in \Gamma$ a la propriété de convergence asymptotique.
+\end{theo}
+
+Dans la  preuve donnée dans l'annexe \ref{chap:annexe_multi} (théorème
+\ref{preuve_theo_longueur}), nous avons  utilisé un  schéma général de
+preuve basé sur le fait qu'un segment de droite discrète faisant parti
+de  la segmentation de  la courbe $D_r(\gamma)$  peut être vu comme un
+{\it tube} dont l'épaisseur est contrôlée et qui englobe un morceau de
+$\gamma$.  Ce schéma est valide quelle que soit  la dimension du problème
+et c'est pour cela que nous pouvons utiliser exactement la même preuve
+pour le cas 2D que pour le cas 3D.
+
+Finalement, nous avons un estimateur de  longueur de courbes discrètes
+3D, noté $\mathcal{E}_{3D-DSS}$, dont le calcul  est optimal en temps,
+purement discret et qui converge asymptotiquement.
+
+
+D'un point de vue expérimental, il est  assez difficile de proposer un
+jeu de tests très pertinent  en 3D.   Dans les analyses  expérimentales
+des    figures  \ref{length_res}  et  \ref{length_resbis},  nous avons
+considéré   des  cercles  et    des ellipses  3D.    Dans  la   figure
+\ref{length_resbis}-$(b)$   nous   avons  tracé une  mesure   que nous
+n'avions pas  présentée  dans le  paragraphe  précédent, celle-ci est
+l'inverse de l'erreur  relative  en  pourcentage.  Cette  mesure  nous
+permet   de  nous rendre compte  de    la vitesse  de  convergence  de
+l'estimation. Dans notre cas, la  courbe se stabilise vers une vitesse
+de convergence linéaire.
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    {\includegraphics[width=8cm,angle=270]{res_cercle_longueur3D}}
+    
+    \caption[Analyse expérimentale de convergence asymptotique de
+      l'estimateur $\mathcal{E}_{3D-DSS}$]{Analyse expérimentale de convergence asymptotique de
+      l'estimateur $\mathcal{E}_{3D-DSS}$~: convergence sur un
+      cercle 3D. Les barres d'erreur correspondent aux différentes
+      mesures observées en fonction du point de départ considéré de la segmentation.}
+ \label{length_res}
+ \end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=8cm,angle=270]{longueur_ellipse}}
+    \subfigure[]{\includegraphics[width=8cm,angle=270]{longueur_inv_ellipse}}
+    \caption[Analyse expérimentale de convergence asymptotique de
+      l'estimateur $\mathcal{E}_{3D-DSS}$]{Analyse expérimentale de convergence asymptotique de
+      l'estimateur $\mathcal{E}_{3D-DSS}$~: $(a)$ sur une ellipse 3D  dont le rapport entre les
+      longueurs d'axe est $\frac{1}{\sqrt{2}}$ et $(b)$ inverse de
+      l'erreur relative sur les ellipses 3D afin d'observer la
+      vitesse de convergence.}
+    \label{length_resbis}
+  \end{center}
+\end{figure}
+
+
+Une perspective importante de ce travail sur les longueurs de courbes
+discrètes 3D est bien évidemment la mise en place d'une plate-forme de
+test similaire à celle utilisée dans le cas 2D. Un travail préalable
+serait la désignation d'une famille de courbes réelles 3D sur
+lesquelles nous avons la mesure exacte de longueur et que nous
+discrétiserons en multi-grille.
+
+
+\clearpage
+\subsection{Aire d'une surface discrète}
+\label{sec:aire-dune-surface}
+
+
+En dimension 3, le calcul  de l'aire de  la surface d'un objet discret
+est un  descripteur de  forme  très important.  En   effet, de la même
+manière qu'en 2D, cette mesure  permet une normalisation de toutes les
+autres  caractéristiques que  nous pourrons extraire  de ces surfaces.
+D'un point  de vue pratique, cette  mesure  nous permet d'extraire une
+information  physique  très   importante    dans  le  cas    d'analyses
+d'échantillons de neige (voir paragraphe \ref{secneige}).
+
+
+Nous allons, ici  aussi, nous  intéresser à  la notion  de convergence
+asymptotique. Pour cela, nous reformulons  la propriété de convergence
+asymptotique    dans le cas des   surfaces  dans  $\R^3$.  Nous notons
+$\mathcal{S}$   une surface    de  \aut{Jordan}   dans $\R^3$.    Nous
+considérons un processus de  discrétisation, noté $D_r$ sur une grille
+3D de résolution $r$.    Soit $\mathcal{A}(\mathcal{S})$ l'aire  de la
+surface $\mathcal{S}$ et $\mathcal{E}(D_r(\mathcal{S}))$  l'estimation
+obtenue à   l'aide   de  $\mathcal{E}$.   L'estimateur   $\mathcal{E}$
+converge asymptotiquement si et  seulement si~:
+\begin{displaymath}
+  |\mathcal{E}(D_r(\mathcal{S})) - \mathcal{A}(\mathcal{S})| \leq \epsilon(r)\quad\text{avec }\quad lim_{r \to \infty} \epsilon(r) = 0    
+\end{displaymath}
+
+
+\subsubsection{Solutions existantes} 
+
+Dans un premier temps, \cite{mullikin} ont proposé une approche locale
+pour  l'estimation   d'aire  de surfaces  discrètes.   L'idée  est la
+suivante~:  tout  d'abord,   les   différentes configurations  locales
+possibles  de voxels,  appartenant    à  une surface   discrète,  sont
+classifiées en neuf catégories. À chacune de ces classes, un poids est
+associé  avec un processus statistique  de  manière à estimer au mieux
+l'aire de morceaux de plans discrets distribués aléatoirement. Lorsque
+l'on    analyse une surface   quelconque,  nous  comptons, pour chaque
+classe, le  nombre  d'occurences  du  motif.   Finalement, l'aire  est
+estimée par   combinaison  des occurrences  et  des  poids   de chaque
+catégorie.
+
+Dans une approche basée sur une approximation polyédrale de la surface
+discrète,  deux  solutions   naïves  peuvent   être   proposées  (voir
+paragraphe  \ref{sec:facett-dobj-discr})~: la  première consiste en le
+calcul de l'enveloppe convexe  de l'objet discret pour ensuite estimer
+l'aire de cette  enveloppe, la seconde se  base sur une utilisation de
+l'algorithme des Marching-Cubes.  Pour  la première solution basée sur
+une enveloppe convexe de  l'objet, l'estimateur n'est bien  évidemment
+valide  que  pour des  objets  convexes et   une preuve de convergence
+existe  dans  ce cas.  Nous  reviendrons sur  cette dernière plus tard
+\citep{sloboda_surface}.     En        considérant  l'algorithme   des
+Marching-Cubes, l'estimation de  l'aire de la surface surface consiste
+à sommer l'aire de chaque facette. Cet estimateur n'a pas la propriété
+de convergence  asymptotique compte tenu  du fait  qu'il s'agisse d'un
+calcul   local.    Afin  d'augmenter  encore    la  précision d'un tel
+estimateur dans   des cas   pratiques,  \cite{nystrom}  proposent  une
+pondération    des différentes   configurations    des  facettes    du
+Marching-Cubes. Cette dernière solution est  proche de l'estimateur de
+\cite{mullikin} décrit ci-dessus.
+
+\cite{klette_IWVF4} utilisent une  facettisation en plan discret et se
+basent sur cette dernière  pour estimer l'aire de  la surface.  L'idée
+est ici    de  mettre en    place  le  même   type  d'estimateurs  que
+$\mathcal{E}_{DR-DSS}$  ou  $\mathcal{E}_{VK-DSS}$  dans  le   cas 2D.
+Cependant,   comme     nous   l'avons    vu  dans     le    paragraphe
+\ref{sec:facett-dobj-discr},  de nombreux problèmes  existent pour  la
+localisation des sommets  d'une polyédrisation et la  construction des
+faces. Ainsi, la mesure donnée par cet estimateur est très variable en
+fonction  des  stratégies    choisies (propagation,   distribution  de
+germes\ldots).   De  plus, le  coût  en complexité des  algorithmes de
+reconnaissance  de plan  discret  étant assez  important, l'estimateur
+obtenu n'est pas très  efficace sur le plan algorithmique. Finalement,
+aucune preuve de convergence asymptotique n'est  disponible sur ce type
+de méthode.
+
+Sur le  plan théorique, \cite{sloboda_surface} proposent l'utilisation
+d'une  enveloppe convexe relative  comme  approximation polyédrale  de
+l'objet discret. Cette structure géométrique serait équivalente au MLP
+dans le cas 2D.  En se basant sur leur définition  de l'enveloppe convexe
+relative,   les auteurs   prouvent     la  propriété de    convergence
+asymptotique  de l'estimateur d'aire  de surface basé sur ce principe.
+Cependant, aucun algorithme n'est  encore disponible pour calculer une
+telle  surface  polyédrale.    Finalement,  \cite{Klette_ICPR_surface}
+proposent  un   algorithme   permettant  d'approximer cette  enveloppe
+convexe  relative  dans une  approche  par coupes~: dans chaque coupe,
+selon un axe de la grille,  un polygone MLP  est calculé. Ensuite, une
+surface  polyédrale est construite en  se basant sur les polygones MLP
+des coupes.   Cet algorithme ne  construit pas  exactement l'enveloppe
+convexe relative  de \citeauthor{sloboda_surface}, et  n'a  pas la
+propriété de convergence asymptotique.
+
+Comme   nous   pouvons   le voir,   les   approches  polyédrales  pour
+l'estimation de surface n'offrent pas de solutions pertinente du point
+de vue  de la convergence asymptotique.   Dans le  paragraphe suivant,
+nous détaillons un estimateur d'aire  de surface, proposé initialement
+par \cite{lenoirthese}, dont nous prouvons la convergence asymptotique
+dans le cas général.
+
+\subsubsection{Estimation d'aire de surface discrète par intégration de normales}
+\label{sec:estimation-daire-de}
+
+Pour faire une comparaison avec  le cas bidimensionnel, cette approche
+correspond        aux    estimateurs      $\mathcal{E}_{TAN}$       et
+$\mathcal{E}_{TAN\_PIX}$.
+
+Comme nous l'avons présenté précédemment, nous avons la formule
+classique en géométrie~:
+\begin{displaymath}
+\mathcal{A}(\mathcal{S})=\int_\mathcal{S} \vec{n}(s)ds
+\end{displaymath}
+
+Nous  pouvons proposer, de  la même   manière  qu'en 2D,  l'estimateur
+d'aire de surface suivant~:
+
+\begin{displaymath}
+\mathcal{E}_{TAN\_SURF}(D_r(\mathcal{S}))=\sum_{s\in D_r(\mathcal{S})}
+  \vec{n}^*(s). \vec{n}_{el}(s)
+\end{displaymath}
+où $\vec{n}^*(s)$ correspond à une estimation du vecteur normal centré
+sur l'élément de surface  $s$  de la discrétisation de  $\mathcal{S}$,
+$\vec{n}_{el}(s)$ correspond au  vecteur   normal élémentaire en   $s$
+(voir figure \ref{fig:norm_elem}).
+
+
+Cet estimateur d'aire de surface a été proposé initialement par
+\cite{lenoirthese}. Dans ce qui suit, nous évaluons ce dernier autant
+sur le plan théorique qu'expérimental.
+
+Si la surface discrète est définie en tant qu'ensemble de voxels, et si
+les normales sont estimées en chaque voxel, nous pouvons décrire un
+estimateur similaire basé sur la mesure suivante, donnée en chaque
+voxel $v$~:
+
+\begin{displaymath}
+  a(v)=\frac{\|\vec{n}^*(v)\|}{\max(|n^*_x(v)|,|n^*_y(v)|,|n^*_z(v)|)}
+\end{displaymath}
+
+Et ainsi obtenir l'estimateur suivant~:
+\begin{displaymath}
+  \mathcal{E}_{TAN\_SURF\_VOX}(D_r(\gamma))=\sum_{v \in
+    D_r(\mathcal{S})} a(v)
+\end{displaymath}
+
+Dans notre analyse théorique, nous ne distinguons pas ces deux
+estimateurs.
+
+
+
+Nous étendons le travail de \cite{lenoirthese} avec le théorème
+suivant~:
+
+\begin{theo}
+  Soit $\mathcal{S}$ une surface  $C^2$ dans $\R^3$ à courbure bornée,
+  l'estimateur d'aire   de surface   discrète basé  sur  l'intégration
+  discrète des  vecteurs  normaux   converge asymptotiquement  si  et
+  seulement si l'estimation des normales converge.
+\end{theo}
+
+La preuve de ce théorème est  donnée en annexe \ref{chap:annexe_multi}
+(théorème       \ref{preuve_surface}            et          corollaire
+\ref{preuve_surface_final}).
+
+En utilisant le théorème \ref{theo:conv_normales_3D}, nous avons~:
+
+\begin{coro}
+   Soit $\mathcal{S}$ une surface $C^2$ dans $\R^3$ à courbure bornée,
+   l'estimateur d'aire   de surface  discrète  basé  sur l'intégration
+   discrète  des vecteurs normaux,  et dont les  normales sont données
+   par        l'algorithme    décrit        dans   le       paragraphe
+   \ref{sec:estim-optim-en},  converge asymptotiquement.
+\end{coro}
+
+Ainsi, nous avons un algorithme d'estimation d'aire de surface en deux
+étapes~:
+\begin{enumerate}
+\item Estimation des normales en chaque surfel de la surface discrète
+\item Sommation, pour chaque surfel, du produit scalaire entre la
+  normale estimée et la normale élémentaire en ce surfel.
+\end{enumerate}
+
+Nous obtenons donc un estimateur~:
+\begin{itemize}
+\item optimal en  temps puisque l'étape 1  s'effectue en $O(n)$ où $n$
+est le nombre de surfels, et puisque l'étape 2 a aussi un coût en $O(n)$
+(voir paragraphe \ref{sec:estim-optim-en}).
+\item qui a la propriété de convergence asymptotique pour une famille
+  de surface réelle  vaste (voir annexe \ref{chap:annexe_multi}).
+\end{itemize}
+
+\subsubsection{Analyse expérimentale}
+
+Dans cette analyse  expérimentale, nous illustrons le comportement, non
+pas  de l'estimateur basé sur  le calcul optimal dont l'implémentation
+finale est en perspective, mais de celui basé sur le calcul de normales
+présenté dans le paragraphe \ref{secnormales_CEN}.
+
+Nous comparons   l'estimateur  d'aire  de surface  discrète   basé sur
+l'intégration  de normales à, d'une   part,  l'estimation basée sur  le
+calcul d'enveloppe convexe dans le  cas d'objets discrets convexes, et
+d'autre part à l'estimation basée sur l'algorithme des Marching-Cubes.
+
+Nous   considérons les   objets  multi-grilles  suivants  (voir figure
+\ref{fig:volumes_tests})~:
+\begin{itemize}
+\item des sphères discrètes~;
+\item des cylindres dont l'axe principal est parallèle à l'axe de la grille~;
+\item des demi-sphères creusées par des sphères de rayon plus petit.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=4cm]{Isph_20_128_6000}}
+  \subfigure[]{\includegraphics[width=4cm]{Icyl_i3e}}
+  \subfigure[]{\includegraphics[width=4cm]{Isspec_10_128}}
+  \caption{Volumes discrets multi-grilles considérés pour l'analyse expérimentale
+    des estimateurs d'aire.}
+  \label{fig:volumes_tests}
+\end{figure}
+
+Ces   objets sont donc    considérés  sur des  grilles  de  résolution
+croissante.   La   mesure utilisée  pour évaluer  ces  estimateurs est
+l'erreur relative en pourcent.
+
+La figure \ref{fig:res_spheres} présente les résultats sur les sphères
+discrètes. Nous pouvons remarquer que l'erreur des estimateurs basés
+sur l'enveloppe convexe et sur l'intégration des normales décroît 
+vers $0$ pour des résolutions croissantes. De plus, nous pouvons
+remarquer que les résultats obtenus en intégrant les normales
+théoriques ou en intégrant les normales estimées par l'algorithme du
+paragraphe \ref{secnormales_CEN} sont quasiment
+confondues. L'approche basée sur l'algorithme des Marching Cubes
+semble avoir une erreur qui se stabilise vers $10\%$.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[angle=270,width=12cm,draft=false]{comp_spheres}
+    \caption{Convergence asymptotique expérimentale des différents
+      estimateurs sur des sphères multi-grilles.}
+    \label{fig:res_spheres}
+  \end{center}
+\end{figure}
+
+Les figures \ref{fig:res_cyl} et \ref{fig:res_sph_trou} présentent les
+différents résultats sur les  cylindres et les sphères trouées. Encore
+une  fois, nous   pouvons  observer  le  bon  comportement   de  notre
+estimateur.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[angle=270,width=12cm]{comp_cyl}
+  \caption{Convergence asymptotique expérimentale des différents
+      estimateurs sur des cylindres multi-grilles.}
+  \label{fig:res_cyl}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[angle=270,width=12cm,draft=false]{comp_spheres_trou}
+  \caption{Convergence asymptotique expérimentale des différents
+      estimateurs sur des demi-sphères trouées multi-grilles.}
+  \label{fig:res_sph_trou}
+\end{figure}
+
+
+Finalement,  la figure  \ref{Surf_map} la   mesure  $a(v)$ associée  à
+chaque voxel   et qui  correspond à   l'apport du  voxel  $v$ à l'aire
+globale  de la surface.  Par définition de  cette mesure, celle-ci est
+comprise entre $1$ et $\sqrt{3}$.
+
+%%%Fig 13
+\begin{figure}[!hptb]
+  \begin{center}
+    \setlength{\unitlength}{1cm}
+    \subfigure[]{\includegraphics[angle=0,width=4cm,draft=false]{Ssph_20_128.eps}}
+    \subfigure[]{\includegraphics[angle=0, width=4cm,draft=false]{Scub_1.eps}}
+    \subfigure[]{\includegraphics[angle=0, width=4cm,draft=false]{Scubl_19.eps}}
+    \includegraphics[angle=0, height=4cm,draft=false]{legende_NG.eps}
+    \begin{picture}(0.3125,2.5)
+      \put(0.0625,0){\footnotesize $1$}
+      \put(0,3.90625){\footnotesize $\sqrt{3}$}
+    \end{picture}
+    \caption{Illustration de la fonction $a(v)$ représentant l'apport
+      de chaque  voxel $v$ à l'aire globale de la surface~: $(a)$
+      sphère discrète, $(b)$ sur un cube et $(c)$ sur un cube lisse tourné.}
+    \label{Surf_map}
+  \end{center}
+\end{figure}
+
+Ces résultats ont été présenté dans \cite{dcoeurjo_TFCV_surface}.
+
+\subsubsection{Conclusion sur l'estimation d'aire d'une surface discrète}
+
+Sur le plan théorique, nous avons proposé un algorithme optimal en
+temps et qui a la propriété de convergence asymptotique pour
+l'estimation de l'aire d'une surface discrète.
+
+Dans la partie expérimentale, nous avons présenté des premiers résultats d'un
+estimateur qui se base aussi sur l'intégration de normales discrètes
+mais qui ne correspond pas exactement à l'algorithme optimal.
+
+Une perspective importante de ce travail est l'implémentation, dans une
+plate-forme de tests, de l'algorithme optimal ainsi que d'autres
+algorithmes proposés dans la littérature.
+
+\section{Courbures d'objets discrets}
+
+ 
+\subsection{Quelques définitions mathématiques}
+
+Dans un  premier temps, nous  présentons les définitions et propriétés
+de la  courbure usuelle dans un espace  euclidien. Nous verrons par la
+suite comment plonger ces définitions dans le modèle discret.
+
+Supposons  une  courbe $x(s)$,   au moins $\mathcal{C}^2$  et dans  un
+espace de dimension $n$, paramétrée par son abscisse curviligne~:
+\begin{align*}
+  x:[0,1] & \to \mathbb{R}^n\\
+  s & \to x(s)
+\end{align*}
+
+La courbure, notée $k(s)$, en un point $s$ de  $x$ est un scalaire qui
+mesure la déviation de la courbe par rapport au vecteur tangent. Étant
+donnée une paramétrisation curviligne de la courbe, nous avons~:
+\begin{equation}
+\label{eq:1}
+k(s)=\left | \frac{d^2x}{ds^2} \right |
+\end{equation}
+
+Ce scalaire est bien évidement toujours positif. Cependant, pour des
+courbes planes, c'est-à-dire pour $x: [0,1]\rightarrow\R^2$, nous
+pouvons signer cette valeur est ainsi définir la {\it courbure
+  algébrique} notée $k_a$ et donnée par~:
+\begin{displaymath}
+  \frac{d\vec{t}}{ds}=k_a\vec{N}
+\end{displaymath}
+avec $\vec{t}(s)$ le vecteur tangent à $x$ en $s$ et $\vec{N}$ tel que
+$(\vec{t},\vec{N})$ soit une base orthonormée.
+
+La  courbure algébrique peut donc être  positive, négative ou nulle et
+permet de caractériser la concavité ou la convexité locale de $x$.
+
+
+Nous avons   une   définition équivalente de  la  courbure~:   si nous
+considérons $\phi(s)$    l'angle  orienté entre    le  vecteur tangent
+$\vec{t}(s)$ et une droite fixe, nous avons~:
+\begin{equation}
+\label{eq:2}
+  k_a(s)=\frac{d\phi}{ds}
+\end{equation}
+
+
+Nous avons une troisième définition donnée par~:
+
+\begin{equation}
+\label{eq:3}
+k(s)=\frac{1}{\rho(s)}
+\end{equation}
+o{\`u} $\rho(s)$  est défini comme    étant  le rayon  du cercle   qui
+géométriquement s'ajuste au  mieux à la  courbe en $s$. On parle alors
+de {\it cercle osculateur}.
+
+Bien évidemment, ces trois  écritures  de la courbure  sont totalement
+équivalentes. En effet, le cercle osculateur se définit à partir de la
+dérivée  seconde de la   courbe.    Nous présentons ces    différentes
+approches  puisque dans    le cas discret,   chacune  d'entre-elles va
+engendrer une classe d'estimateurs discrets de courbure.
+
+Considérons  maintenant une  surface  paramétrée  $x(u,v)$ dans $\R^3$
+donnée par~:
+\begin{align*}
+ x:U & \to \mathbb{R}^3\\
+  (u,v) & \to x(u,v)
+\end{align*}
+avec $U$ un ouvert de $\R^2$.
+
+Pour définir une courbure en tout point de  cette surface, nous devons
+introduire un repère  en tout point  de  celle-ci~: soit  $m=(u,v)$ un
+point de  la surface, nous  considérons le  repère de \aut{Frenet} est
+défini par la normale $\vec{N}$ et un vecteur $\vec{t}$ appartenant au
+plan tangent à la surface en $m$ (voir figure \ref{courbure_surface}).
+Dans  ce repère orthonormé,  nous considérons deux courbes $x_1(s)$ et
+$x_2(s)$  sur la surface contenues  dans deux plans $\Pi_1$ et $\Pi_2$
+orthogonaux      et, contenant  la     normale    en   $m$  (cf  figure
+\ref{courbure_surface}). Nous pouvons définir la {\it~courbure moyenne
+$H$} en $m$ en fonction des courbures $k_1(m)$ et $k_2(m)$ des courbes
+$x_1$ et $x_2$~:
+\begin{displaymath}
+H(m)=\frac{k_1(m) + k_2(m)}{2}
+\end{displaymath}
+
+
+Si maintenant nous prenons $x_1$ (resp.  $x_2$)  comme étant la courbe
+de  courbure  maximale $k_{max}$  (resp.  courbure minimale $k_{min}$)
+dans toutes les  directions du repère   de \aut{Frenet}. Nous  pouvons
+donner la définition de la {\it courbure gaussienne $K$} de la surface
+au point $m$~:
+\begin{displaymath}
+ K(m) = k_{max}(m)k_{min}(m)
+\end{displaymath}
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=7cm]{courbure_surface.ps}
+\caption{Exemple de plans principaux ($\Pi_1$ et $\Pi_2$) à une
+  surface avec leur cercle principal respectif et le repère de
+  \aut{Frenet} $(\vec{N},\vec{b},\vec{t})$ ainsi défini.} 
+\label{courbure_surface}
+\end{center}
+\end{figure}
+
+La connaissance de ces deux courbures nous permet de caractériser
+toutes les configurations locales de la surface (cf tableau
+\ref{H_et_K} et figure \ref{H_et_K_fig}).
+
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+~& $K=0$ & $K>0$ (elliptique)& $K<0$ (hyperbolique)\\
+\hline
+$H=0$ & plan & indéterminé & surface minimale\\
+\hline
+$H>0$ & cylindre concave & vallée & col concave\\
+\hline
+$H<0$ & cylindre convexe & pic & col convexe\\
+\hline
+\end{tabular}
+\caption{Caractérisation locale des surfaces en fonction des courbures
+  moyenne et gaussienne.}
+\label{H_et_K}
+\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=10cm]{H_et_K}
+\caption{Caractérisation locale des surfaces en fonction des courbures
+  moyennes et gaussiennes.}
+\label{H_et_K_fig}
+\end{center}
+\end{figure}
+
+Nous pouvons remarquer que le calcul de la courbure gaussienne est, en
+termes de complexité, beaucoup plus difficile à  mettre en place que la
+courbure  moyenne qui bénéficie  de la  propriété d'invariance quelque
+soit les  directions  du repère  de   \aut{Frenet}. 
+
+
+\subsection{Courbure de courbes discrètes}
+\label{sec:courbure2d}
+
+Nous nous intéressons  dans ce paragraphe au  calcul de la courbure en
+tout point  d'une courbe discrète 2D ou  3D.  Cette mesure euclidienne
+est une  information très importante figurant  dans la {\it signature}
+associée à un contour discret.
+
+Les différents estimateurs que nous proposons correspondent
+essentiellement aux travaux présentés dans   \cite{dcoeurjo_IWVF4}
+ainsi que dans  \cite{dcoeurjo_digitalarc}.
+
+
+
+
+\subsubsection{État de l'art}
+\label{sec:etat-de-lart}
+
+Dans  cette  étude    bibliographique, nous   reprenons  l'analyse  de
+\cite{Worring} en ajoutant les derniers  travaux dans ce domaine. Dans
+ce  qui suit,  les  estimateurs proposés   correspondent  tous à   des
+courbures algébriques  (donc  signées).   Le signe peut   parfois être
+ajouté  en post-traitement par une   analyse de concavité ou convexité
+locale de la courbe en un point donné.
+ 
+
+
+Ainsi,  les  équations (\ref{eq:1}), (\ref{eq:2}) et  (\ref{eq:3}) ont
+respectivement introduit des estimateurs basés sur~:
+\begin{enumerate}
+\item un calcul de dérivée seconde de la courbe discrète~;
+\item  un calcul de tangente puis un processus de calcul de
+  variation d'angle des tangentes~;
+\item l'estimation ou la reconnaissance du cercle osculateur.
+\end{enumerate}
+
+Une des premières  solutions pour l'estimation de  courbure en un  point
+$p_i$ d'une  courbe   discrète se   base   sur  la  formule suivante   (voir
+\citealt{montanvert})~:
+\begin{displaymath}
+k^*(p_i)=\frac{\angle(p_{i-m}p_i,p_ip_{i+m})}{|p_{i-m}p_i|+|p_ip_{i+m}|}
+\end{displaymath}
+
+Cette estimation de la courbure est appelée {\it courbure normalisée
+  d'ordre m} (voir figure \ref{courbure_k}). Dans cette approche, le
+paramètre $m$ représente un compromis entre précision et lissage du calcul.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=8cm]{courbure_k}
+\caption{Exemple de calcul de courbure normalisée d'ordre $m$ pour $m=4$.}
+\label{courbure_k}
+\end{center}
+\end{figure}
+
+
+En se basant sur la formule (\ref{eq:2}), \cite{Worring} proposent
+l'estimateur suivant~:
+\begin{displaymath}
+  k^*(p_i) =\frac{\theta(p_i)\ast\mathcal{G}'_\sigma}{1.107}
+\end{displaymath}
+où~:
+\begin{displaymath}
+  \theta(p_i) =\angle(\text{\aut{LineFitting}}(p_i,m),O_x)
+\end{displaymath}
+et $\mathcal{G}'_\sigma$ un filtre Gaussien dérivatif d'écart type $\sigma$.
+
+Cette approche consiste  à estimer une  tangente à la courbe en  $p_i$
+grâce    à    une  technique des   moindres     carrés sur  les points
+$\{p_{i-m}\ldots p_{i+m}\}$ (noté  \aut{LineFitting} dans la formule).
+Ensuite, la fonction $\theta(p_i)$   correspond à l'angle  entre cette
+tangente estimée  au point $p_i$ et une  droite quelconque  (ici l'axe
+$O_x$). Finalement, une convolution  de cette fonction avec  un filtre
+Gaussien dérivatif permet  d'estimer  la   dérivée de $\theta$.     Le
+facteur de  régularisation  $1.107$ correspond  à  la distance moyenne
+entre deux pixels de grille sur une distribution aléatoire de droites.
+
+
+Par  la  suite, \cite{vialard,vialardthese}  remplace l'estimation aux
+moindres carrés de  la tangente par  la tangente  discrète calculée au
+point $p_i$,  la formule de l'estimateur  reste inchangée.  D'un point
+de  vue  algorithmique,  l'optimisation de \cite{laurefab}  permet une
+estimation de la courbure en tout point de la courbe en temps optimal,
+c'est-à-dire $O(n)$ pour une courbe de $n$ pixels.
+
+Dans une approche basée  sur   l'estimation de cercles    osculateurs,
+\cite{Worring} proposent la formule générale suivante~:
+\begin{displaymath}
+  k^*(p_i)= \frac{1}{r^*(p_i)}
+\end{displaymath}
+avec
+\begin{displaymath}
+  (c^*,r^*)=\text{\aut{ArcFitting}}(p_i,m)
+\end{displaymath}
+
+En d'autres termes, une estimation du centre $c^*$ et du rayon $r^*$
+du cercle osculateur est calculée par moindres carrés (processus noté
+\aut{ArcFitting}) sur une fenêtre de $m$ pixels et la valeur de la
+courbure est donnée par l'inverse du rayon estimé.
+
+
+Finalement, \cite{Worring} proposent aussi un estimateur basé sur le
+calcul de la dérivée seconde de la courbe discrète. Ils montrent
+cependant que l'erreur engendrée par l'estimation de la dérivée
+d'ordre deux est assez importante.
+
+
+Dans ce qui suit, nous allons nous intéresser dans  un premier temps à
+une définition purement discrète de la courbure basée sur l'estimation
+ou  la  reconnaissance de   cercle osculateur   discret.  En  d'autres
+termes,   de  la même    manière    que \aut{Vialard}   a  résolu   le
+\aut{LineFitting}    en        discret,  nous   souhaitons    résoudre
+l'\aut{ArcFitting} en discret.  Ensuite, nous présentons un estimateur
+de courbure  basé  sur la   notion de  courbure normalisée  mais  avec
+l'introduction  d'objets  discrets     que nous  appelons    {\it  les
+demi-tangentes discrètes} en un point.    Pour ce dernier  estimateur,
+nous présentons une preuve de convergence asymptotique de la mesure.
+
+\subsubsection{Estimation du cercle osculateur discret}
+
+Nous nous intéressons à la  résolution du problème \aut{ArcFitting} de
+\citeauthor{Worring}. Pour  cela, nous allons utiliser l'analyse faite
+au chapitre \ref{chap-cercles}.
+
+La première  solution que nous  présentons correspond à une estimation
+du cercle  osculateur très rapide   basée sur l'analyse  des paraboles
+discrètes    associées   aux   cercles     discrets  (voir   paragraphe
+\ref{sec:approche-paraboles}).  Nous proposons des premières idées sur
+un estimateur basé sur la reconnaissance de cercle discret.
+
+Reprenons   l'analyse du   paragraphe \ref{sec:approche-paraboles}. Le
+cercle    discret arithmétique  de centre  $(0,0)$    et de rayon  $R$
+peut-être construit par le faisceau de paraboles~:
+
+
+\begin{displaymath}
+\left \{
+\begin{array}{l}
+y =\left [\sqrt{x(1+2k)-k^2+1/4} \right]\\
+x=R-k\\
+ 0\leq k \leq R
+\end{array} \right .
+\end{displaymath}
+
+Si nous considérons une hauteur $l$, les cercles arithmétiques dont la
+première parabole a une hauteur $l$ ont un  rayon entier compris entre
+$r_{inf}$ et $r_{sup}$ donnés par~:
+\begin{align}
+\label{eq:4}
+  r_{inf}&=\left\lceil (l-1/2)^2 - 1/4\right\rceil\\
+\label{eq:5}
+  r_{sup}&=\left\lfloor (l+1/2)^2 - 1/4 \right\rfloor
+\end{align}
+
+Cet ensemble correspond au palier de paraboles de hauteur $l$ (voir
+figure \ref{fig:palier_para}).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{palier_para.ps}
+  \caption{Illustration de la première parabole des cercles
+    arithmétiques et calcul de l'ensemble des cercles de hauteur $l$.}
+  \label{fig:palier_para}
+\end{figure}
+
+
+Ainsi, l'estimateur basé sur  le cercle osculateur que  nous proposons
+utilise l'analogie suivante avec le  continu~: considérons la tangente
+en un point d'un cercle de rayon  $r$ contenu dans l'anneau $r-1/2$ et
+$r+1/2$. Ce segment  a une longueur constante  en tout point du cercle
+de rayon $r$  (voir  figure   \ref{fig:analogie}).  Nous  partons   de
+l'hypothèse que  la   discrétisation de ce  segment   correspond à une
+tangente discrète d'un   cercle  arithmétique de rayon $r$   (l'anneau
+$r-1/2$, $r+1/2$ définissant le cercle arithmétique).
+
+Nous  émettons  donc  l'hypothèse   que  les longueurs  des  tangentes
+discrètes  en tout point d'un   cercle  arithmétique sont  constantes.
+Même  si cette  hypothèse n'est  pas vraie  dans  le cas général, nous
+montrons  que la variation de longueur  des tangentes  ne perturbe pas
+l'estimateur de courbure pour des rayons raisonnables.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{anneau}
+  \caption{Analogie en l'anneau euclidien ($r-1/2,r+1/2$), la tangente
+  au cercle de rayon $r$ dans cet anneau et la tangente discrète en un
+  point d'un cercle arithmétique.}
+  \label{fig:analogie}
+\end{figure}
+
+Si nous considérons la tangente discrète au  point $(r,0)$ d'un cercle
+de rayon  $r$, celle-ci correspond
+exactement à un segment vertical dont la longueur est  le double de la
+hauteur de la  première parabole.  Ainsi, sous l'hypothèse ci-dessus,
+nous  pouvons associer à chaque  demi-longueur $l$ de tangente discrète
+une estimation  des cercles osculateurs     discrets donnés par    les
+formules (\ref{eq:4}) et (\ref{eq:5}).
+
+Finalement, à partir de $r_{inf}$ et de $r_{sup}$, nous estimons la
+courbure au point $p_i$ comme étant l'inverse du rayon moyen~:
+\begin{equation}
+\label{eq:6}
+  k^*(p_i)=\frac{2}{r_{inf}+r_{sup}}
+\end{equation}
+
+L'algorithme \ref{algcourbure_estim} présente l'estimateur complet.
+
+\begin{algorithm}[htbp]
+\caption{Calcul de courbure par estimation de cercles osculateurs discrets}
+\label{algcourbure_estim}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Courbure\_osculateur($C$)}
+\\ \COMMENT{$C$ est une courbe discrète}
+
+\STATE Calcul des tangentes discrètes avec l'algorithme de
+\cite{laurefab}
+\FOR{\textbf{tout}  pixel $p_i$ de $C$}
+\STATE Soit $l$ la demi-longueur de la tangente en $p_i$
+\STATE Soit $r_{inf}=\left\lceil (l-1/2)^2 - 1/4\right\rceil$
+\STATE Soit $r_{sup}=\left\lfloor (l+1/2)^2 - 1/4 \right\rfloor$
+\STATE $k^*(p_i)=\frac{2}{r_{inf}+r_{sup}}$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+
+Sur le  plan algorithmique,  nous  pouvons remarquer que  l'algorithme
+\ref{algcourbure_estim} s'effectue   en $O(n)$  puisque les  tangentes
+discrètes  sont calculées en    temps optimal \citep{laurefab}.   Nous
+obtenons donc une estimation de la  courbure très rapide et construite
+uniquement à partir de rayons  entiers de cercles osculateurs.  Notons
+que la  valeur de la   courbure calculée est,  par  la suite,  signée en
+analysant   la convexité ou  concavité  locale de   la courbe discrète
+grâce aux paramètres des tangentes des points adjacents à $p_i$.
+
+
+La  figure \ref{fig:comp_courbure2d} présente une première comparaison
+entre cet estimateur et  celui proposé par \cite{vialardthese}  sur un
+cercle de rayon  40. Nous pouvons remarquer  que, sans introduction de
+paramètre $\sigma$  toujours  difficile à  choisir  en fonction de  la
+donnée,  nous avons une  meilleure  estimation de la  courbure en tout
+point. De plus, nous notons que  l'hypothèse de travail que nous avons
+faite, selon laquelle la longueur   des  tangentes discrètes en   tout
+point d'un cercle arithmétique est constante, reste  valide au vue des
+résultats~:  la  variation  de longueur   $l$   permet d'avoir  de bon
+résultat sur l'estimation.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[angle=270,width=12cm]{comp}
+  \caption[Comparaison entre le graphe de courbure de
+    \cite{vialardthese} (avec $\sigma=1$) et l'estimation de
+    l'algorithme \ref{algcourbure_estim}]{Comparaison entre le graphe de courbure de
+    \cite{vialardthese} (avec $\sigma=1$) et l'estimation de
+    l'algorithme \ref{algcourbure_estim} sur un cercle discret de
+    rayon 40.}
+  \label{fig:comp_courbure2d}
+\end{figure}
+
+
+De  plus, n'ayant pas  de processus de  lissage dans le  coeur même de
+l'algorithme, nous  avons de  très bonnes  localisations des  points de
+forte    courbure    sur  des   courbes   non  bruitées   (voir figure
+\ref{fig:carre_courbure}).   Dans  le cas  de courbes   bruitées, nous
+pouvons  utiliser des processus  de  filtrage en post-traitement  mais
+ceux-ci sont dissociés de la méthode.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=5cm]{carre_deplie}}
+  \subfigure[]{\includegraphics[origin=lc,angle=270,width=8.5cm]{res_carre}}
+  \caption[Comparaison entre le graphe de courbure de
+    \cite{vialardthese} (avec $\sigma=1$) et l'estimation de
+    l'algorithme \ref{algcourbure_estim}]{Comparaison entre le graphe de courbure de
+    \cite{vialardthese} (avec $\sigma=1$) et l'estimation de
+    l'algorithme \ref{algcourbure_estim} sur un carré déplié.}
+  \label{fig:carre_courbure}
+\end{figure}
+
+
+Du point de  vue de la  convergence asymptotique, cet estimateur n'est
+pas du tout adapté.   En effet,  nous pouvons  remarquer que  pour des
+longueurs $l$ croissantes, l'incertitude sur le rayon croît (le palier
+de la  première  parabole est  de plus  en  plus long).   Ainsi,  cet
+estimateur permet une estimation   de la courbure très  rapide,  assez
+efficace sur des objets de taille raisonnable et sans aucun paramètre.
+
+
+Afin d'avoir non plus un processus d'estimation de cercle osculateur
+mais un processus de reconnaissance,  nous pouvons envisager
+l'utilisation des différents algorithmes du chapitre
+\ref{chap-cercles}. L'algorithme \ref{algcourbure_reco} présente une
+solution directe au problème du calcul de courbure par  reconnaissance
+de cercles osculateurs. Cet algorithme repose sur la définition
+suivante~:
+\begin{defi}[Cercle osculateur discret]
+  Étant donnés une courbe discrète $C$ et un point $p_i$ de $C$. Le
+  cercle osculateur discret à $C$ en $p_i$ est le plus grand morceau
+  de cercle discret qu'il est possible de reconnaître, centré en $p_i$.  
+\end{defi}
+
+Cette définition est similaire à celle de la tangente discrète
+proposée par \citeauthor{vialardthese}.
+
+\begin{algorithm}[htbp]
+\caption{Calcul de courbure par reconnaissance de cercles osculateurs discrets}
+\label{algcourbure_reco}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Courbure\_reconnaissance\_osculateur($C$)}
+\\ \COMMENT{$C$ est une courbe discrète}
+\FOR{\textbf{tout} pixel $p_i$ de  $C$}
+\STATE Reconnaître le plus grand arc de cercle centré en $p_i$
+\STATE Calculer, par exemple, le cercle  $(c^*,r^*)$ avec $c^*$ barycentre du polygone $acd$ résultat
+de la reconnaissance
+\STATE $k^*(p_i)=\frac{1}{r^*}$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+Dans les résultats de segmentation des figures \ref{segm} et
+\ref{segm_detail}, nous pouvons observer que la qualité de
+localisation du centre théorique du cercle est de l'ordre du
+pixel. Ainsi, ces premiers résultats laissent imaginer un très bon
+comportement de ce type d'estimateur de courbure.
+
+Un inconvénient majeur  de cet  algorithme  reste sa complexité.    En
+effet,   nous avons vu dans   le  chapitre  \ref{chap-cercles} que  la
+reconnaissance et la segmentation  en  arcs de cercles discrets   d'une
+courbe discrète       de   $n$ points     ont   une     complexité  en
+$O(n^{4/3}log(n))$.   Or, une  implémentation directe  de l'algorithme
+\ref{algcourbure_reco}  nous oblige à appliquer  un tel calcul en tout
+point de  la  courbe ce  qui nous  donnerait un coût   au pire cas  en
+$O(n^{8/3}log(n))$.
+
+Une perspective de cette approche  serait d'analyser le comportement du
+polygone   des solutions  du cercle  osculateur   discret lorsque nous
+passons d'un point $p_i$ au point suivant de la courbe.
+ 
+\subsubsection{Estimation de courbure avec convergence asymptotique}
+\label{sec:courb_conv_2d}
+
+Dans ce paragraphe, nous présentons un estimateur de courbure qui a la
+propriété de convergence  asymptotique. Cet estimateur repose  sur une
+extension de la {\it courbure normalisée d'ordre $m$} (voir paragraphe
+\ref{sec:etat-de-lart} et \citealt{montanvert}) avec  des outils de la
+géométrie discrète.
+
+L'idée principale  est de construire, en un  point $p_i$ de la courbe,
+le  plus  long segment   de    droite discrète    à droite de    $p_i$
+(respectivement à gauche  de $p_i$), le pixel  extrémité de ce segment
+est noté $P_D$   (respectivement $P_G$).   Ces deux segments    seront
+appelés  respectivement {\bf demi-tangente  discrète à droite} et {\bf
+demi-tangente    discrète  à gauche} à    la  courbe en $p_i$.  Ainsi,
+l'estimation de la courbure au point $p_i$ de la courbe est donnée par
+l'inverse du  rayon du cercle passant  par les points  $P_D$, $p_i$ et
+$P_G$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{courbure_conver.ps}
+  \caption{Illustration de l'estimateur de courbure basé sur les
+    demi-tangentes à gauche et à droite de $p_i$.}
+  \label{fig:courbure_conv}
+\end{figure}
+
+L'estimation de la courbure   se ramène donc   au calcul du   rayon du
+cercle circonscrit au triangle  $(P_G,p_i,P_G)$.  Une idée simple pour
+implémenter ce  calcul se base  sur l'intersection  des médiatrices de
+$[P_Gp_i]$ et de $[P_Dp_i]$. Nous présentons cependant une
+formule directe permettant d'estimer très simplement le rayon $R_c$ du
+cercle circonscrit à un  triangle donné par  les longueurs $a$, $b$ et
+$c$ de chacunes des arêtes \citep{handbook}.
+
+Nous calculons tout d'abord l'aire du triangle donnée par~:
+\begin{displaymath}
+\mathcal{A}=\frac{\sqrt{(b+c)^2-a^2}\sqrt{a^2-(b-c)^2}}{4}  
+\end{displaymath}
+
+Puis nous avons la formule directe~:
+\begin{displaymath}
+  R_c=\frac{abc}{4\mathcal{A}}
+\end{displaymath}
+
+Dans notre application,  tous les cas  dégénérés, qui correspondent  à
+des demi-tangentes discrètes colinéaires   par exemple, sont  capturés
+par un simple test de nullité de  $\mathcal{A}$ ($a$, $b$ et $c$ étant
+non nuls par construction  des demi-tangentes). Ce cas particulier nous
+permet de définir une courbure nulle au point $p_i$.
+
+L'algorithme  \ref{algcourbure_demi} présente  l'implémentation   très
+simple  de cet estimateur de  courbure.   Le calcul des demi-tangentes
+discrètes s'effectue  grâce aux différents algorithmes présentés dans
+le chapitre~\ref{chap-droites}.  Nous  pouvons aussi implémenter  dans
+cet algorithme le calcul du signe de $R_c$  avec une simple extraction
+du signe du   déterminant des  vecteurs  $\overrightarrow{p_iP_D}$  et
+$\overrightarrow{p_iP_G}$.
+
+
+
+\begin{algorithm}[htbp]
+\caption{Calcul de courbure par demi-tangentes discrètes}
+\label{algcourbure_demi}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Courbure\_demi-tangentes($C$)}
+\\ \COMMENT{$C$ est une courbe discrète}
+\FOR{\textbf{tout} pixel $p_i$ de  $C$}
+\STATE Calculer la demi-tangente discrète à droite $[p_iP_D]$
+\STATE Calculer la demi-tangente discrète à gauche $[P_Gp_i]$
+\STATE
+$S=signe(det(\overrightarrow{p_iP_D},\overrightarrow{p_iP_G}))$
+\COMMENT{calcul de la convexité ou concavité locale}
+\STATE $a=\|\overrightarrow{p_iP_D}\|$,  $b=\|\overrightarrow{p_iP_G}\|$,  $c=\|\overrightarrow{P_DP_G}\|$,
+\STATE $\mathcal{A}=\frac{\sqrt{(b+c)^2-a^2}\sqrt{a^2-(b-c)^2}}{4}$
+\IF{$\mathcal{A}=0$}
+\STATE  $k^*(p_i)=0$ \COMMENT{Cas dégénéré}
+\ELSE
+\STATE  $R_c=\frac{abc}{4\mathcal{A}}$
+\STATE  $k^*(p_i)=S\frac{1}{R_c}$
+\ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+Si  maintenant nous regardons  le coût de  cet algorithme, nous voyons
+qu'une  implémentation directe nous  donne  une complexité en $O(n^2)$
+pour l'étiquetage  de chaque  pixel par  la valeur  de la  courbure en
+ce point. Cependant, nous  pouvons transformer l'algorithme optimal de
+calcul  des tangentes discrètes  de \cite{laurefab} pour construire en
+$O(n)$ toutes les demi-tangentes à gauche et à droite en tout point.
+
+En effet, l'algorithme initial  de \citeauthor{laurefab}  n'impose pas
+la symétrie complète de la tangente  dans le calcul en temps optimal~:
+si  l'ajout d'un  point à  gauche  fait  échouer  la reconnaissance de
+segment  discret,  la tangente  peut  continuer  à droite  autant  que
+possible,  et  réciproquement.   Pour   le  calcul des  demi-tangentes
+discrètes  à droite,  il suffit d'invalider,   dès  le début,  le coté
+gauche   du  segment.  Nous   calculons  ainsi  en  $O(n)$  toutes les
+demi-tangentes à droite.  En appliquant un processus symétrique, nous
+pouvons calculer les demi-tangentes à gauche dans le même temps.
+
+Par  conséquent, l'algorithme \ref{algcourbure_demi}  est  optimal  en
+temps puisqu'il a une complexité  en $O(n)$. Notons que cette approche
+ne nécessite aucun paramètre pour son fonctionnement.
+
+En plus de ce résultat algorithmique, nous avons le théorème suivant~:
+
+
+\begin{theo}
+\label{theo:courbure_demi}
+ Soit  $\Gamma$ la famille des courbes $C^2$ dans $\R^2$ à courbure bornée (plus
+ quelques hypothèses techniques), l'estimateur
+de courbure basé sur les demi-tangentes discrètes converge
+asymptotiquement.
+\end{theo}
+
+La preuve est donnée dans l'annexe (théorème \ref{preuve_K}).
+
+
+En conclusion, nous avons présenté  un estimateur de courbure basé sur
+la notion de demi-tangente  discrète en un point  d'une courbe qui  est
+optimal en temps et qui à la propriété de convergence asymptotique.
+
+Des analyses expérimentales préliminaires ont été effectuées pour
+évaluer cet estimateur mais une analyse comparative précise avec les
+algorithmes présentés ci-dessus est en cours de développement.
+
+\subsubsection{Courbures de courbes discrètes 3D}
+\label{sec:courb_conv_3d}
+
+Nous  présentons ici  quelques   solutions au  problème du  calcul  de
+courbure   sur des  courbes  discrètes  tridimensionnelles.   Dans  la
+littérature, nous  n'avons pas trouvé  d'estimateurs existants pour un
+tel   calcul.   Ceci s'explique  par le  fait   que peu d'applications
+existent dans la  pratique.   Récemment, \cite{aronsson} a  montré
+l'utilité d'une telle mesure   dans un projet  d'analyse de  fibres de
+papier.
+
+
+
+Dans ce  qui suit,  nous présentons  des  estimateurs de  courbure  de
+courbes discrètes 3D basés sur les algorithmes \ref{algcourbure_estim}
+et \ref{algcourbure_demi}.  Par la   suite, nous ne parlerons  que  de
+courbure non signée, les notions de  convexité ou de concavité locales
+n'ayant pas de sens en 3D.
+
+
+
+Dans le cas de l'estimation du cercle osculateur basée sur la longueur
+de  la tangente   discrète (algorithme \ref{algcourbure_estim}),  nous
+pouvons étendre directement cette approche au cas 3D en considérant la
+notion  de  tangente  discrète   en  un point   d'une   courbe discrète
+26-connexe.   En  effet,   si   nous  utilisons  les  algorithmes   de
+reconnaissance   de     droites   3D    vus  dans       le  paragraphe
+\ref{sec:droites-discretes-3d},   nous pouvons  définir  la  notion de
+tangente  discrète  3D comme  étant  le  plus long  segment de droite,
+centré au voxel considéré qu'il est possible de reconnaître.  Ensuite,
+une fois la demi-longueur $l$ calculée de cette tangente, nous pouvons
+utiliser la formule (\ref{eq:6}) pour estimer la courbure en ce voxel.
+
+D'un point  de vue algorithmique, il  est possible de rendre ce calcul
+optimal   en temps.  En  effet,  compte tenu du   fait que les droites
+discrètes  3D se projettent sur les  plans d'axe  de la grille suivant
+des droites discrètes 2D, nous pouvons  utiliser le calcul optimal des
+tangentes  2D  pour construire la tangente  3D.    Il suffit pour cela
+d'effectuer  le calcul  de tangente  en temps  optimal  dans les trois
+plans de  projections de la  grille, puis de  définir la tangente 3D à
+partir des résultats 2D obtenus dans les coupes.
+
+La  figure \ref{fig:3dcourbure}   présente  un exemple   de graphe  de
+courbure calculé  avec cet estimateur.  Dans cet exemple, nous pouvons
+distinguer sur  le graphe~: la zone  de courbure presque constante qui
+correspond à l'arc de cercle, la zone de forte courbure qui correspond
+à la jonction entre l'arc  de cercle et le segment  de droite et enfin
+un  ensemble de  voxels  à courbure presque   nulle qui  correspond au
+segment.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=5cm]{courbe26}}
+  \subfigure[]{\includegraphics[origin=lm,angle=270,width=8cm]{courbure26}}
+  \caption[Exemple de calcul de courbure sur une courbe discrète 3D
+    avec   une estimation du  cercle osculateur]{Exemple  de calcul de
+    courbure sur une courbe discrète 3D  avec une estimation du cercle
+    osculateur~: $(a)$ courbe discrète 26-connexe composée d'un arc de
+    cercle et   d'un segment de droite discrète   3D,  $(b)$ graphe de
+    courbure obtenu.}
+  \label{fig:3dcourbure}
+\end{figure}
+
+Nous pouvons  aussi présenter une  extension de l'algorithme basée sur
+les demi-tangentes (algorithme \ref{algcourbure_demi}). En effet, pour
+les mêmes raisons que précédemment,  nous pouvons définir la notion de
+demi-tangente  discrète  3D en     un point  d'une     courbe discrète
+26-connexe.   De plus,  ce  qui est remarquable  avec  les formules de
+calcul du   rayon $R_c$ (voir   ci-dessus), c'est  que   ce dernier ne
+nécessite que  les distances entre les sommets  et  est défini quelque
+soit la dimension  de l'espace dans lequel  se trouve le triangle. Sur
+le  plan algorithmique,  ce calcul  se   fait aussi en temps  optimal,
+c'est-à-dire  en $O(n)$ pour une courbe  discrète  de $n$ voxels, pour
+les mêmes raisons que ci-dessus.
+
+De plus, la  preuve  du théorème \ref{theo:courbure_demi}   est valide
+quelle que soit la dimension de la  courbe euclidienne sous-jacente (voir
+annexe   \ref{chap:annexe_multi}.)   Nous  avons   donc le  théorème
+suivant~:
+
+\begin{theo}
+ Soit  $\Gamma$ la famille des   courbes $C^2$ dans  $\R^3$ à courbure
+ bornée   (plus  quelques  hypothèses   techniques),   l'estimateur de
+ courbure    basé    sur  les   demi-tangentes     discrètes  converge
+ asymptotiquement.
+\end{theo}
+
+En conclusion, l'algorithme \ref{algcourbure_demi3D} est optimal en
+temps et a la propriété de convergence asymptotique.
+
+\begin{algorithm}[htbp]
+\caption{Calcul de courbure par demi-tangentes discrètes}
+\label{algcourbure_demi3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Courbure\_demi-tangentes($C$)}
+\\ \COMMENT{$C$ est une courbe discrète 3D}
+\FOR{\textbf{tout} voxel $v_i$ de  $C$}
+\STATE Calculer la demi-tangente discrète 3D à droite $[v_iV_D]$
+\STATE Calculer la demi-tangente discrète 3D à gauche $[V_Gv_i]$
+\STATE $a=\|\overrightarrow{v_iV_D}\|$,  $b=\|\overrightarrow{v_iV_G}\|$,  $c=\|\overrightarrow{V_DV_G}\|$,
+\STATE $\mathcal{A}=\frac{\sqrt{(b+c)^2-a^2}\sqrt{a^2-(b-c)^2}}{4}$
+\IF{$\mathcal{A}=0$}
+\STATE  $k^*(v_i)=0$ \COMMENT{Cas dégénéré}
+\ELSE
+\STATE  $R_c=\frac{abc}{4\mathcal{A}}$
+\STATE  $k^*(v_i)=\frac{1}{R_c}$
+\ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Courbures de surfaces discrètes}
+
+Nous  nous intéressons  maintenant    aux différentes courbures    sur
+surfaces  discrètes 3D.  Sur le plan  théorique, ces  mesures sont des
+éléments importants de la signature d'une surface discrète. D'un point
+de vue pratique,  ces mesures ont aussi  de nombreuses applications en
+physique des matériaux (voir annexe \ref{chap-app}).
+
+\subsubsection{Courbure Moyenne}
+\label{sec:courbure-moyenne}
+
+Pour l'estimation de la courbure moyenne, deux approches différentes sont
+possibles~: la  première se base  sur une analyse volumique de l'objet
+et la seconde  repose sur  une décomposition en   coupes de la  surface
+discrète.
+
+Dans    une première approche  volumique,   nous  pouvons utiliser  le
+formalisme  associé aux  surfaces  implicites   afin de  proposer   un
+estimateur   volumique  de   courbure moyenne.    En   effet, si  nous
+considérons    une   surface   implicite  donnée  par    l'iso-surface
+$f(x,y,z)=0$,   nous pouvons caractériser  la  valeur  de la  courbure
+moyenne en un point de cette surface  à partir des dérivées partielles
+premières et   secondes de  $f$ dans  les   trois directions (voir par
+exemple \citealt{thirion-marching-lines,inria}).  Si    nous reprenons
+l'analyse  présentée  dans  le  paragraphe   \ref{secnormales_CEN} qui
+consiste à construire la  fonction $f$ à partir  de la transformée  en
+distance des voxels de la surface discrète, nous pouvons estimer cette
+courbure en calculant  des   dérivées partielles dans  cette  carte de
+distance.
+
+Une autre approche volumique, moins coûteuse que  la précédente, a été
+proposée par  \cite{courbure_moy}.  L'estimateur  est assez  simple et
+permet  une  mesure linéaire en  la  courbure  moyenne.  L'idée est de
+centrer, en tout point $v$ de la  surface discrète, une boule de rayon
+$r$.  Ensuite, il faut estimer  le volume $V$ de l'intersection  entre
+cette boule  et  l'objet discret en  comptant  le nombre de voxels  de
+l'objet  dans cette boule  (la figure \ref{fig:courb_moy_sph} illustre
+ce calcul dans le cas  2D).  Finalement, \cite{courbure_moy} proposent
+la formule~:
+\begin{displaymath}
+  H^*(v)=\frac{3.868}{\pi r^4}V-\frac{7.179}{3r}
+\end{displaymath}
+
+Les différents nombres réels de cette formule ont été choisis de façon
+à minimiser  l'erreur sur un ensemble  de sphères discrètes. La figure
+\ref{fig:ex_courb_moy} présente quelques résultats d'étiquetage par la
+courbure moyenne sur    différents  objets.  Le  niveau   de gris  est
+proportionnel à la  valeur $H^*(v)$~: les niveaux clairs correspondent
+aux parties  convexes de la surface et  les couleurs sombres aux zones
+concaves.  Étant donné que les  poids  sont optimisés sur des sphères,
+nous remarquons   que les centres  des faces  des cubes sont étiquetés
+``faiblement concaves'' avec l'estimateur précédent.  Bien évidemment,
+la qualité de l'approximation dépend aussi du choix du rayon de la boule $r$
+en fonction des objets à analyser.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=10cm]{courbure_moy_sphere}
+  \caption{Illustration en 2D de l'estimateur de courbure moyenne de
+    \cite{courbure_moy}.}
+  \label{fig:courb_moy_sph}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_cube_20_8}}
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_fig4_8}}
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_sphere_15_8}}
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_fig3_8}}
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_fig2_8}}
+  \subfigure[]{\includegraphics[width=5.5cm]{courb_moy_fig2_8b}}
+  \caption[Exemples de calcul de courbure moyenne avec l'estimateur de
+  \cite{courbure_moy}]{Exemples  de calcul  de courbure  moyenne  avec
+  l'estimateur de \cite{courbure_moy}~: $(a)$   sur un  cube  discret,
+  $(b)$ sur un cube dont un coin  est chanfreiné, $(c)$ sur une sphère
+  discrète, $(d)$ sur  un  objet composé  de deux  sphères connexes et
+  $(e)-(f)$ sur un objet composite.}
+  \label{fig:ex_courb_moy}
+\end{figure}
+
+
+Dans    une   approche  surfacique,    \cite{lenoirthese}   propose une
+décomposition  de la surface  discrète en coupes   pour le calcul de la
+courbure moyenne.   Ainsi, étant donné   un surfel $s$ de   la surface
+discrète, on commence par calculer la valeur de la  courbure 2D en $s$
+dans  les deux  coupes  associées  à  ce  surfel.  Soient $k_1(s)$  et
+$k_2(s)$ ces deux valeurs, et $\vec{n}(s)$ la normale en $s$.
+
+Rappelons que nous avons~:
+\begin{displaymath}
+H(m)=\frac{k_1(m) + k_2(m)}{2}
+\end{displaymath}
+si $k_1(m)$ et $k_2(m)$ sont calculées sur des courbes contenues dans
+des plans orthogonaux contenant la normale en $m$.
+
+
+Dans cette approche par coupes, deux possibilités s'offrent à nous~:
+\begin{itemize}
+\item  la normale a une ou deux de ses composantes nulles, dans ce
+  cas les deux coupes sont des plans orthogonaux contenant la
+  normale. Nous utilisons donc l'estimateur~:
+  \begin{displaymath}
+    H^*(s)=\frac{k_1(s) + k_2(s)}{2}
+  \end{displaymath}
+\item  la  normale a  ses trois composantes  non nulles,  les plans de
+coupe sont orthogonaux mais ne  contiennent pas la normale. La formule
+précédente ne s'applique pas.
+\end{itemize}
+
+
+Pour   résoudre    ce   dernier point,    \cite{lenoirthese}   propose
+l'utilisation de  la  formule d'\aut{Euler}~: si nous  connaissons les
+courbures  $k_1$, $k_2$  et $k_3$  en un  point $m$, de  trois courbes
+adjacentes  en  $m$, la courbure  moyenne   est alors une  combinaison
+linéaire de ces courbures~:
+\begin{displaymath}
+  H(m)=w_1k_1+w_2k_2+w_3k_3
+\end{displaymath}
+avec $\{w_i\}_{1..3}\in\R$.
+
+En se basant sur cette formule, \cite{lenoirthese} construit trois
+courbures, les deux premières correspondent aux courbures dans les
+coupes $k_1(s)$ et $k_2(s)$ , la troisième correspond à une estimation
+basée sur une analyse locale en $s$.
+
+\subsubsection{Courbure Gaussienne}
+\label{sec:courbure-gaussienne}
+
+
+Sur le plan bibliographique, peu de solutions existent pour
+l'estimation de courbure Gaussienne sur des surfaces discrètes. 
+Dans le cas de la courbure moyenne,  différentes recherches  ont été
+menées en physique des matériaux (voir par exemple
+\citealt{courbure_moy}) puisque cette information à un sens en terme
+ d'équilibre d'interface.
+
+La  courbure   Gaussienne  quant à   elle ne    semble  pas avoir  une
+signification  physique  directe.  Cependant     sur le plan     de la
+description  de   forme,  elle  est  une mesure   prépondérante.  Nous
+proposons donc un  estimateur  de courbure Gaussienne  qui  permet un
+calcul rapide de cette mesure.
+
+
+Cet estimateur se base sur le calcul de courbure grâce à l'application
+de \aut{Gauss}~:
+\begin{defi}[Application de \aut{Gauss}]
+  L'application  de \aut{Gauss},  notée $\mathcal{G}$, associe  à tout
+  point  d'une surface $M$ orientable et  au  moins $C^1$, son vecteur
+  normal  orienté.  Cette application est  illustrée par une injection
+  entre  les points de   $M$ et les points  à  la surface de la sphère
+  unité.
+\end{defi}
+
+
+
+
+\begin{figure}[htbp]
+  \centering \includegraphics[width=12cm]{app_gauss}
+  \caption{Illustration de l'application de \aut{Gauss} dans le cas de
+  surfaces dans $\R^3$.}
+  \label{fig:app_gauss}
+\end{figure}
+
+De plus, nous avons le théorème suivant en géométrie différentielle classique~:
+
+\begin{displaymath}
+  K(m)=\lim_{v\rightarrow m} \frac{\mathcal{A}(\mathcal{G}(v))}{\mathcal{A}(v)}
+\end{displaymath}
+où $v$ est un ouvert sur la surface contenant $m$ tendant vers
+ce dernier. $\mathcal{A}(v)$ est l'aire de ce voisinage sur la surface
+et $\mathcal{A}(\mathcal{G}(v))$ l'aire de l'ouvert sur la sphère
+unité de l'application de \aut{Gauss} $\mathcal{G}$ de $v$.
+
+
+Dans le cas des surfaces triangulées, cette relation entre la courbure
+et  l'aire a permis   la construction d'estimateurs très  simples. Par
+exemple, la figure \ref{fig:courb_trian} illustre un estimateur simple
+de courbure  Gaussienne en  un sommet  d'une  triangulation (voir  par
+exemple \cite{boix}).  Cet estimateur consiste  à envoyer les normales
+des facettes adjacentes au sommet  sur la sphère  unité et ensuite  à
+faire le rapport entre  la somme des aires  des triangles et l'aire du
+polygone sphérique engendré par les normales sur la sphère unité.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=12cm]{courb_trian.ps}
+  \caption{Application de \aut{Gauss} et estimation de courbure
+    Gaussienne dans le cas d'une surface triangulée.}
+  \label{fig:courb_trian}
+\end{figure}
+
+Nous présentons brièvement cet estimateur  mais une importante théorie
+mathématique existe pour prouver une sorte de convergence asymptotique
+de ce dernier \citep{boix}.
+
+Dans le cas discret,  une application directe  de cet estimateur n'est
+pas réaliste.  En effet, celle-ci consisterait  en la projection sur la
+sphère unité des normales issues des  surfels adjacents à un certain pointel
+de la surface.  Étant  donné que  le nombre  de  telles configurations
+locales est faible,  la mesure de  courbure ainsi obtenue n'aurait pas
+un très bon comportement.
+
+Cependant le fait d'avoir beaucoup  de normales (une par surfel)  pour
+caractériser  une petite  partie de  la  surface va nous permettre  de
+proposer  des estimateurs  très  efficaces.  L'idée est la  suivante~:
+considérons  une surface sur laquelle  nous avons estimé la normale en
+tout surfel. Pour    un surfel $s$  de  la surface, nous  nous
+intéressons au
+voisinage géodésique  de  normales autour  de  $s$  paramétré par  une
+distance $d$ (voir paragraphe  \ref{section3D}).  Nous considérons  un
+processus,           pour     l'instant       abstrait            noté
+\aut{Aire\_sphère}$(\mathcal{G}(v))$, qui nous permet d'estimer l'aire
+associé à un ensemble  fini de points sur  la  sphère unité donné  par
+l'application de \aut{Gauss} des normales dans le voisinage $v$.  Nous
+définirons plus  formellement ce processus par  la suite.  Enfin, nous
+utilisons l'estimateur de  surface basé sur l'intégration  de normales
+du      paragraphe \ref{sec:aire-dune-surface}   pour   estimer l'aire
+\aut{Aire}$(v)$   de la  surface  associée au   voisinage  $v$.   Nous
+proposons donc l'estimateur~:
+\begin{displaymath}
+  K^*(s)=\frac{\text{\aut{Aire\_sphère}}(\mathcal{G}(v))}{ \text{\aut{Aire}}(v)}
+\end{displaymath}
+
+Par rapport aux approches basées sur des surfaces triangulées, nous
+considérons un ensemble de normales dans un voisinage plus grand
+qu'une simple adjacence  avec le surfel $s$. Le paramètre $d$,
+fixant le rayon géodésique de ce voisinage, permet un contrôle de
+l'estimateur.
+
+Le problème maintenant est donc d'estimer l'aire associée au nuage de
+points $\mathcal{G}(v)$ sur la sphère unité. La figure
+\ref{fig:aire_sphere} nous illustre le problème avec les deux
+solutions que nous avons apporté. 
+
+Nous définissons l'aire de ce nuage de points comme étant l'aire  du
+plus petit polygone sphérique convexe contenant ces points. Avant de
+poursuivre, le choix de se baser sur la notion d'enveloppe convexe
+n'est pas anodine. En effet,  au sens de la géométrie différentielle,
+l'application de \aut{Gauss} sur un ouvert convexe reste convexe sur
+la sphère unité. Or, notre définition de disque géodésique surfacique
+semble proche d'une notion de convexité sur la surface euclidienne
+sous-jacente (une preuve formelle de ce point est en cours de rédaction).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=14cm]{aire_sphere_unit}
+  \caption[Illustration des différentes solutions pour l'estimation de
+    l'aire  d'un nuage  de  points  sur une  sphère]{Illustration  des
+    différentes solutions pour  l'estimation  de l'aire d'un  nuage de
+    points sur une sphère~:  {\it(de gauche à  droite)} les données du
+    problème,   solution   par calcul  d'enveloppe  convexe sphérique,
+    solution par calcul d'une ellipse de meilleure approximation.}
+  \label{fig:aire_sphere}
+\end{figure}
+
+La première solution  est très géométrique et   se base sur la  notion
+d'enveloppe convexe    sphérique.   Avant   cela,   rappelons quelques
+principes de la  géométrie sur la surface  d'une sphère. On appelle 
+{\it grand cercle} l'intersection de  celle-ci avec un plan  contenant
+son  centre. Le  rayon  d'un grand cercle  correspond  au  rayon de la
+sphère. Un {\it  triangle sphérique} (ou {\it triangle d'\aut{Euler}})
+est tel que   ses trois arêtes  correspondent  à  des arcs de   grands
+cercles distincts.  Enfin,  un {\it  polygone sphérique} correspond  à
+une généralisation des triangles sphériques~: les arêtes correspondent
+à des arcs de grands cercles.  Un angle d'un triangle ou d'un polygone
+sphérique en un  sommet correspond à  l'angle entre les plans générant
+les grands cercles associés aux arêtes sphériques du sommet.
+
+Finalement, pour ce qui nous intéresse, l'aire d'un polygone sphérique
+$P$ de $n$  sommets  et dont la   somme des angles est  $\Theta$,  est
+donnée par la formule très simple~:
+
+\begin{displaymath}
+  \text{\aut{Aire\_sphère}}(P)= \left ( \Theta - (n-2)\pi\right)R^2
+\end{displaymath}
+où $R$ est le rayon de la sphère (ici $R=1$).
+
+
+En se basant sur ces notions,  nous avons proposé l'algorithme
+\ref{alg:env_cvx_sphere}. L'idée est d'utiliser l'algorithme de calcul
+d'enveloppe convexe 2D de \aut{Graham} (voir par exemple
+\citealt{cormen,deberg}) pour l'étendre au cas sphérique.
+
+Ainsi, basé sur  la notion d'angle  présentée ci-dessus,  nous pouvons
+construire un tri polaire sphérique étant donné  un centre et surtout,
+nous pouvons   construire un prédicat   \aut{Convexe} qui étant donnés
+trois sommets décide   si  l'angle  sphérique  formé est  convexe   ou
+concave.   Ce   prédicat  nous  permet  d'implémenter l'algorithme  de
+\aut{Graham}. Cet algorithme a  pour  hypothèse que tous les   sommets
+sont dans la même  demi-sphère.   Dans le  cas contraire nous  pouvons
+avoir des ambiguïtés dans la définition du polygone sphérique.
+
+\begin{algorithm}[htbp]
+\caption{Aire d'un nuage de points sur la sphère par enveloppe convexe sphérique}
+\label{alg:env_cvx_sphere}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Aire\_sphère\_enveloppe($\mathcal{G}(v)$)}
+\\ \COMMENT{$\mathcal{G}(v)$ est le nuage de points sur la sphère
+  unité}
+\STATE Choisir un point $p_0$ de $\mathcal{G}(v)$ dont les coordonnées
+sphériques $(\theta,\phi)$ sont minimales (ordre lexicographique)
+\STATE Trier  $\mathcal{G}(v)$  dans un ordre polaire sphérique de
+centre $p_0$
+\STATE Calculer l'enveloppe convexe sphérique par l'algorithme de
+\aut{Graham}
+\STATE Calculer la somme des angles $\Theta$ du polygone résultant
+\STATE  \RETURN $\quad\Theta - (n-2)\pi$
+\end{algorithmic}
+\end{algorithm}
+
+
+Cet algorithme   est  assez simple  sur   le plan  théorique  mais son
+utilisation  pour  l'estimation  de courbure   rend son implémentation
+assez difficile.  En effet, dans  le cas où  les normales  sont issues
+d'un    morceau de    sphère  discrète  par      exemple,  les  points
+$\mathcal{G}(v)$  sont   assez  bien   répartis et l'algorithme   peut
+fonctionner   sans  difficulté (voir figure \ref{fig:ex_gauss}-$(a)$).
+Par contre, dans   le cas   d'une  surface  plutôt plane  ou    plutôt
+cylindrique,  la courbure Gaussienne associée  est alors nulle et donc
+les points $\mathcal{G}(v)$ sont,  soit tous regroupés en paquets, soit
+étirés dans une   direction  (voir  figure  \ref{fig:ex_gauss}-$(b)$).
+Dans  ce  cas, de  nombreux problèmes  numériques surviennent  dans le
+calcul du   tri polaire   et dans  le  calcul de   l'enveloppe convexe
+sphérique.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{gauss}}
+  \subfigure[]{\includegraphics[width=6cm]{gausscar}}
+  \caption[Exemples de calcul d'enveloppes convexes
+  sphériques]{Exemples de    calcul d'enveloppes convexes sphériques~:
+  $(a)$ représentation  sur la sphère  unité du polygone obtenu sur un
+  voisinage  $v$  provenant d'une  sphère  discrète et $(b)$ provenant
+  d'un morceau de cylindre.}
+  \label{fig:ex_gauss}
+\end{figure}
+
+
+Pour résoudre   ces problèmes d'instabilité numérique,  nous proposons
+une autre approche  basée sur  l'ellipse  de   meilleure  approximation.
+Rappelons le principe  de cette approximation  dans  le cas 2D.  Étant
+donné un ensemble de $N$ points  $\{(x_i,y_i)\}_{i=1..N}$ du plan, nous
+calculons la matrice d'inertie~:
+\begin{displaymath}
+  M=\left [  
+    \begin{array}{cc}
+      I_{xx} & I_{xy}\\
+      I_{xy} & I_{yy}
+    \end{array} 
+  \right ]
+\end{displaymath}
+où~:
+\begin{align*}
+I_{xx}&=\frac{1}{N}\sum_{k=1}^{N}( x_k -\mu_x)^2\\
+I_{yy}&=\frac{1}{N}\sum_{k=1}^{N}( y_k -\mu_y)^2\\
+I_{xy}&=\frac{1}{N}\sum_{k=1}^{N}( x_k -\mu_x)(y_k -\mu_y)\\
+\mu_x&=\frac{1}{N}\sum_{k=1}^{N} x_k\\
+\mu_y&=\frac{1}{N}\sum_{k=1}^{N} y_k
+\end{align*}
+
+Ensuite, l'ellipse de meilleure approximation est définie comme étant
+l'ellipse de centre $(\mu_x,\mu_y)$ et dont les longueurs des axes
+sont données par~:
+\begin{displaymath}
+  a_i=\sqrt{\lambda_i}
+\end{displaymath}
+où les $\lambda_i$ (pour $i=1,2$) correspondent aux valeurs propres de la matrice
+$M$ (voir figure \ref{fig:ellipse}). Les directions des axes de l'ellipse sont données par les vecteurs
+propres de $M$.
+Enfin, l'aire de cette ellipse est donnée par~:
+\begin{displaymath}
+  \mathcal{A}=\pi\sqrt{\lambda_1\lambda_2}
+\end{displaymath}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=12cm]{ellipse.ps}
+  \caption{Ellipse de meilleure approximation dans le plan. Les
+    directions des axes principaux sont données par les vecteurs
+    propres de la matrice d'inertie.}
+  \label{fig:ellipse}
+\end{figure}
+
+
+Dans notre cas, l'idée est  de résoudre statistiquement notre problème
+\aut{Aire\_sphère}  avec   cette  notion    d'ellipse   de   meilleure
+approximation. Cependant, il  n'est  aisé de  calculer  des moments de
+points  sur  la  sphère    unité.  Nous  utilisons  pour     cela  une
+approximation qui se base sur une projection du nuage de points sur un
+plan {\it représentatif}.
+
+Ce plan correspond au plan tangent à la  surface de la sphère au point
+qui  est le  barycentre  du nuage de  points. Nous  faisons donc une
+approximation  en trois étapes~: dans  un premier temps, on calcule le
+barycentre du     champ de normales  $\mathcal{G}(v)$,   ensuite, nous
+effectuons   une  rotation de  ces  normales  pour   que le barycentre
+coïncide avec  le point  $(\pi,\pi/2)$ dans  l'espace $(\phi,\theta)$.
+Finalement, nous utilisons  une projection perspective, dont le centre
+est le   centre  de la sphère,  sur   le plan d'équation   $x=-1$ afin
+d'estimer   l'ellipse de  meilleure  approximation des  projections de
+$\mathcal{G}(v)$.  Encore une fois, ce calcul  n'est valide que si les
+points  $\mathcal{G}(v)$ sont   dans  la  même  demi-sphère. Les  deux
+premières étapes de recentrage  des    normales nous permettent     de
+simplifier     le    processus   de   projection    (voir   algorithme
+\ref{alg:ellipse}).
+
+Nous  obtenons     ainsi   une    estimation    de    l'aire,    notée
+$\mathcal{A}_{proj}$, associée au   nuage de points  $\mathcal{G}(v)$.
+Ce processus est une approximation d'autant  plus juste que les points
+sont {\it  regroupés}  autour   du  barycentre.  Il   nous permet  une
+estimation très rapide  et avec très  peu d'instabilités numériques de
+la courbure gaussienne.
+ 
+Nous obtenons donc l'algorithme \ref{alg:ellipse}. La figure
+\ref{fig:ex_K} présente quelques résultats de cet estimateurs sur des
+volumes discrets. Remarquons que dans le cas du cylindre, nous avons
+effectivement une valeur de la courbure Gaussienne proche de $0$
+partout sauf sur les bords des bases circulaires (voir tableau \ref{H_et_K}).
+
+\begin{algorithm}[htbp]
+\caption{Aire d'un nuage de points sur la sphère par calcul d'une ellipse de
+  meilleure approximation}
+\label{alg:ellipse}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Aire\_sphère\_ellipse($\mathcal{G}(v)$)}
+\\ \COMMENT{$\mathcal{G}(v)$ est le nuage de points sur la sphère
+  unité}
+\STATE Soit $\mu$ le barycentre des normales $\mathcal{G}(v)$
+\STATE Appliquer une rotation aux normales pour faire coïncider $\mu$ avec
+$(\pi,\pi/2)$ en coordonnées sphériques
+\STATE Projection des normales $(x,y,z)$ en coordonnées sphériques
+$(\phi,\theta,1)$ sur le plan $x=-1$ avec la
+formule~:
+\begin{align*}
+  X&=tan(\phi-\pi)\\
+  Y&=tan(\theta-\frac{\pi}{2})
+\end{align*}
+
+\STATE Calculer l'ellipse de meilleure approximation $(\lambda_1,\lambda_2)$ sur les points $(X_i,Y_i)_{i=1\ldots|\mathcal{G}(v)|}$
+\STATE \RETURN{ $\mathcal{A}_{proj}(\mathcal{G}(v))=\pi\sqrt{\lambda_1\lambda_2}$}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=5.5cm]{cube_K}}
+  \subfigure[]{\includegraphics[width=8cm]{cube_rot_K}}
+  \subfigure[]{\includegraphics[width=6cm]{cyl_K}}
+  \caption[Exemples de calcul de courbure Gaussienne]{Exemples de
+    calcul de courbure Gaussienne ~: $(a)$ sur un  cube dans les axes,
+    $(b)$  sur un  cube tourné  et $(c)$ sur  un cylindre.  Les voxels
+    noirs   correspondent  à  des  valeurs  de   courbures  nulles  ou
+    quasi-nulles.}
+  \label{fig:ex_K}
+\end{figure}
+
+
+Dans les  estimateurs que nous avons  montrés, le signe de la courbure
+Gaussienne est obtenu  en post-traitement.  Pour  cela,  il suffit  de
+considérer une  courbe fermée orientée  autour du surfel $s$ considéré
+(la courbure Gaussienne en $s$ doit être non-nulle) et de comparer son
+sens avec le sens  de la courbe   obtenue sur la  sphère  unité par application  de
+\aut{Gauss} (voir figure \ref{fig:signe}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=14cm]{signe_courbure}
+  \caption[Illustration du calcul du signe de la courbure Gaussienne]{Illustration du calcul du signe de la courbure Gaussienne~:
+  la courbe A et sa transformée  par \aut{Gauss} sont dans le même
+  sens, le signe est donc positif.  Il y a changement  de sens pour la
+  courbe B, le signe sera négatif.}
+  \label{fig:signe}
+\end{figure}
+
+
+
+\section{Conclusion}
+
+Dans ce  chapitre, nous  avons  présenté une analyse  algorithmique et
+théorique   d'estimations de   mesures   euclidiennes (longueur,  aire,
+courbure\ldots)   sur des objets  discrets  divers  (courbes 2D, 3D,
+surfaces discrètes \ldots). À chaque  fois que cela a été possible, nous
+nous sommes  intéressés à des notions  de convergence asymptotique des
+estimateurs étudiés.   Pour résumer brièvement,  nous  avons montré la
+convergence asymptotique des estimateurs  de longueur de courbes 2D et
+3D, d'un     estimateur de normales   de  courbes  2D   et de surfaces
+discrètes, d'un  estimateur de courbure de courbes  2D et 3D et enfin
+d'un estimateur d'aire de surfaces discrètes.
+
+Parmi toutes ces mesures, l'analyse  expérimentale de l'estimation  de
+longueur d'une courbe discrète   2D a bénéficié d'une  plate-forme  de
+tests   conséquente   (8   estimateurs     implémentés  et    5  formes
+multi-grilles). Une des perspectives  majeures de  ce chapitre repose donc la
+création de plates-formes similaires pour l'estimation de courbure et
+d'aire de surfaces.
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 
+

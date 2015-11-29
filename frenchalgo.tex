@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%% D{\'e}but des red{\'e}finitions %%%%%%%%%%%%%%%%%%%%
+
+% pour le package algorithm an fran{\c c}ais
+\renewcommand{\listalgorithmname}{Table des algorithmes}
+\floatname{algorithm}{Algorithme}
+
+% pour le package algorithmic en fran{\c c}ais plus 3 commandes: RETURN, INTERNNAME et
+% EXTERNNAME qui permettent respectivement de faire un return et de donner
+% un nom {\`a} l'Algorithme avec un certain style et enfin de lui donner un nom 
+% dans le cas o{\`u} il est r{\'e}cursif (seul cas, me
+% semble-t-il, o{\`u} il soit vraiment n{\'e}cessaire de lui donner un
+% nom..)
+% Lorsque l'on veut donner un nom {\`a} l'algorithme, on place la commande
+% \EXTERNNAME juste avant de lui donner son nom et en d{\'e}but
+% d'algorithme. La commande INTERNNAME permet de le mettre en majuscule..
+\def\RETURN{\bf retourner}
+\newcommand{\EXTERNNAME}{\item[]\hspace{-1.5em}}
+\newcommand{\INTERNNAME}[1]{\textsc{#1}}
+\renewcommand{\listalgorithmname}{Table des algorithmes}
+\renewcommand{\algorithmiccomment}[1]{\hspace{1.5em}\{\textsf{#1}\}}
+\renewcommand{\algorithmicrequire}{\textbf{Requiert}}
+\renewcommand{\algorithmicensure}{\textbf{Post-condition:}}
+\renewcommand{\algorithmicend}{\textbf{fin du}}
+\renewcommand{\algorithmicif}{\textbf{si}}
+\renewcommand{\algorithmicthen}{\textbf{alors}}
+\renewcommand{\algorithmicelse}{\textbf{sinon}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\renewcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+%\renewcommand{\algorithmicendif}{}
+\renewcommand{\algorithmicfor}{\textbf{pour}}
+\renewcommand{\algorithmicforall}{\textbf{pour tout}}
+\renewcommand{\algorithmicdo}{\textbf{faire}}
+\renewcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+%\renewcommand{\algorithmicendfor}{}
+\renewcommand{\algorithmicwhile}{\textbf{tant que}}
+\renewcommand{\algorithmicendwhile}{\algorithmicend\ \algorithmicwhile}
+%\renewcommand{\algorithmicendwhile}{}
+\renewcommand{\algorithmicloop}{\textbf{loop}}
+\renewcommand{\algorithmicendloop}{\algorithmicend\ \algorithmicloop}
+%\renewcommand{\algorithmicendloop}{}
+\renewcommand{\algorithmicrepeat}{\qtextbf{R{\'e}p\'ter}}
+\renewcommand{\algorithmicuntil}{\textbf{jusqu'{\`a} ce que}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Fin des red{\'e}finitions %%%%%%%%%%%%%%%%%%%%%%

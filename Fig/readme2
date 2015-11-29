@@ -1,0 +1,29 @@
+This is the LaTeX package for the production of camera-ready copy for
+contributions to proceedings volumes and regular edited/contributed
+volumes in one-column format, published by Elsevier Science Publishers. 
+
+The package consists of the following two files
+
+- espcrc2.tex, a small sample article
+- espcrc2.sty
+
+Extract these files to the harddisk, and copy them to the directories
+appropriate for TeX. You can then run espcrc1.tex through LaTeX and
+inspect the result. This file can be used as a model for other articles.
+
+If you obtained this file from colleagues or from the net, please
+contact the publisher to verify that you have obtained the most recent
+version of it.
+
+The document style has been tested by a substantial number of authors
+and at present no errors are known. It can be used with LaTeX 2.09 (14
+January 1992 or later) and LaTeX2e. For advanced mathematics, we
+suggest to combine it with AMS-LaTeX.
+
+Should you have comments or questions (in case of UNCHANGED versions):
+please send them to the publisher.
+
+The ASCII table included in this package serves to detect any
+transmission errors that might occur when this file is sent with
+electronic mail.
+

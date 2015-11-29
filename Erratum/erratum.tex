@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+
+
+\title{Erratum}
+\author{David Coeurjolly}
+
+\begin{document}
+\maketitle
+
+\begin{itemize}
+
+\item {\bf page 14 : Fig1.8} : il y a une inversion des codages de
+  Freeman entre la 4- et la 8- adjacence (par rapport à la figure 1.7)
+
+\item {\bf page 41  : Algorithme 5,  lignes 28-32} : il faut supprimer
+  le ``sinon''  dans la ligne  30.  En effet  si $b=1$, alors les deux
+  tests sont vérifiés en même temps. Dans ce cas, il faut bien décaler
+  $U'$ ET $L'$.
+
+\item {\bf page 45 : Tableau 2.2} : le coût en mémoire des algorithmes
+  de Preparata-Shamos, Vittone et Vittone modifié  est en $O(n)$ et
+  non en $O(n^2)$. 
+\item {\bf page 51} : $g.(-3,17,5)=\ldots \Rightarrow
+  (-3,17,5).g=\ldots$ (merci à Isabelle Sivignon)
+\item {\bf page 62 : Definition de $\mathcal{P}$} :
+  $\mathcal{P}=\{(x,y,z)\in\mathbb{Z}^3~|~0\leq \alpha x+\beta y+ \gamma - z
+  <1\}$ ($-z$ au lieu de $+z$)
+\item {\bf page 65 : Preuve prop. 2.8} : même erreur, correction: 
+\begin{align*}
+C_1&:\quad\alpha x+\beta y +\gamma -z\geq 0\\
+C_2&:\quad\alpha x+\beta y +\gamma -z<1
+\end{align*}
+
+%\item {\bf page 73, Prop 2.9} : la probabilité d'avoir le code ``0''
+%  est $\frac{b}{a+b}$, celle d'avoir le code ``1'' est
+%  $\frac{a}{a+b}$. (merci à Bertrand Kerautret et Damien Jamet).
+
+\item {\bf page 77, Prop 2.10} : les  probabilités sont les suivantes:
+  \begin{align*}
+    Type1&: \frac{c}{a+b+c}\\
+    Type2&: \frac{b}{a+b+c}\\
+    Type3&: \frac{a}{a+b+c}
+  \end{align*}
+
+(merci  à Bertrand Kerautret et Damien Jamet).
+
+
+\end{itemize}
+
+
+\end{document}

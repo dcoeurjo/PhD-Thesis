@@ -1,0 +1,319 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Applications}\label{chap-app}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Dans   cette annexe,  nous présentons   succinctement  les différentes
+applications dans lesquelles nous avons utilisé  les différents outils
+présentés dans les paragraphes  précédents. Plus précisément, nous nous
+intéressons,  dans   un   premier temps,   à    un processus   de {\it
+vectorisation} de  courbes    2D en  utilisant  la notion   de  points
+caractéristiques dans le graphe  de courbure. Ensuite, nous présentons
+une application utilisant  les estimateurs d'aire  et  de courbure sur
+des surfaces discrètes. Enfin  nous voyons comment les estimateurs des
+estimateurs du chapitre \ref{chap-mesuresa} peuvent être utilisés dans
+un processus de segmentation par un modèle déformable discret.
+
+
+\section{Extraction de primitives pour la classification de profils de
+  stèles funéraires}
+
+Ce travail s'inscrit  dans le cadre  du projet ``Stèles''  qui est une
+collaboration entre le laboratoire    ERIC et la Maison  de   l'Orient
+Méditerranéen de  l'université Lumière Lyon 2.  Ce  projet a  pour but
+d'aider les archéologues à construire une classification d'un ensemble
+de profils de stèles funéraires.
+
+Des images de profils ont été recueillies  par les archéologues sur le
+terrain et  obtenues par l'utilisation de  peignes à dents rétractiles
+(ou conformétres) qui, en suivant le bord d'une  stèle, épousent le bord
+de celle-ci. Ensuite, ce contour peut être reproduit et numérisé (voir
+figure \ref{fig:steles_brutes}).   Outre ces profils,
+nous possédons des textes   écrits  résumant pour chacun   d'eux
+certaines  de  leurs  caractéristiques  géographiques  ou  historiques
+telles que le lieu, la date, le type de population.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[height=10cm]{Page001}}
+  \subfigure[]{\includegraphics[height=10cm]{Page002}}
+\hspace*{1cm}
+  \subfigure[]{\includegraphics[height=10cm]{Page003}}
+  \caption{Exemples de profils de stèles funéraires sans pré-traitement.}
+  \label{fig:steles_brutes}
+\end{figure}
+
+L'étude   classique des  profils par les   archéologues s'effectue par
+l'extraction de   moulures et de  moulurations  (ensemble de moulures)
+caractéristiques des  styles.  L'objectif de  ce  projet est  donc  de
+proposer une extraction automatique de primitives géométriques  de ces
+contours 2D qui seront ensuite utilisées dans un processus plus général
+d'extraction de connaissance.
+
+
+Ce    projet  a   démarré  par   une   élaboration d'un   ensemble  de
+pré-traitements  permettant  de  passer  des   images de   la   figure
+\ref{fig:steles_brutes}  à     des  courbes    discrètes   strictement
+8-connexes.
+
+Ensuite,     nous  nous  sommes    attachés   à  extraire  des  points
+caractéristiques (points de  forte courbure) de  ces courbes discrètes
+en utilisant les techniques proposées par  \cite{teh}~: étant donné le
+graphe de courbure de  la courbe discrète, les points caractéristiques
+sont des   extrema locaux de  ce graphe  dans un  voisinage adaptatif.
+Nous avons   pour  cela   utilisé le   calcul  de  courbure    issu de
+l'algorithme        \ref{algcourbure_estim}      (voir          figure
+\ref{courbure_stele}).  Par la suite, nous  utilisons des processus de
+reconnaissance de formes pour  permettre d'associer, à  chaque morceau
+de courbe  entre   deux   points dominants,  les différentes    formes
+suivantes~:
+\begin{itemize}
+\item segment de droite avec comme information sa longueur et sa pente~;
+\item arc de cercle avec comme information son rayon, son centre et
+son orientation.
+\end{itemize}
+
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=10cm]{Page001_seuil00_sigma3}
+\caption{Exemple de graphe des courbures}
+\label{courbure_stele}
+\end{figure}
+
+Le profil de stèle  est représenté par un vecteur  dans lequel ne sont
+codés que  les points caractéristiques et   les formes associées entre
+ces points    (voir   figure \ref{fig:stele_rec}-$(c)$).  L'évaluation
+grossière des formes entre deux   points caractéristiques nous  permet
+d'avoir  de bons résultats dans  un processus  de création d'une stèle
+synthétique à partir d'un vecteur (voir figure \ref{fig:stele_rec}).
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[height=10cm]{Page001}}
+  \subfigure[]{\includegraphics[height=10cm]{points_part_page001}}
+\hspace*{0.4cm}
+  \subfigure[]{\includegraphics[origin=c, width=4cm]{vecteur_page001}}
+  \subfigure[]{\includegraphics[height=10cm]{stele_reconstruite}}
+  \caption[Vectorisation et reconstruction de profils de stèles
+    funéraires]{Vectorisation et reconstruction de profils de stèles
+    funéraires~: $(a)$ profil de stèle sans pré-traitement, $(b)$
+    après les pré-traitements et avec localisation des points
+    caractéristiques, $(c)$ vecteur descriptif du profil (SD pour
+    segment de droite et AC pour arc de cercle) et $(d)$ reconstruction à partir du code généré.}
+  \label{fig:stele_rec}
+\end{figure}
+
+
+
+Pour avoir la  possibilité d'utiliser des  outils de {\em text mining}
+en    plus  des  algorithmes   classiques  d'apprentissage automatique
+supervisé ou non supervisé, il est  nécessaire de coder la description
+précédente  sous forme  de texte.  Pour    cela, nous construisons  un
+alphabet  dans lequel des   lettres vont représenter  les segments  de
+droite selon leur  orientation (lettres $s0$  à $s8$)  et d'autres vont
+représenter les différentes orientations des  arcs de cercles (lettres
+$c0$ et $c1$)~;  la figure \ref{fig:codage_stele} illustre ce  codage.
+Il  est  clair  que  cette   transformation  supprime  de   nombreuses
+informations géométriques sur  la    stèle  mais le mot   obtenu   est
+significatif de l'allure  du profil.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{fig13}}
+  \subfigure[]{\includegraphics[width=12cm]{mot_stele}}
+      \caption[Codage d'une courbe discrète après segmentation par les
+        points caractéristiques]{Codage  d'une courbe  discrète  après
+        segmentation  par les  points caractéristiques~:  $(a)$ codage
+        utilisé pour les segments de  droite et $(b)$ exemples de mots
+        obtenus.}
+      \label{fig:codage_stele}
+\end{figure}
+    
+
+La démarche partant  d'une courbe bruitée et aboutissant  à un mot est
+suffisamment  générale pour  trouver  de  nombreuses applications dans
+d'autres domaines.  Une validation en  apprentissage de ce codage  sur
+les profils  de stèles a débuté  lors du stage  de  DEA de \aut{Fatma}
+\cite{Baklouti} mais mérite d'être poursuivie.
+
+Par ailleurs, dans \cite{dcoeurjo_SFC}, le processus de reconnaissance
+reposait sur des approximations de segments et de cercles {\it épais},
+et n'utilisaient  pas les algorithmes décrits  dans la première partie
+de ce manuscrit. Une  perspective importante est donc d'intégrer  des
+objets purement discrets dans ce processus.
+
+\clearpage
+\section{Analyse microscopique d'échantillon de neige}
+\label{secneige}
+
+Ce travail  correspond à une collaboration  avec le Centre d'Études de
+la Neige (CEN)  de Météo-France à  Grenoble. Le contexte général de ce
+projet est l'analyse des microstructures  d'échantillons de neige afin
+de  mieux comprendre  et de   modéliser  le  comportement du   manteau
+neigeux.  Les  analyses classiques   reposent sur des   observations au
+microscope de  l'échantillon de     neige mais  elles ne     permettent pas
+d'observer les  agencements des grains  et d'étudier la répartition de
+l'air et de l'eau dans l'échantillon.
+
+Pour  cela, le CEN a développé  un procédé permettant  de maintenir en
+l'état  un échantillon    de neige fraîche   jusqu'à  un  appareil  de
+tomographie  X afin d'acquérir  une image volumique de cet échantillon
+(voir \citealt{newsletter,flin_dea,tomo_neige,brzoska}). Une fois  les
+images acquises à l'Installation Européenne de Rayonnement Synchrotron
+(ESRF)   à Grenoble, des     traitements d'images sont  effectués afin
+d'obtenir des volumes binaires séparant  la neige de l'air. Les images
+de   la  figure \ref{fig:volumes}   présentent    quelques uns de  ces
+échantillons de neige (volumes de $300^3$ voxels).
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{fig8a_raster}}
+  \subfigure[]{\includegraphics[width=6cm]{fig9c_raster}}
+  \caption[Exemples de volumes binaires d'échantillons de neige]
+{Exemples de volumes  binaires d'échantillons de neige~:  $(a)$ grains
+fins provenant de l'Alpe d'Huez et $(b)$  croûte de regel provenant du
+Col de Porte.  Les volumes sont visualisés avec un rendu intégrant les
+normales  calculées par  l'algorithme   présenté  dans le   paragraphe
+\ref{secnormales_CEN} (Météo-France/ESRF).}
+  \label{fig:volumes}
+\end{figure}
+
+Sur ces objets  discrets 3D,  les mesures  proposées dans le  chapitre
+\ref{chap-mesuresa} ont des implications physiques et thermodynamiques
+ importantes. Plus  précisément, les estimateurs d'aire de surface
+discrète permettent d'approcher la notion de {\it surface spécifique}.
+De plus, à la différence des glaces profondes et  mis à part les cas de
+forts gradients thermiques, les métamorphoses de la neige sont
+essentiellement contrôlées par des phénomènes d'interfaces gouvernés par
+la courbure moyenne (voir figure \ref{fig:courbure_moy_CEN}).
+
+Ainsi, un calcul efficace de courbure moyenne en tout point de tels
+volumes discrets permet~:
+\begin{itemize}
+\item de caractériser  le volume en   question par son histogramme  de
+courbure. En  effet, en l'absence de gradient   de température dans le
+manteau  neigeux, les grains  grossissent et s'arrondissent lentement.
+Par contre, en  présence d'un gradient   de température, les  cristaux
+croissent  suivant  leurs   axes cristallographiques  privilégiés   et
+forment  des facettes.   Les  différences entre  les volumes  analysés
+apparaissent clairement dans de tels histogrammes \citep{tomo_neige}.
+
+\item      de    simuler     certaines      métamorphoses    de  neige
+\citep{article_xtop}. En effet, les  zones convexes ont tendance à  se
+sublimer tandis que la vapeur se condense dans les zones concaves.
+\end{itemize}
+
+Par la dimension des  volumes  manipulés, cette application  nécessite
+des algorithmes  d'estimation très  robustes.  Un premier  résultat de
+cette  collaboration a été la  publication de travaux sur l'estimation
+d'aire de  surfaces \cite{dcoeurjo_TFCV_surface}.   Une première étude
+sur l'application d'un estimateur de courbure moyenne aux échantillons
+de neige a permis de se rendre compte de  l'intérêt d'une telle mesure
+(voir      \citealt{neige} et  figure     \ref{fig:courbure_moy_CEN}).
+Cependant, elle a aussi  montré les différents problèmes  de stabilité
+et d'efficacité sur des volumes importants.   Des études sont en cours
+pour rendre un tel estimateur plus robuste et plus efficace.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{neigechamair_red}}
+  \subfigure[]{\includegraphics[width=6cm]{neigecrcdp_red}}
+  \subfigure[]{\includegraphics[width=6cm]{neigegrad1_red}}
+  \subfigure[]{\includegraphics[width=6cm]{neigegrad3_red}}
+\caption{Exemples de coloriage  des voxels à la surface d'échantillons
+  de neige par une estimation de la  courbure moyenne proposée par
+  \cite{neige} (Météo-France/ESRF).}
+  \label{fig:courbure_moy_CEN}
+\end{figure}
+
+
+\clearpage
+\section{Modèle déformable discret}
+
+Ce   projet est une collaboration  entre   le Laboratoire Bordelais de
+Recherche en Informatique (LaBRI) et le  laboratoire ERIC soutenue par
+le GDR ISIS (projet jeunes chercheurs).
+
+En  segmentation   d'images,  un paradigme classique   repose   sur un
+processus de minimisation d'énergie.  L'idée est de déformer une forme
+géométrique  donnée a  priori  (un  modèle)  sur  l'image  analysée en
+minimisant une énergie, souvent dirigée par deux termes~:
+\begin{itemize}
+\item le premier terme correspond à une {\it énergie image} dirigée
+  par les données. Cette
+  énergie est minimale quand  la forme géométrique est localisée sur
+  une zone de l'image {\it intéressante}. Habituellement, on souhaite
+  que la forme s'adapte aux contours présents dans l'image et donc
+  cette énergie est souvent donnée par l'opposé de la norme du
+  gradient de l'image.
+\item Le second terme est une énergie liée à la forme de l'objet
+  géométrique. L'idée est que, dans le cas où l'image présente du bruit
+  ou de faibles contrastes, il nous faut {\it régulariser} cette
+  forme. Classiquement, cette énergie  correspond à des mesures de
+  longueur et de courbure de la forme.
+\end{itemize}
+
+Dans la littérature, des courbes paramétriques ({\it snakes} par
+exemple) sont utilisées comme formes géométriques à déformer. Le
+processus de minimisation est  itératif, et consiste à déformer
+cette forme mathématique afin de converger vers une courbe d'énergie
+localement minimale dans l'image (ce minimum est censé correspondre à
+la forme recherchée dans l'image).
+
+Ce   projet a démarré  sur la  définition  d'un {\it modèle déformable
+discret} proposée par \cite{Lachaud01a}. L'idée  est de considérer non
+plus une déformation d'une  courbe  paramétrique mais directement  une
+déformation  d'une   courbe ou d'une   surface  discrète  (voir figure
+\ref{fig:mdd}).  L'intérêt d'une telle  approche  est double. Dans  un
+premier  temps, la forme, dont l'énergie  est à minimiser, est dans le
+même modèle {\it image}  que l'objet à  segmenter. De plus, l'ensemble
+des déformations   possibles  d'une  forme discrète  est    finie.  La
+recherche d'un minimum local de la  fonction d'énergie devient donc un
+problème combinatoire sur l'image.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=12cm]{mdd}
+  \caption{Exemples de déformation d'un contour discret.}
+  \label{fig:mdd}
+\end{figure}
+
+En nous basant sur cette définition de modèle déformable, il nous faut
+définir  la fonction  d'énergie associée  à ce  contour discret.  Pour
+cela, des estimateurs très performants de longueur ou de courbure pour
+le cas 2D sont nécessaires.  Cette  collaboration avec le LaBRI a donc
+pour   objectif principal  l'intégration   des différents  estimateurs
+présentés dans le  chapitre \ref{chap-mesuresa}  dans le processus  de
+calcul  d'énergie.  Sur le  plan expérimental, l'objectif est d'offrir
+une stabilité et  une bonne précision à   ce calcul d'énergie tout  en
+utilisant des algorithmes efficaces.  Sur le plan théorique, la notion
+de  convergence  asymptotique    de  ces  estimateurs   s'interprètent
+directement dans  ce  modèle~: dans   le  cas bidimensionnel, si  nous
+utilisons des  estimateurs discrets de  courbure et  de longueur ayant
+cette   propriété de convergence     asymptotique, nous pouvons  alors
+montrer que l'énergie d'une  courbe discrète converge asymptotiquement
+vers l'énergie  classique  d'un {\it snake}   sous-jacent à  la courbe
+discrète, si celui-ci    est paramétré par  son   abscisse curviligne.
+L'idée de ces recherches  est de permettre  une mise en correspondance
+entre modèles déformables discrets et modèles déformables continus.
+
+\section{Conclusion}
+
+Nous avons regroupé dans cette annexe l'ensemble des applications dans
+lesquelles nous avons  utilisé les algorithmes proposés. Ces dernières
+nous ont servis,   en amont, d'inspiration  pour  le développement des
+estimateurs du  chapitre \ref{chap-mesuresa}.  En aval, ces
+applications nous ont permis de concrétiser un certain nombre
+d'avancées théoriques.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 
+
+

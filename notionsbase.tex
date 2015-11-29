@@ -1,0 +1,610 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Notions de base}\label{chap-notions}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Dans ce chapitre, nous introduisons certaines notions et propriétés de
+bases   de la géométrie  discrète.   Celles-ci seront utilisées par la
+suite pour définir   différents objets et  algorithmes sur  la  grille
+discrète.
+
+\section{Espace discret et connexité}
+
+Nous commen{\c c}ons   par décrire les  notions de  base  en géométrie
+discrète  (voir  \citealt{montanvert}).   Nous appelons  {\it   espace
+discret} par la suite  un pavage régulier du   plan en dimension  2 ou
+plus   généralement de l'espace en  dimension  supérieure (voir figure
+\ref{fig:pavage}).    Nous appelons aussi    un {\it point discret} le
+centre de gravité de chaque cellule dans le pavage considéré.
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=15cm]{pavage.eps}
+  \caption{Pavages réguliers en dimension 2 par carrés, par hexagones  et par
+    triangles}
+  \label{fig:pavage}
+\end{center}
+\end{figure}
+
+Dans ce qui  suit, nous  représentons graphiquement l'espace  discret,
+soit par le  pavage régulier, soit par le  maillage issu de ce  pavage
+qui est un graphe  dont les sommets sont  les points discrets et  dont
+les  ar{\^e}tes représentent  les  adjacences des  éléments  du pavage
+(voir figure \ref{fig:maillage}).
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=15cm]{maillage}
+  \caption{Représentation duale par maillage en dimension 2.}
+  \label{fig:maillage}
+\end{center}
+\end{figure}
+
+En géométrie discrète, les espaces discrets engendrés par des carrés ou des
+cubes multi-dimensionnels pour les dimensions supérieures, sont les plus
+utilisés. Les points discrets associés {\`a} ces espaces sont donc des
+points de $\Z^n$ pour la dimension $n$.
+
+Sur cet espace discret, nous introduisons des notions de {\it
+  voisinage} nous permettant de construire des graphes
+d'adjacence. Ainsi, si nous considérons un espace discret 2D généré
+par des carrés, nous définissons le {\it 4-voisinage} comme étant la
+relation d'adjacence par ar{\^e}tes  dans la partition de l'espace et le
+{\it 8-voisinage} comme étant la relation d'adjacence par ar{\^e}tes et par
+sommets. Plus formellement, deux points $p$ et $q$ de $\Z^2$ sont {\it
+  4-voisins}  (ou {\it 4-adjacents}) si :
+\begin{displaymath}
+  |x_p - x_q| + |y_p - y_q| =1
+\end{displaymath}
+
+De la m{\^e}me manière, deux points $p$ et $q$  de $\Z^2$ sont {\it
+  8-voisins}  (ou {\it 8-adjacents}) si :
+\begin{displaymath}
+  max(|x_p-x_q|,|y_p-y_q|)=1
+\end{displaymath}
+
+
+En dimension 3, nous pouvons introduire les notions de {\it 6-, 18-} ou
+{\it 26-voisinage} en considérant les adjacences par faces, par ar{\^e}tes et
+par sommets (voir figure \ref{fig:adjacences3D}). Ces adjacences
+peuvent s'écrire formellement :
+
+
+
+
+\begin{center}
+  \begin{tabular}{|l|r|}
+    \hline
+    adjacence & caractérisation \\
+    \hline
+    $6$ &  $|x_p - x_q| + |y_p - y_q| + |z_p - z_q|=1$\\
+    $18$ & $p$ et $q$ sont 26-voisins et $|x_p - x_q| + |y_p - y_q| +
+    |z_p - z_q| \leq 2$\\
+    $26$ & $max(|x_p-x_q|,|y_p-y_q|,|z_p - z_q|)=1$\\
+    \hline
+  \end{tabular}
+\end{center}
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=8cm]{connexite}
+  \caption{Différentes connexités en 3D sur un pavage par cubes.}
+  \label{fig:adjacences3D}
+\end{center}
+\end{figure}
+
+En  dimension $n$, une écriture  unifiée  de ces différentes relations
+d'adjacence s'exprime sous la   forme de {\it O(r)-voisinage}  : deux
+points  de $\Z^n$ sont   {\it  O(r)-voisins} si leurs  coordonnées  ne
+diffèrent que de  1 et qu'au moins $n-r$  coordonnées sont égales (voir
+\citet{jonas97} par exemple). Ainsi, les connexités 6,  18 et 26 en 3D
+s'écrivent respectivement $O(1)$, $O(2)$ et $O(3)$ dans ce
+schéma (voir table \ref{tab:vois} pour une comparaison des
+différentes notations).
+
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      $O(r)$-voisinage &       \multicolumn{3}{|c|}{$k-$voisinage}\\ \cline{2-4}
+      
+       &  $2D$ & $3D$ & $nD$\\
+       \hline
+       1 & 4 & 6 & $2n$\\
+       2 & 8 & 18 & $2n^2$\\
+       3 & . & 26 & \ldots\\
+       \ldots& . &. & \ldots\\
+       $r$ & . & . & $\sum_{i=n-r}^{n-1} \frac{n!}{i!(n-i)!}2^{n-i} $\\
+      \ldots& . &. & \ldots\\
+      $n$ & . & . & $3^n -1$\\
+      \hline
+    \end{tabular}
+    \caption{Liens entre notations de voisinage pour un pavage  par hypercubes.}
+    \label{tab:vois}
+  \end{center}
+\end{table}
+
+Dans  le cas d'un pavage  hexagonal,  nous n'avons  qu'un seul voisinage
+élémentaire appelé {\it 6-voisinage}. Pour une grille triangulaire,
+nous pouvons décrire, avec les m{\^e}mes principes que précédemment, le
+{\it 3-voisinage} (connexité par ar{\^e}te) et le {\it 12-voisinage}
+(connexité par ar{\^e}tes et par sommets). 
+
+\section{Objets, courbes, surfaces et hyper-surfaces}
+
+Maintenant  que l'espace de travail  est défini,  nous pouvons décrire
+les objets que l'on manipulera par la suite. Bien évidement, la notion
+de courbe  ou de surface est intimement  liée aux notions topologiques
+que nous introduirons sur l'espace discret.
+
+Dans un premier temps, les relations d'adjacence décrites précédemment
+permettent de définir un {\it k-chemin} sur l'espace discret : 
+
+\begin{defi}[$k-$chemin]
+  Soit un ensemble $\E$ de points discrets   et une relation de
+  $k-$adjacence, $\E$ est un $k-$chemin si pour tous les
+  éléments $\{p_i\}_{i=0..n}$ de $\E$, $p_i$ est $k-$voisin de $p_{i-1}$.
+\end{defi}
+
+
+Nous pouvons définir de la m{\^e}me manière un objet dans un espace
+discret muni d'une relation d'adjacence.
+
+\begin{defi}[$k-$objet]
+  Soit un ensemble $\E$ de points discrets et une relation de
+  $k-$adjacence, $\E$ est un $k-$objet si pour tout couple $p$ et $q$
+  de $\E$, il existe un $k-$chemin dans $\E$.
+\end{defi}
+
+Selon une approche orientée graphe, un $k-$objet peut-{\^e}tre vu
+comme une composante connexe dans le graphe dont les sommets sont les
+points discrets et les ar{\^e}tes les $k-$adjacences \citep{Rosenfeld1970}.
+
+La notion de $k-$chemin décrite ci-dessus est très générale. Nous
+restreignons cette notion pour pouvoir introduire des propriétés
+topologiques sur ces objets. Nous proposons ainsi la notion de
+$k-$arc définie par \citet{rosenfeld}.
+
+\begin{defi}[$k-$arc]
+  Soit  un  ensemble $\E$  de  points  discrets  et  une relation   de
+  $k-$adjacence,  $\E$    est un $k-$arc si     pour tous les éléments
+  $\{p_i\}_{i=0..n}$    de  $\E$,   $p_i$   a  exactement  deux points
+  $k-$voisins, sauf $p_0$ et $p_n$ appelés alors extrémités de l'arc.
+\end{defi}
+
+
+Si le $k-$arc est fermé  on parle alors de $k-$courbe. 
+
+
+\begin{defi}[$k-$courbe]
+  Soit un ensemble $\E$ de points discrets  et une relation de
+  $k-$adjacence, $\E$ est une $k-$courbe si $\E$ est un $k-$arc et que
+  $p_0=p_n$.
+\end{defi}
+
+Pour simplifier l'écriture,  nous utiliserons le terme générique  {\it
+courbe discrète} pour représenter une $k-$courbe ou un $k-$arc.
+
+L'introduction des courbes lève des  problèmes topologiques. En effet,
+une  propriété {\it  souhaitable} sur une   $k-$courbe serait que l'on
+puisse  définir un intérieur et   un extérieur. Ces définitions  sont liées
+{\`a} la  notion de  propriété de  Jordan  en géométrie différentielle
+classique que nous détaillerons dans la section suivante.
+
+
+\subsection{Notions de topologie discrète}
+\label{sec:topo}
+
+En géométrie différentielle classique, le théorème de séparabilité de
+Jordan-Brouwer \citep{jordan} s'énonce :
+
+\begin{theo}[Théorème de Jordan-Brouwer]
+  Pour toute variété $M$,  $C^\infty$ et de dimension $n-1$ dans
+  $\R^n$, nous avons~:
+  \begin{itemize}
+  \item $M$ est orientable,  c'est-{\`a}-dire qu'il existe un champ de
+  vecteurs dont la  différentielle ne  s'annule  pas, est continue  et
+  définie sur $M$, {\`a} valeurs dans $\R^n$~;
+  \item $M$ partage l'espace en deux domaines (ouverts connexes) dont l'un
+    est borné et l'autre non et dont $M$ est la frontière commune~;
+  \item il n'existe pas de chemin continu entre ces domaines qui
+    n'intersecte pas $M$.
+  \end{itemize}
+\end{theo}
+
+En d'autres termes, une courbe fermée infiniment dérivable dans $\R^2$
+définit un {\it intérieur} et un {\it extérieur}, et l'union de ces
+deux ensembles et de la courbe est une partition de $\R^2$.
+
+Afin de proposer une version discrète de ce théorème, une idée
+possible est de regarder la transposition directe de celui-ci en
+considérant des $k-$courbes et des $k-arcs$ dans l'espace
+discret. Cependant, la figure \ref{fig:topoerreur} illustre le
+paradoxe de connexité dans le cas d'un pavage par carrés du
+plan. Sur la partie gauche de la figure, les pixels noirs forment une
+$8-$courbe mais il existe un $8-$chemin entre l'extérieur et le pixel
+blanc intérieur {\`a} la courbe. La propriété de séparabilité n'est donc
+pas vérifiée dans ce cas. Sur la partie droite de la figure
+\ref{fig:topoerreur}, nous observons le cas o{\`u} une $4-$connexité est
+utilisée pour les pixels blancs et les pixels noirs, dans ce cas il
+n'existe pas de $4-$chemin joignant les pixels blancs au pixel central
+mais la courbe des pixels noirs est elle déconnectée.
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=8cm]{topoerreur}
+  \caption[Paradoxe de connexité pour un maillage par carré]
+  {Paradoxe de connexité pour un maillage par carrés, les
+    arêtes de ces graphes représentent les différentes connexités
+    choisies (voir texte).}
+  \label{fig:topoerreur}
+\end{center}
+\end{figure}
+
+Une fa{\c c}on simple pour résoudre le  paradoxe en 2D pour une grille
+carrée est de considérer une certaine connexité pour  la courbe et une
+autre pour son complémentaire. Ainsi, nous pouvons définir un analogue
+discret du théorème de Jordan. 
+
+\begin{theo}[Séparabilité de \aut{rosenfeld}]
+  Dans $\Z^2$, nous avons :
+\begin{itemize}
+\item le complémentaire de tout $4-$arc  (resp. un $8-$arc) est
+  $8-$connexe (resp. $4-$connexe)~;
+\item le complémentaire de toute $4-$courbe 
+  (resp. une $8-$courbe)  a deux composantes
+  $8-$connexes (resp. $4-$connexes) dont l'une est bornée et l'autre non.
+\end{itemize}
+\end{theo}
+
+
+
+La garantie d'un certain  nombre  de propriétés topologiques sur   les
+objets discrets est indispensable pour deux raisons principales, d'une
+part les objets manipulés  sont plus formalisés et mieux contr{\^o}lés,
+mais aussi cela  permet  l'écriture d'algorithmes très  efficaces pour,
+par exemple, le parcours des   éléments d'une courbe discrète ou  d'une
+surface discrète.   Il est donc nécessaire de   choisir un cadre
+topologique nous permettant de résoudre ces problèmes.
+
+
+Pour cela, deux grandes approches  sont possibles, la première appelée
+{\it topologie digitale} ({\it digital  topology} en anglais) considère  des
+bords ou  des surfaces discrètes comme  étant  des ensembles de points
+discrets (pixel ou voxels en 2D et 3D pour des pavage par hypercubes). La
+seconde se   base  sur  une  décomposition  en éléments   de  dimension
+inférieure appelée {\it complexe cellulaire}.
+
+\subsubsection{Approche basée sur les points discrets}
+\label{sec:bord}
+Dans cette approche,  la surface ou le contour  d'un objet discret est
+un ensemble connexe de point discrets. On parle alors de {\it bord} ou
+de  {\it  frontière}   ({\it   boundary} en  anglais).   Une  première
+définition constructive proposée  par  \citet{morgenthaler} permet  de
+caractériser localement une  telle   surface dans le cas   d'un espace
+discret dans $\Z^3$. L'idée principale est  de vérifiée qu'il y a bien
+séparation locale dans un $26-$voisinage entre le bord et le
+complémentaire. Cette caractérisation locale
+permet cependant  d'énoncer un théorème  global de Jordan pour ce type
+de surface.
+
+Une définition de surface multidimensionelle et un algorithme de
+parcours ont été proposé par \citet{udupa_boundary} et reposent sur une idée
+ simple : un point discret appartient au bord de l'objet s'il
+possède un voisin dans le complémentaire (au sens de l'adjacence
+attribuée {\`a} celui-ci). 
+%Ce type de surface est paramétré par une paire
+%de Jordan.
+
+Une   autre   définition  de ce   type   de  surface  basée   sur  des
+caractérisations        locales      a      été        proposé     par
+\citet{BerMal96,Malgouyres:1997:DSZ}.  Dans ce  cadre-l{\`a}, une  version
+discrète du théorème de Jordan peut {\^e}tre prouvée.
+
+Un problème lié  {\`a}   ce  type de   surface  a été  illustré    par
+\citet{perroton}  et est présenté dans  la figure \ref{fig:bord}. Tout
+d'abord,  le bord  de l'objet  et le  bord  de  son complémentaire  ne
+co{\"\i}ncident   pas.  De  plus,  une  autre  propriété  classique de
+topologie   n'est pas   vérifiée   :   dans l'exemple   de   la figure
+\ref{fig:bord}, le pixel du bord indiqué par une flèche est voisin des
+deux composantes connexes de son complémentaire,  et les deux surfaces
+que l'on   souhaiterait  (l'une  bornant  la   cavité   et l'autre  le
+complémentaire non-borné) se trouvent fusionnées.
+
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=12cm]{bord}
+  \caption[Défaut de la notion de bord en tant qu'ensemble de points
+    discrets]{Défaut de la notion de bord en tant qu'ensemble de points
+    discrets (points noirs à gauche) et surface de lignels basée sur une
+    approche cellulaire (polygones en gras à droite).}
+  \label{fig:bord}
+\end{center}
+\end{figure}
+
+\subsubsection{Approche basée sur les éléments de surface}
+\label{sec:approche-surfel}
+
+Dans  cette  approche,   des  éléments  (appelés  {\it cellules})   de
+dimension  inférieure    au  polygone  pavant   l'espace  discret sont
+considérés  (voir figure  \ref{fig:cellules}). Ainsi,  les cellules de
+dimension 0 sont les {\it pointels}, les  éléments de dimension 1 sont
+appelés {\it lignels}, les faces ou éléments de dimension 2 sont
+appelé {\it surfels}. Cette décomposition ainsi que la théorie
+topologique associée correspond à un cas particulier de complexe
+simplicial baptisé {\it complexe cellulaire} pour des grilles dans
+$\Z^n$ \citep{kovalevsky_arc}.
+
+En se basant sur ce schéma de décomposition, \citet{artzy} et \citet{udupa}
+ont proposé une définition de surface discrète dans $\Z^n$ comme étant un ensemble
+connexe (au sens d'une certaine relation d'adjacence) de cellules de
+dimension $n-1$ ``partageant'' un point discret de l'objet et un point
+discret de son complémentaire. Par exemple en dimension 3, la surface discrète est
+un ensemble de {\it surfels} et ne sont considérés que les surfels
+partageant un voxel de l'objet et un voxel du fond.
+\aut{Udupa} \etal considèrent donc une $\kappa\lambda-$surface
+discrète définie par la paire de connexités dite de Jordan
+$(\kappa,\lambda)$. Cette paire de connexités est une  extension 3D
+de celle utilisée dans le théorème de séparabilité de
+\aut{Rosenfeld}. Ainsi, une surface définie par une paire
+$(\kappa,\lambda)$ considère un objet $\kappa$-connexe et un fond
+$\lambda$-connexe. Dans le cas 2D, les paires  $(4,8)$ et $(8,4)$ sont
+dites de Jordan. En 3D nous avons les paires $(6,18)$, $(18,6)$,
+$(6,26)$ et $(26,6)$.
+
+La   relation        d'adjacence      entre   les    éléments       de
+surfaces\footnote{relation  $\beta$ dans  \citet{udupa}} composant  la
+$\kappa\lambda-$surface   permet   de    construire   des  algorithmes
+d'extraction très  efficaces  de   surfaces  discrètes  en   dimension
+quelconque (voir \citealt{perroton} par exemple pour le cas 3D).
+
+
+Dans une approche purement complexe cellulaire, \citet{koval99} a
+proposé une définition et un algorithme de parcours de surfaces discrètes.
+
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=12cm]{elements}
+  \caption{Décomposition d'un pixel et d'un voxel en cellules
+    de dimensions inférieures.}
+  \label{fig:cellules}
+\end{center}
+\end{figure}
+
+
+\section{Codage et propriétés du codage des courbes discrètes}
+
+Dans    cette partie, nous   introduisons les  codages  usuels pour la
+représentation de  courbes dans un espace  discret. L'objectif est ici
+de proposer un codage de la courbe discrète ayant les propriétés de~:
+\begin{description}
+\item[compacité] : compression du codage par rapport à une liste de
+  coordonnées des points discrets
+\item[réversibilité] : possibilité de reconstruire la courbe à partir du
+  codage
+\item[invariance] : dans quelle mesure le code est-il invariant par
+  certaines transformations géométriques ?
+\item[informative] : Est-il possible d'extraire des informations au
+  sens large sur la courbe à partir du codage (par exemple sa
+  longueur\ldots) ?
+\end{description}
+
+
+Un   codage  usuel       d'une   courbe  discrète      est   celui  de
+\citet{Fre-encoding-agc} qui consiste à introduire $k$ labels pour les
+connexités possibles d'une $k-$courbe (voir \ref{fig:freeman} pour les
+codes 2D). Ensuite le codage consiste à associer le code qui correspond
+à chaque déplacement en $k-$connexité dans la courbe discrète. 
+Il suffit donc de mémoriser les coordonnées du point de départ et le code de chaque déplacement pour reconstruire la courbe. 
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=14cm]{freeman}
+  \caption[Codage de \aut{freeman}]{Codage de \aut{freeman} pour la $4-$ et la $8-$connexité du
+    pavage par carré, les codages pour les $3-$connexité pour le
+    pavage triangulaire et la $6-$connexité pour la grille hexagonale.}
+  \label{fig:freeman}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=14cm]{codage_freeman}
+  \caption[Codage de \aut{freeman} d'arcs]{Codage de \aut{freeman}
+    d'arcs respectivement $8-$connexe, $4-$connexe, $3-$connexe et
+    $6-$connexe en utilisant les codes de    la figure \ref{fig:freeman}.}
+  \label{fig:codage}
+\end{center}
+\end{figure}
+
+Ce codage de \aut{freeman} a de nombreuses propriétés \citep{montanvert} :
+il permet notamment de segmenter une courbe discrète en quadrants,
+octants, sextants \ldots en fonction de l'espace discret. On peut aussi
+voir des transformations simples telles que la translation, la symétrie
+d'axes, la rotation, comme des processus de réécriture sur le code. Par
+exemple, pour une rotation de $\pi/2$ dans le sens trigonométrique d'une
+courbe $8-$connexe, il suffit de remplacer le code
+$(\{c_i\},(x,y))$ tel que les $c_i$ sont les éléments du code et
+  $(x,y)$ sont les coordonnées du point de départ, par~:
+
+\begin{displaymath}
+\left \{  \begin{array}{l}
+  c'_i = c_i + 2\quad mod (8) \\
+  (x',y')= (y,x)
+  \end{array} \right.
+\end{displaymath}
+
+Dans un objectif de comparaison de courbes discrètes par leur code,
+le codage de \aut{freeman} souffre du problème de variance par symétrie
+d'axe.
+
+D'autres codes existent, ceux-ci diffèrent de l'application que l'on en
+fait. Nous présentons , par exemple, un codage très simple qui est lui
+invariant par symétrie. \citet{Bri1999} propose un codage de chaque
+{\it pointel} de la surface de l'objet par le nombre de points discrets de l'objet
+auxquels ce pointel est adjacent (voir figure \ref{fig:brib}). Ce code
+a les propriétés suivantes :
+\begin{itemize}
+\item invariance au choix du point de départ~;
+\item invariance par rotations d'angles $k\pi/2$ (avec $k\in\Z$)~;
+\item invariance par symétrie d'axe~;
+\item permet le calcul de la longueur au sens de \aut{freeman}~;
+\item permet le calcul du code du complémentaire par simple réécriture ~;
+\item transposition possible entre ce code et le codage de~;
+  \aut{freeman}, la propriété de synthèse est donc vérifiée~;
+\item extraction des caractéristiques d'\aut{Euler} à partir du code.
+
+\end{itemize}
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=14cm]{codage_bribiesca}
+  \caption[Codage de \aut{Bribiesca}]{Codage de \aut{Bribiesca} pour la $4-$ et la $8-$connexité du
+    pavage par carré, les codages pour les $3-$connexité pour le
+    pavage triangulaire et la $6-$connexité pour la grille hexagonale.}
+  \label{fig:brib}
+\end{center}
+\end{figure}
+
+
+\section{Processus de discrétisation}
+
+Pour terminer cette introduction des notions de base en géométrie
+discrète utiles pour la suite, nous détaillons les différents processus de
+discrétisation que nous serons amenés à utiliser.
+
+Le contexte est le suivant : nous considérons un objet continu
+$\mathcal{O}$ ou uniquement son bord, noté $\gamma$, et nous souhaitons
+construire l'ensemble des points discrets qui sont les
+{\it discrétisés} soit de $\mathcal{O}$, soit de $\gamma$.
+Dans ce qui suit, nous nous intéressons plus particulièrement au
+pavage par carrés et donc à des grilles dans $\Z^n$.
+
+\citet{jonas97} proposent un ensemble de propriétés permettant une
+comparaison théorique de ces processus de discrétisation :
+
+\begin{description}
+\item[Permutation du système d'axes] : est-ce que la discrétisation
+  du symétrique par rapport à un axe de $\gamma$ est le symétrique de
+  la discrétisation de $\gamma$ ?
+\item[Invariant par translation entière] : le processus est-il dépend
+  d'une origine sur la grille ?
+\item[Perturbation locale] : est-ce qu'une petite perturbation locale
+  de $\gamma$ n'entraîne qu'une perturbation locale sur la
+  discrétisation ?
+\item[Droite-arc] : est-ce que la discrétisation d'une droite est un
+  $k-$arc (pour une relation d'adjacence donnée) ?
+\item[Propriété de projection] : pour les dimensions supérieures,
+  est-ce le discrétisé du projeté sur un hyper-plan canonique de la
+  grille coîncide avec le projeté du discrétisé ?
+\item[Convergence en distance] : est-ce que la discrétisation converge
+  selon une certaine métrique vers la courbe ou l'objet continu pour
+  une résolution de grille croissante ?
+\end{description}
+
+\subsection{Discrétisations classiques}
+
+Dans un  premier temps, nous  considérons  que  la courbe $\gamma$  en
+position générale.  C'est-à-dire qu'elle  a une  probabilité nulle de
+passer par  un sommet du pavage de  l'espace discret et de  croiser une
+arête du maillage à égale distance des deux sommets adjacents à
+ celle-ci. Nous verrons par la suite des processus de discrétisation qui gèrent ces cas pathologiques. 
+
+
+Un premier processus de discrétisation a pour analogie le tracé de
+droite de \citet{bres65} : lorsque l'on a le choix entre deux points
+discrets, c'est-à-dire à chaque fois que la courbe $\gamma$ croise
+une arête du maillage discret, on choisit celui qui est le plus
+proche. Ce processus s'appelle {\it Grid Intersect Quantization} (ou
+GIQ) et est illustré sur le premier schéma de la figure
+\ref{fig:disc}.
+
+S'il on considère maintenant la discrétisation d'un objet et non d'une
+courbe, nous pouvons définir les discrétisations {\it interne} et {\it
+  externe} de l'objet. Dans ce cas, lors du choix entre deux points
+discrets, nous choisissons respectivement celui qui est dans l'objet
+ou celui qui est extérieur à celui-ci (voir figure
+\ref{fig:disc}). Ces discrétisations sont appelées respectivement {\it
+  Object Boundary Quantization} (OBQ) et {\it  Background Boundary
+  Quantization} (BBQ).
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=14cm]{discretisations}
+  \caption[ Processus de discrétisation classiques]{Processus de discrétisation classiques : ({\it de gauche à
+droite}) {\it Grid Intersect Quantization}, {\it Object Boundary
+Quantization} et {\it Background Boundary Quantization}.}
+  \label{fig:disc}
+\end{center}
+\end{figure}
+
+Ces discrétisations simples peuvent être facilement étendues pour des
+grilles dans $\Z^n$ (voir \citealt{jonas97} par exemple pour la 3D).
+
+
+\subsection{Discrétisation de simplexes}
+\label{sec:discr-de-simpl}
+
+Dans    ce  paragraphe, on   s'intéresse   au  cas  particulier  de la
+discrétisation de  points,  de droites, de  plans  ou d'hyper-plans en
+dimension $n$~; ou encore de  $m$-simplexes (facettes de dimension $m$
+dans un espace  de  dimension  $n$).  Pour  ce type  d'objet,  les cas
+pathologiques  ne peuvent pas être  supprimés et  doivent être pris en
+compte.
+
+De plus, certains de  ces  modèles  permettent d'avoir des   écritures
+analytiques des discrétisations des  objets. C'est le cas notamment de
+la  notion  de  {\it supercouverture}  (voir  \citealt{montanvert} par
+exemple)   dont la description  analytique   pour des $m-$simplexes en
+dimension  $n$     a    été   proposée   par    \aut{andrès}     (voir
+\citealt{andres_hdr}  par  exemple).      Dans ce  modèle,     les cas
+pathologiques décrits précédemment  s'appellent des  {\it bulles} (voir figure
+\ref{fig:discbis}).
+
+\cite{andres_standard} a aussi récemment proposé un autre modèle,
+appelé {\it standard}, permettant aussi une écriture analytique des
+objets discrétisés et ne contenant plus de {\it bulles} par le biais
+de convention d'orientations dans $\Z^n$.
+
+Dans une approche plus topologique, \citet{couprie_discretization} ont
+proposé un modèle proche du modèle de supercouverture mais basé sur
+une approche complexe cellulaire. Dans ce cas, la notion de {\it
+  bulles} comme étant des {\it singularités} du modèle
+disparaît. Cependant, ce modèle n'est disponible qu'en dimensions 2 et 3 et n'est
+pas encore généralisé.
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=10cm]{discretisationsbis}
+  \caption[Discrétisation par  supercourvertures]{Discrétisation par  supercourvertures : ({\it gauche})
+    discrétisation d'une courbe quelconque et illustration d'une {\it
+      bulle} pour la discrétisation d'une droite.}
+  \label{fig:discbis}
+\end{center}
+\end{figure}
+
+
+
+\section{Conclusion}
+
+Dans ce chaptire nous avons présenté quelques  notions
+de base en géométrie discrète. Nous avons défini la notion d'espace
+discret, de point discret et d'objets simples sur cet espace (objet, courbe
+surface). Nous avons aussi présenté les différents codages des courbes
+dans le cas 2D. Nous avons terminé ce chapitre par une description des
+principales discrétisations d'objets euclidiens  qui nous serviront par la
+suite.
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 
+% LocalWords:  pixel

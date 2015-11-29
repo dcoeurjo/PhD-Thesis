@@ -1,0 +1,18 @@
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {2}The Separating Arc Problem}{1}
+\contentsline {subsection}{\numberline {2.1}Points-lines duality}{2}
+\contentsline {subsection}{\numberline {2.2}Improvements of the separating circle algorithms}{5}
+\contentsline {subsubsection}{\numberline {2.2.1}Reducing S}{5}
+\contentsline {subsubsection}{\numberline {2.2.2}Reducing T}{5}
+\contentsline {subsubsection}{\numberline {2.2.3}Relation with Vorono\"{\i } diagrams}{5}
+\contentsline {section}{\numberline {3}An arithmetical Approach}{6}
+\contentsline {subsection}{\numberline {3.1}Input description and Algorithms}{6}
+\contentsline {subsubsection}{\numberline {3.1.1}SCoC part case}{8}
+\contentsline {subsubsection}{\numberline {3.1.2}Incremental algorithm}{8}
+\contentsline {subsection}{\numberline {3.2}Complexity analysis}{9}
+\contentsline {paragraph}{Global approach}{9}
+\contentsline {paragraph}{Incremental approach}{10}
+\contentsline {subsection}{\numberline {3.3}Reversibility}{10}
+\contentsline {subsection}{\numberline {3.4}Application to curvature computation}{10}
+\contentsline {section}{\numberline {4}Some experiments}{11}
+\contentsline {section}{\numberline {5}Conclusion and future works}{12}

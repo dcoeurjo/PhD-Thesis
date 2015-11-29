@@ -1,0 +1,365 @@
+%%%%%%%%%% espcrc2.tex %%%%%%%%%%
+%
+% $Id: espcrc2.tex 1.2 2000/07/24 09:12:51 spepping Exp spepping $
+%
+\documentclass[fleqn,twoside]{article}
+\usepackage{espcrc2}
+
+% change this to the following line for use with LaTeX2.09
+% \documentstyle[twoside,fleqn,espcrc2]{article}
+
+% if you want to include PostScript figures
+\usepackage{graphicx}
+% if you have landscape tables
+\usepackage[figuresright]{rotating}
+
+% put your own definitions here:
+%   \newcommand{\cZ}{\cal{Z}}
+%   \newtheorem{def}{Definition}[section]
+%   ...
+\newcommand{\ttbs}{\char'134}
+\newcommand{\AmS}{{\protect\the\textfont2
+  A\kern-.1667em\lower.5ex\hbox{M}\kern-.125emS}}
+
+% add words to TeX's hyphenation exception list
+\hyphenation{author another created financial paper re-commend-ed Post-Script}
+
+% declarations for front matter
+\title{Elsevier instructions for the preparation of a
+       2-column format camera-ready paper in \LaTeX}
+
+\author{P. de Groot\address[MCSD]{Mathematics and Computer Science Section, 
+        Elsevier Science B.V., \\ 
+        P.O. Box 103, 1000 AC Amsterdam, The Netherlands}%
+        \thanks{Footnotes should appear on the first page only to
+                indicate your present address (if different from your
+                normal address), research grant, sponsoring agency, etc.
+                These are obtained with the {\tt\ttbs thanks} command.},
+        R. de Maas\addressmark\thanks{For following authors with the same
+                address use the {\tt\ttbs addressmark} command.},
+        X.-Y. Wang\address{Economics Department, University of Winchester, \\
+        2 Finch Road, Winchester, Hampshire P3L T19, United Kingdom}
+        and
+        A. Sheffield\addressmark[MCSD]\thanks{To reuse an addressmark
+                later on, label the address with an optional argument to the
+                {\tt \ttbs address} command, e.g. {\tt\ttbs
+                address[MCSD]}, and repeat the label
+                as the optional argument to the {\tt\ttbs addressmark}
+                command, e.g. {\tt\ttbs addressmark[MCSD]}.}}
+       
+\begin{document}
+
+\begin{abstract}
+These pages provide you with an example of the layout and style for
+100\% reproduction which we wish you to adopt during the preparation of
+your paper. This is the output from the \LaTeX{} document class you
+requested.
+\vspace{1pc}
+\end{abstract}
+
+% typeset front matter (including abstract)
+\maketitle
+
+\section{FORMAT}
+
+Text should be produced within the dimensions shown on these pages:
+each column 7.5 cm wide with 1 cm middle margin, total width of 16 cm
+and a maximum length of 19.5 cm on first pages and 21 cm on second and
+following pages. The \LaTeX{} document class uses the maximum stipulated
+length apart from the following two exceptions (i) \LaTeX{} does not
+begin a new section directly at the bottom of a page, but transfers the
+heading to the top of the next page; (ii) \LaTeX{} never (well, hardly
+ever) exceeds the length of the text area in order to complete a
+section of text or a paragraph. Here are some references:
+\cite{Scho70,Mazu84}.
+
+\subsection{Spacing}
+
+We normally recommend the use of 1.0 (single) line spacing. However,
+when typing complicated mathematical text \LaTeX{} automatically
+increases the space between text lines in order to prevent sub- and
+superscript fonts overlapping one another and making your printed
+matter illegible.
+
+\subsection{Fonts}
+
+These instructions have been produced using a 10 point Computer Modern
+Roman. Other recommended fonts are 10 point Times Roman, New Century
+Schoolbook, Bookman Light and Palatino.
+
+\section{PRINTOUT}
+
+The most suitable printer is a laser or an inkjet printer. A dot
+matrix printer should only be used if it possesses an 18 or 24 pin
+printhead (``letter-quality'').
+
+The printout submitted should be an original; a photocopy is not
+acceptable. Please make use of good quality plain white A4 (or US
+Letter) paper size. {\em The dimensions shown here should be strictly
+adhered to: do not make changes to these dimensions, which are
+determined by the document class}. The document class leaves at least
+3~cm at the top of the page before the head, which contains the page
+number.
+
+Printers sometimes produce text which contains light and dark streaks,
+or has considerable lighting variation either between left-hand and
+right-hand margins or between text heads and bottoms. To achieve
+optimal reproduction quality, the contrast of text lettering must be
+uniform, sharp and dark over the whole page and throughout the article.
+
+If corrections are made to the text, print completely new replacement
+pages. The contrast on these pages should be consistent with the rest
+of the paper as should text dimensions and font sizes.
+
+\section{TABLES AND ILLUSTRATIONS}
+
+Tables should be made with \LaTeX; illustrations should be originals or
+sharp prints. They should be arranged throughout the text and
+preferably be included {\em on the same page as they are first
+discussed}. They should have a self-contained caption and be positioned
+in flush-left alignment with the text margin within the column. If they
+do not fit into one column they may be placed across both columns
+(using \verb-\begin{table*}- or \verb-\begin{figure*}- so that they
+appear at the top of a page).
+
+\subsection{Tables}
+
+Tables should be presented in the form shown in
+Table~\ref{table:1}.  Their layout should be consistent
+throughout.
+
+\begin{table*}[htb]
+\caption{The next-to-leading order (NLO) results
+{\em without} the pion field.}
+\label{table:1}
+\newcommand{\m}{\hphantom{$-$}}
+\newcommand{\cc}[1]{\multicolumn{1}{c}{#1}}
+\renewcommand{\tabcolsep}{2pc} % enlarge column spacing
+\renewcommand{\arraystretch}{1.2} % enlarge line spacing
+\begin{tabular}{@{}lllll}
+\hline
+$\Lambda$ (MeV)           & \cc{$140$} & \cc{$150$} & \cc{$175$} & \cc{$200$} \\
+\hline
+$r_d$ (fm)                & \m1.973 & \m1.972 & \m1.974 & \m1.978 \\
+$Q_d$ ($\mbox{fm}^2$)     & \m0.259 & \m0.268 & \m0.287 & \m0.302 \\
+$P_D$ (\%)                & \m2.32  & \m2.83  & \m4.34  & \m6.14  \\
+$\mu_d$                   & \m0.867 & \m0.864 & \m0.855 & \m0.845 \\
+$\mathcal{M}_{\mathrm{M1}}$ (fm)   & \m3.995 & \m3.989 & \m3.973 & \m3.955 \\
+$\mathcal{M}_{\mathrm{GT}}$ (fm)   & \m4.887 & \m4.881 & \m4.864 & \m4.846 \\
+$\delta_{\mathrm{1B}}^{\mathrm{VP}}$ (\%)   
+                          & $-0.45$ & $-0.45$ & $-0.45$ & $-0.45$ \\
+$\delta_{\mathrm{1B}}^{\mathrm{C2:C}}$ (\%) 
+                          & \m0.03  & \m0.03  & \m0.03  & \m0.03  \\
+$\delta_{\mathrm{1B}}^{\mathrm{C2:N}}$ (\%) 
+                          & $-0.19$ & $-0.19$ & $-0.18$ & $-0.15$ \\
+\hline
+\end{tabular}\\[2pt]
+The experimental values are given in ref. \cite{Eato75}.
+\end{table*}
+
+\begin{sidewaystable}
+\caption{The next-to-leading order (NLO) results
+{\em without} the pion field.}
+\label{table:2}
+\newcommand{\m}{\hphantom{$-$}}
+\newcommand{\cc}[1]{\multicolumn{1}{c}{#1}}
+\renewcommand{\arraystretch}{1.2} % enlarge line spacing
+\begin{tabular*}{\textheight}{@{\extracolsep{\fill}}lllllllllllll}
+\hline
+& $\Lambda$ (MeV) & \cc{$140$} & \cc{$150$} & \cc{$175$} & \cc{$200$} & \cc{$225$} & \cc{$250$} &
+\cc{Exp.} & \cc{$v_{18}$~\cite{v18}} &  \\
+\hline
+%b
+ & $r_d$ (fm)                        & \m1.973 & \m1.972 & \m1.974 & \m1.978 & \m1.983 & \m1.987 & 1.966(7) & \m1.967 & \\[2pt]
+ & $Q_d$ ($\mbox{fm}^2$)             & \m0.259 & \m0.268 & \m0.287 & \m0.302 & \m0.312 & \m0.319 & 0.286    & \m0.270 & \\[2pt]
+ & $P_D$ (\%)                        & \m2.32  & \m2.83  & \m4.34  & \m6.14  & \m8.09  & \m9.90  & $-$      & \m5.76  & \\[2pt]
+ & $\mu_d$                           & \m0.867 & \m0.864 & \m0.855 & \m0.845 & \m0.834 & \m0.823 & 0.8574   & \m0.847 & \\[5pt]
+ & $\mathcal{M}_{\mathrm{M1}}$ (fm)             & \m3.995 & \m3.989 & \m3.973 & \m3.955 & \m3.936 & \m3.918 & $-$      & \m3.979 & \\[5pt]
+ & $\mathcal{M}_{\mathrm{GT}}$ (fm)             & \m4.887 & \m4.881 & \m4.864 & \m4.846 & \m4.827 & \m4.810 & $-$      & \m4.859 & \\[2pt]
+ & $\delta_{\mathrm{1B}}^{\mathrm{VP}}$ (\%)   & $-0.45$ & $-0.45$ & $-0.45$ & $-0.45$ & $-0.45$ & $-0.44$ & $-$      & $-0.45$ & \\[2pt]
+ & $\delta_{\mathrm{1B}}^{\mathrm{C2:C}}$ (\%) & \m0.03  & \m0.03  & \m0.03  & \m0.03  & \m0.03  & \m0.03  & $-$      & \m0.03  & \\[2pt]
+ & $\delta_{\mathrm{1B}}^{\mathrm{C2:N}}$ (\%) & $-0.19$ & $-0.19$ & $-0.18$ & $-0.15$ & $-0.12$ & $-0.10$ & $-$      & $-0.21$ & \\
+\hline
+\end{tabular*}\\[2pt]
+The experimental values are given in ref. \cite{Eato75}.
+\end{sidewaystable}
+
+Horizontal lines should be placed above and below table headings, above
+the subheadings and at the end of the table above any notes. Vertical
+lines should be avoided.
+
+If a table is too long to fit onto one page, the table number and
+headings should be repeated above the continuation of the table. For
+this you have to reset the table counter with
+\verb|\addtocounter{table}{-1}|. Alternatively, the table can be turned
+by $90^\circ$ (`landscape mode') and spread over two consecutive pages
+(first an even-numbered, then an odd-numbered one) created by means of
+\verb|\begin{table}[h]| without a caption. To do this, you prepare the
+table as a separate \LaTeX{} document and attach the tables to the
+empty pages with a few spots of suitable glue.
+
+\subsection{Useful table packages}
+
+Modern \LaTeX{} comes with several packages for tables that
+provide additional functionality. Below we mention a few. See
+the documentation of the individual packages for more details. The
+packages can be found in \LaTeX's \texttt{tools} directory.
+
+\begin{description}
+  
+\item[\texttt{array}] Various extensions to \LaTeX's \texttt{array}
+  and \texttt{tabular} environments.
+  
+\item[\texttt{longtable}] Automatically break tables over several
+  pages. Put the table in the \texttt{longtable} environment instead
+  of the \texttt{table} environment.
+  
+\item [\texttt{dcolumn}] Define your own type of column. Among others,
+  this is one way to obtain alignment on the decimal point.
+
+\item[\texttt{tabularx}] Smart column width calculation within a
+  specified table width.
+  
+\item[\texttt{rotating}] Print a page with a wide table or figure in
+  landscape orientation using the \texttt{sidewaystable} or
+  \texttt{sidewaysfigure} environments, and many other rotating
+  tricks. Use the package with the \texttt{figuresright} option to
+  make all tables and figures rotate in clockwise. Use the starred
+  form of the \texttt{sideways} environments to obtain full-width
+  tables or figures in a two-column article.
+
+\end{description}
+
+\subsection{Line drawings}
+
+Line drawings may consist of laser-printed graphics or professionally
+drawn figures attached to the manuscript page. All figures should be
+clearly displayed by leaving at least one line of spacing above and
+below them. When placing a figure at the top of a page, the top of the
+figure should align with the bottom of the first text line of the other
+column.
+
+Do not use too light or too dark shading in your figures; too dark a
+shading may become too dense while a very light shading made of tiny
+points may fade away during reproduction.
+
+All notations and lettering should be no less than 2\,mm high. The use
+of heavy black, bold lettering should be avoided as this will look
+unpleasantly dark when printed.
+
+\subsection{PostScript figures}
+
+Instead of providing separate drawings or prints of the figures you
+may also use PostScript files which are included into your \LaTeX{}
+file and printed together with the text. Use one of the packages from
+\LaTeX's \texttt{graphics} directory: \texttt{graphics},
+\texttt{graphicx} or \texttt{epsfig}, with the \verb|\usepackage|
+command, and then use the appropriate commands
+(\verb|\includegraphics| or \verb|\epsfig|) to include your PostScript
+file.
+
+The simplest command is: \newline
+\verb|\includegraphics{file}|, which inserts the
+PostScript file \texttt{file} at its own size. The starred version of
+this command: \newline
+\verb|\includegraphics*{file}|, does the same, but clips
+the figure to its bounding box.
+
+With the \texttt{graphicx} package one may specify a series of options
+as a key--value list, e.g.:
+\begin{tabular}{@{}l}
+\verb|\includegraphics[width=15pc]{file}|\\
+\verb|\includegraphics[height=5pc]{file}|\\
+\verb|\includegraphics[scale=0.6]{file}|\\
+\verb|\includegraphics[angle=90,width=20pc]{file}|
+\end{tabular}
+
+See the file \texttt{grfguide}, section ``Including Graphics Files'',
+of the \texttt{graphics} distribution for all options and a detailed
+description.
+
+The \texttt{epsfig} package mimicks the commands familiar from the
+package with the same name in \LaTeX2.09. A PostScript file
+\texttt{file} is included with the command
+\verb|\psfig{file=file}|.
+
+Grey-scale and colour photographs cannot be included in this way,
+since reproduction from the printed CRC article would give
+insufficient typographical quality. See the following subsections.
+
+\begin{figure}[htb]
+\vspace{9pt}
+\framebox[55mm]{\rule[-21mm]{0mm}{43mm}}
+\caption{Good sharp prints should be used and not (distorted) photocopies.}
+\label{fig:largenenough}
+\end{figure}
+%
+\begin{figure}[htb]
+\framebox[55mm]{\rule[-21mm]{0mm}{43mm}}
+\caption{Remember to keep details clear and large enough.}
+\label{fig:toosmall}
+\end{figure}
+
+\subsection{Black and white photographs}
+
+Photographs must always be sharp originals ({\em not screened
+versions\/}) and rich in contrast. They will undergo the same reduction
+as the text and should be pasted on your page in the same way as line
+drawings.
+
+\subsection{Colour photographs}
+
+Sharp originals ({\em not transparencies or slides\/}) should be
+submitted close to the size expected in publication. Charges for the
+processing and printing of colour will be passed on to the author(s) of
+the paper. As costs involved are per page, care should be taken in the
+selection of size and shape so that two or more illustrations may be
+fitted together on one page. Please contact the Author Support
+Department at Elsevier (E-mail: \texttt{authorsupport@elsevier.nl})
+for a price quotation and layout instructions before producing your
+paper in its final form.
+
+\section{EQUATIONS}
+
+Equations should be flush-left with the text margin; \LaTeX{} ensures
+that the equation is preceded and followed by one line of white space.
+\LaTeX{} provides the document class option {\tt fleqn} to get the
+flush-left effect.
+
+\begin{equation}
+H_{\alpha\beta}(\omega) = E_\alpha^{(0)}(\omega) \delta_{\alpha\beta} +
+                          \langle \alpha | W_\pi | \beta \rangle 
+\end{equation}
+
+You need not put in equation numbers, since this is taken care of
+automatically. The equation numbers are always consecutive and are
+printed in parentheses flush with the right-hand margin of the text and
+level with the last line of the equation. For multi-line equations, use
+the {\tt eqnarray} environment.
+
+For complex mathematics, use the \AmS math package. This package
+sets the math indentation to a positive value. To keep the equations
+flush left, either load the \texttt{espcrc} package \emph{after} the
+\AmS math package or set the command \verb|\mathindent=0pt| in the
+preamble of your article.
+
+\begin{thebibliography}{9}
+\bibitem{Scho70} S. Scholes, Discuss. Faraday Soc. No. 50 (1970) 222.
+\bibitem{Mazu84} O.V. Mazurin and E.A. Porai-Koshits (eds.),
+                 Phase Separation in Glass, North-Holland, Amsterdam, 1984.
+\bibitem{Dimi75} Y. Dimitriev and E. Kashchieva, 
+                 J. Mater. Sci. 10 (1975) 1419.
+\bibitem{Eato75} D.L. Eaton, Porous Glass Support Material,
+                 US Patent No. 3 904 422 (1975).
+\end{thebibliography}
+
+References should be collected at the end of your paper. Do not begin
+them on a new page unless this is absolutely necessary. They should be
+prepared according to the sequential numeric system making sure that
+all material mentioned is generally available to the reader. Use
+\verb+\cite+ to refer to the entries in the bibliography so that your
+accumulated list corresponds to the citations made in the text body. 
+
+Above we have listed some references according to the
+sequential numeric system \cite{Scho70,Mazu84,Dimi75,Eato75}.
+\end{document}

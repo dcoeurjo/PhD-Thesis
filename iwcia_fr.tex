@@ -1,0 +1,442 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,graphicx}
+\usepackage{natbib}
+\usepackage[francais]{babel} 
+\usepackage{french}                        % langue : javanais
+\usepackage[T1]{fontenc}                   % pour coupure d'accent
+
+
+\def\eme{^{\textrm{{\`e}me}}}                  % i {\`e}me
+\def\num{n^{\circ}}                        % numero
+\def\Num{N^{\circ}}                        % Numero
+\def\sinc{\mathrm{sinc}}                   % sinus cardinal
+\def\ere{$^{\textrm{{\`e}re}}$}                % {\`e}re
+\def\eg{\emph{e.g.} }                      % e.g.
+\def\ie{\emph{i.e.} }                      % i.e.
+\def\etc{\emph{etc}}                       % etc
+\def\cm{\,cm}                              % cm
+\def\met{\,m}                              % m
+\def\mm{\,mm}                              % mm
+\def\deg{$^\circ$}                         % degres
+\def\ud{\mathrm{d}}     
+\def \R {{\Bbb R}}
+\def \Z {{\mathbb Z}}
+\def \L {{\mathcal{L}}}
+\def \C {{\mathcal C}}
+\def \P {{\mathcal P}}
+\def \Q {{\mathcal Q}} 
+\def \E{{\mathcal E}}
+\def \D{{\mathcal D}}
+\def \BD {{\bar{\mathcal{D}}}}
+\def \etal {{\it et al.~}}
+\def\eme{^{\textrm{{\`e}me}}}
+\newcommand{\aut}[1]{{\sc #1}}
+\newtheorem{defi}{D{\'e}finition}
+\newtheorem{lem}{Lemme}
+\newtheorem{coro}{Corollaire}
+\newtheorem{prop}{Proposition}
+\newtheorem{conj}{Conjecture}
+\newtheorem{example}{Exemple}
+\newenvironment{mapreuve}%                 % environnement preuve
+{\begin{description}%               
+\item [Preuve :] \sl }{ \hfill $\Box$%     % termine par carr{\'e} blanc
+\end{description} }
+\bibliographystyle{dav}
+\graphicspath{{./Fig/}}  
+
+
+
+
+
+\title{Approche basée sur la structure du dual}
+
+\begin{document}
+\maketitle
+
+
+
+Considérons un ensemble $\mathcal{E}$  de voxels.  Si cet  ensemble de
+voxels   forment un   plan discret   naïf  dans le   premier 48$i\eme$
+d'espace,  il existe  alors un  plan Euclidien  dont la discrétisation
+contient  $\mathcal{E}$.    Plus formellement,  il   existe un triplet
+$(\alpha,\beta,\gamma)$      dans  $[0,1]^2\times[0,1[$   tel      que
+$\mathcal{E}$ est contenu dans l'ensemble~:
+\begin{displaymath}
+\mathcal{P}=\{(x,y,z)\in\Z^3~|~0\leq \alpha x+\beta y+ \gamma + z <1\}
+\end{displaymath}
+
+Si  nous voulons construire l'ensemble  des plans se discrétisant dans
+l'ensemble        $\mathcal{E}$,    nous    définissons     l'ensemble
+$\bar{\mathcal{E}}$ dans l'espace des paramètres défini par~:
+\begin{equation}
+\label{eq:ebar}
+\bar{\mathcal{E}}=\{
+(\alpha,\beta,\gamma)\in[0,1]^2\times[0,1[~|~\forall(x,y,z)\in\mathcal{E}
+ ~0\leq\alpha x+\beta y+ \gamma +z <1 \}
+\end{equation}
+
+Comme en dimension 2,  la construction de  ce domaine ou simplement le
+test d'existence d'une  solution se ramène à  un problème classique de
+programmation linéaire.
+
+{\Huge illustration plan+dual}
+
+Nous pouvons, par   exemple, utiliser  l'algorithme  de \cite{megiddo}
+(théorème  \ref{theo:megiddo})  qui nous permet  d'avoir un algorithme
+linéaire  en le   nombre de points    pour tester la coplanarité  d'un
+ensemble de voxels.  De plus, nous  disposons de l'amélioration de cet
+algorithme proposé par \cite{buzer} qui nous permet d'avoir un test de
+coplanarité incrémental en $O(n)$ où $n$ est  le nombre de voxels dans
+$\mathcal{E}$ ce qui est optimal pour le problème.
+
+Si nous  souhaitons, décrire entièrement   le polyèdre des  solutions,
+\cite{fourier}   propose     l'utilisation    de  la   réduction    de
+\aut{Fourier-Motzkin} pour construire le polyèdre  $\bar{\mathcal{E}}$
+mais la   complexité  en  $O(n^XXX)$  de    cet  algorithme  rend  son
+utilisation très peu avantageuse pour la reconnaissance de plan.
+
+Afin  d'avoir   une écriture des   sommets du  polyèdre  sous forme de
+fractions  irréductibles, \cite{vittonethese} propose une  utilisation
+de l'algorithme  de \cite{grabiner}  afin de  représenter  les sommets
+sous  forme  $\left  (\frac{a}{c},\frac{b}{c},\frac{\mu}{c}) \right )$
+(dans le premier   48$i\eme$ d'espace) permettant  ainsi  l'extraction
+d'une paramétrisation arithmétique naïve  du morceau reconnu donné par
+$\mathcal{P}(a,b,c,\mu)$.
+
+L'idée est similaire au cas  2D,  à chaque insertion d'une  contrainte
+dans le système (c'est-à-dire à chaque ajout de voxel), nous regardons
+l'ensemble des   arêtes coupées   par celle-ci.   Chaque  intersection
+engendre   donc   un nouveau  sommet  du polyèdre   solution  dont les
+coordonnées, sous forme de  fractions irréductibles, sont calculées en
+appliquant  l'algorithme  de \cite{grabiner}  sur les  coordonnées des
+extrémités de l'arête coupée (voir algorithmes \ref{alg:grabiner}).
+
+L'algorithme initial de \cite{vittonethese} est   peu efficace  à
+cause du test exhaustif sur toutes les arêtes du polyèdre introduisant
+ainsi une  complexité    en $O(n^3log(n))$.  Nous    pouvons cependant
+baisser  cette  borne  asymptotique   en  utilisant   des  algorithmes
+optimaux, classiques  en  géométrie algorithmique  ou en programmation
+linéaire,     couplés    avec    l'algorithme    de   réduction     de
+\aut{Grabiner}. Ainsi, en utilisant  une variante tridimensionnelle de
+l'algorithme  de  \cite{P16}, et   en    appliquant la réduction    de
+\aut{Grabiner}, nous  obtenons  une borne en  $O(nlog^2(n))$.  Nous ne
+détaillons  pas cet algorithme car    celui-ci  est très similaire   à
+l'algorithme \ref{alg:vittonebis}.
+
+\subsubsection{Vers une structure complète du domaine dans l'espace  dual}
+
+Lors   de l'analyse  des droites   discrètes  dans l'espace  dual, des
+théorèmes très puissants  ont  été mis  au  jours nous  permettant  de
+connaître exactement la  structure de la  pré-image dans  l'espace des
+paramètres associée à un segment discret.  De plus, cette analyse nous
+a  permis d'écrire des  algorithmes  optimaux pour le  problème  de la
+reconnaissance de ces objets.
+
+Dans  le cas  tridimensionnel,  certes sur le   plan algorithmique des
+solutions très   efficaces,  provenant de  la  programmation linéaire,
+existent  \citep{buzer,P16}  pour  le   test   de  coplanarité ou   la
+construction  du domaine  dans le  dual. Mais  très  peu  de solutions
+exploitent pleinement    la  structure très particulière     des plans
+discrets. Ainsi, de  nombreuses question nous semblent intéressantes~:
+en imposant  une contrainte de  connexité de l'ensemble $\mathcal{E}$,
+peut-on réduire la borne  $O(nlog(n))$ proposée par \citeauthor{P16} ?
+Quel est le nombre de faces du polyèdre des solutions  ? Est-ce que ce
+polyèdre possède une structure arithmétique ?
+
+Dans   cette  analyse, nous  montrons    que ce polyèdre   possède une
+structure   particulière qu'il serait  dommage  de  ne  pas prendre en
+compte dans les algorithmes de reconnaissance de plans discrets.
+
+Dans  un   premier  temps,  nous montrons  qu'il   existe deux sommets
+particuliers du polyèdre qui correspondent aux plans d'appui d'un plan
+discret~:
+
+\begin{prop}
+Étant donné un morceau de plan na\"if $\mathcal{P}(a,b,c,\mu)$,
+le polyèdre des plans Euclidiens dans l'espace des paramètres
+contient deux sommets particuliers~:
+\begin{itemize}
+\item celui de coordonnées $\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$
+qui correspond au plan d'appui inférieur de $\mathcal{P}$~;
+\item celui de coordonnées $\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$
+qui correspond au plan d'appui supérieur de $\mathcal{P}$.
+\end{itemize}
+De plus, nous avons~:
+\begin{itemize}
+\item les faces du polyèdre adjacentes au point
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$ sont issues des
+sommets du polygone d'appui inférieur~;
+\item les faces du polyèdre adjacentes au point
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$ sont issues des
+sommets du polygone d'appui supérieur.
+\end{itemize}
+\end{prop}
+
+
+
+\begin{mapreuve}
+
+
+Considérons  tout    d'abord, un  morceau   connexe   de  plan discret
+$\mathcal{P}(a,b,c,\mu)$ dans  le premier 48$i\eme$ d'espace.  Lors du
+passage dans l'espace dual du voxel  $(x,y,z)$, nous introduisons deux
+demi-espaces dans l'espace des paramètres~:
+\begin{align*}
+C_1&:\quad\alpha x+\beta y +\gamma +z\geq 0\\
+C_2&:\quad\alpha x+\beta y +\gamma +z<1
+\end{align*}
+
+De   la même manière  que l'algorithme   de  \cite{P16}, nous traitons
+indépendamment  les contraintes $C_1$  et  $C_2$. Sur les  contraintes
+$C_2$, nous souhaitons calculer l'enveloppe inférieure de celles-ci et
+sur  les contraintes $C_1$,  nous considérons  l'enveloppe supérieure.
+Étant donné que les voxels appartiennent à un plan discret, l'union de
+ces  deux enveloppes sera non vide   et définira exactement le polyèdre
+des plans Euclidiens dans l'espace des param\`etres. Dans ce qui suit,
+nous considérons les  contraintes $C_2$ sans  l'inégalité stricte pour
+simplifier les explications. Le polyèdre final s'obtiendra en excluant
+toutes les faces et sommets issues des contraintes $C_2$.
+
+
+Si nous considérons uniquement la contrainte $C_2$, celle-ci
+correspond au passage dans l'espace dual du point $(x,y,z)$. La
+contrainte $C_1$ correspond au passage dans le dual des points
+$(x,y,z+1)$.
+
+Soit  $P_{sup}$ le plan d'appui supérieur  associé  au morceau de plan
+$\mathcal{P}$. Par définition de ce plan, tous les voxels $(x,y,z)$ de
+$\mathcal{P}$ sont sous ce plan  (dans le premier 48$i\eme$ d'espace).
+Ainsi, dans l'espace   dual, toutes les  contraintes  $C_2$ des points
+$(x,y,z)$ contienent le point $P^*_{sup}$  transformé de $P_{sup}$. De
+la  m\^eme manière, toutes  les contraintes $C_1$, dans l'espace dual,
+associées  aux  points $(x,y,z+1)$  contiennent  le  point $P^*_{inf}$
+correspondant au plan d'appui  inférieur $P_{inf}$  translaté de 1  en
+$z$.
+
+De plus,  si nous  considérons   les contraintes $C_2$   associées aux
+points d'appui supérieurs,  celles-ci passent par le point $P^*_{sup}$
+(par définition  des points d'appui, ceux-ci sont  les seuls points de
+$\mathcal{P}$   contenus dans  $P_{sup}$).    Étant  donné que  chaque
+contrainte partitionne l'espace des  paramètres, le  point $P^*_{sup}$
+est  donc un  sommet  du polyèdre final   associé au  morceau  de plan
+$\mathcal{P}$. De plus les faces adjacentes correspondent à des points
+d'appui supérieurs de $\mathcal{P}$.   De m\^eme, le point $P^*_{inf}$
+est  un   sommet  du  polyèdre   final associé    au  morceau  de plan
+$\mathcal{P}$ et les  faces adjacentes à  ce point correspondent à des
+points d'appui inférieurs $\mathcal{P}$.
+
+Nous  pouvons affiner encore  notre analyse en  ne considérant que les
+points   d'appui sommets des   polygones  d'appui. En  effet, un  voxel
+$v(v_x,v_y,v_z)$ intérieur au  polygone d'appui supérieur engendre une
+face     adjacente à  $P^*_{sup}$ dont    la   normale est donnée par
+$(v_x,v_y,v_z)^T$.  Ce vecteur normal  est orthogonal à  la face et sa
+direction est contraire à celle de l'inégalité.
+
+Si nous   notons $\{e^i\}_{i=1..N}$  les  sommets du  polygone d'appui
+supérieur et si $v$ est intérieur à ce polygone, nous avons~:
+
+\begin{displaymath}
+v=\sum_{i=1}^N w^i e^i
+\end{displaymath}
+
+avec $\{w^i\}_{i=1..N}$ dans $\R^3$ et $w^i_j>0$ pour $1\leq i\leq N$
+et $1\leq <j\leq 3$.
+
+
+En d'autres  termes,  la  normale  du plan  engendré  par $v$   est un
+barycentre à  poids   positifs des  normales   issues  des  sommets du
+polygone d'appui supérieur. Ainsi, la contrainte issues de $v$ ne crée
+donc pas de face au polyèdre (voir figure \ref{fig:barycentre}).
+
+Un raisonnement  similaire permet de montrer que  seuls les sommets du
+polygone d'appui    inférieur engendrent  des   facettes adjacentes  à
+$P^*_{inf}$.
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=10cm]{barycentre_dual.ps}
+\caption{Illustration de la contrainte engendrée  par un point
+d'appui $v$ contenu dans le polygone d'appui défini par les sommets sont les
+points $\{e^i\}_{i=1..4}$.}
+\label{fig:barycentre}
+\end{center}
+\end{figure}
+\end{mapreuve}
+
+Nous  connaissons maintenant  certains     points de la    géométrie du
+polyèdre~:  nous avons    deux sommets particuliers   ayant le  m\^eme
+abscisse et la  m\^eme ordonnée avec une   hauteur en $\gamma$  qui ne
+différent que de $\frac{1}{c}$.  De plus, nous  connaissons exactement
+la géométrie des     faces adjacentes à  ces    sommets. D'une manière
+informelle,   la    figure   \ref{fig:double_cone}  illustre     notre
+connaissance actuelle du  polyèdre~: nous connaissons  deux sommets et
+les faces  adjacentes à ceux-ci.  Par contre,  nous ne connaissons pas
+encore ce qu'il se passe à l'intersection des ces {\it cônes}.
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6cm]{double_cone.ps}
+\caption{Illustration du polyèdre avec la notion de double-cône.}
+\label{fig:double_cone}
+\end{center}
+\end{figure}
+
+
+Avant de continuer, nous  pouvons encore afiner notre analyse actuelle
+en  dénombrant  les facettes   adjacentes  aux sommets  $P^*_{sup}$ ou
+$P^*_{inf}$. Nous avons  montré que ce  nombre  est égal au  nombre de
+sommets de  l'enveloppe  convexe des  points d'appui. Or,  ces  points
+d'appui ont   une   structure  arithmétique  particulière  puisqu'ils
+appartiennent à un reseau défini par deux vecteurs solutions d'une
+équation diophantienne $ax+by+cz=r$.
+
+Ainsi, si nous considérons un résau donné par 
+(voir figure \ref{fig:env_cvx_appui})~:
+\begin{displaymath}
+\left (i,\left\{\frac{ai}{b}\right\}\right)\quad\text{pour}\quad 0<i<b
+\end{displaymath}
+
+\cite{reveilles_cvx} ont montré  que le calcul de  l'enveloppe convexe
+d'un  tel réseau est  liée  au développement  en fraction continue  de
+$\frac{a}{b}$. Ils ont  ensuite  proposé    un algorithme  dont     la
+complexité  est en $O(log(a))$   permettant  de construirre une  telle
+enveloppe convexe    dont le nombre de  sommets   est aussi  borné par
+$O(log(a))$.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6cm]{env_cvx_appui}
+\caption{Enveloppe convexe du réseau engendré par la suite $\left\{(i,\left\{\frac{ai}{b}\right\})~\text{avec}~0<i<b\right \}$ pour $a=5$ et $b=17$.}
+\label{fig:env_cvx_appui} 
+\end{center}
+\end{figure}
+
+Ce cas de  figure est idéal dans le  sens où nous n'avons qu'une seule
+période du réseau.  Cependant,   en considérant  un morceau  de   plan
+quelconque, cette  théorie devrait nous permettre  de borner ce nombre
+de faces avec des bornes assez intéressantes par  rapport au nombre de
+voxels. D'une   manière générale, nous  pouvons  utiliser  la borne de
+\cite{acketa}  sur le  nombre maximal d'arêtes   d'un polygone discret
+convexe dans une grille $n\times n$ qui est en $O(n^{2/3})$.
+
+
+Si nous revenons maintenant à notre analyse  du polyèdre, nous pouvons
+prouver la proposition suivante~:
+
+\begin{prop} 
+\label{propenv_cvx}
+Étant donné  un  morceau de  plan discret  $\mathcal{P}$ dans  premier
+48$i\eme$ d'espace dont les voxels se projette, sur le plan $Oxy$, \`a
+l'intérieur des projections  des  polygones d'appui, le polyèdre  dans
+l'espace des parmètres est  exactement l'intersection des  deux cônes
+issus de $P^*_{sup}$ et $P^*_{inf}$.
+\end{prop}
+
+\begin{mapreuve}
+Considérons un voxel $v$ dont la contrainte $C_2(v)$  ne passe pas par
+$P^*_{sup}$  ($v$  n'est donc pas  un  point d'appui).  Suppons que la
+contrainte   $C_2(v)$ engendre une   nouvelle   face au  polyèdre,  en
+d'autres  termes, supposons que    $C_2(v)$ appartient  à  l'enveloppe
+inférieure      des      contraintes        $C_2$   (voir       figure
+\ref{fig:preuve_cvx_appui}-$(a)$ pour une illustration en 2D).
+
+
+La   contrainte $C_2(v)$ coupe la  droite  parallèle  à l'axe $\gamma$
+passant par  $P^*_{sup}$  au  point $p$.   Sur  cette droite, $p$  est
+nécessairement  au-dessus de $P^*_{sup}$  sinon  ce dernier  ne serait
+sommet du polyèdre (voir figure \ref{fig:preuve_cvx_appui}$-(b)$).
+
+La projection  verticale  du voxel   $v$  sur la  plan  $P_{sup}$ dans
+l'espace primal correspond dans l'espace dual à  une translation de la
+contrainte  $C_2(v)$  de vecteur     $\overrightarrow{pP^*_{sup}}$. Si
+$C_2(v)$  fait parti de  l'enveloppe   inférieure des contraintes,  la
+contrainte     issue    de      la        translation    de     vecteur
+$\overrightarrow{pP^*_{sup}}$ est   aussi dans l'enveloppe  inférieure
+des contraintes (figure \ref{fig:preuve_cvx_appui}-$(c)$).
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=14cm]{preuve_cvx_appui.ps}
+\caption[Illustration de la preuve de la proposition
+\ref{propenv_cvx}]{Illustration  de  la   preuve  de  la   proposition
+\ref{propenv_cvx}~: $(a)$ la contrainte  $C_2(v)$   ne passe pas   par
+$P^*_{sup}$ mais  engendre   une face  du poly`edre,  $(b)$   et $(c)$
+translation       de      la          contrainte         du    vecteur
+$\overrightarrow{pP^*_{sup}}$.}
+\label{fig:preuve_cvx_appui} 
+\end{center}
+\end{figure}
+
+
+Si $v$ se  projette  verticalement  sur  $P_{sup}$ à l'intérieur    du
+polygone d'appui, la normale  associée à la  contrainte $C_2(v)$ est un
+barycentre  à  poids positifs des  normales  associées aux  sommets du
+polygone d'appui  (nous rappelons que vecteur  normal est orthogonal à
+la face et  sa direction est contraire à  celle de  l'inégalité). Cela
+implique    que     la     contrainte     $C_2(v)$   translatée     de
+$\overrightarrow{pP^*_{sup}}$  ne   fait  pas  partie  de  l'enveloppe
+inférieure des contraintes  et donc la contrainte  $C_2(v)$ n'engendre
+pas de face du polyèdre.
+
+
+Finalement, un  condition nécessaire pour  que  les contraintes $C_2$
+associées à un morceau de plan $\mathcal{P}$ n'engendrent pas de faces
+au polyèdre, est  que ces voxels se  projettent sur le plan $Oxy$ dans
+la projection du polygone d'appui supérieur.
+
+En utilisant, le m\^eme raisonnement pour les contraintes $C_1$, si le
+morceau de  plan $\mathcal{P}$ dans  le premier 48$i\eme$ d'espace est
+tel  que ses voxels se projettent,  sur le plan $Oxy$, \`a l'intérieur
+des      projections    des     polygones   d'appui    (voir    figure
+\ref{fig:proj_poly_appui}),  alors le    polyèdre des  solutions   est
+exactement l'union des deux c\^ones   issus des points $P^*_{sup}$  et
+$P^*_{inf}$.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=8cm]{proj_poly_appui}
+\caption{Condition nécessaire pour que le polyèdre des solutions
+dans l'espace des paramètres soit un double-c\^one~: chaque voxel doit
+se projeter  sur  le plan  $Oxy$,  dans les projections des  polygones
+d'appui.}
+\label{fig:proj_poly_appui}
+\end{center}
+\end{figure}
+\end{mapreuve}
+
+
+Dans cette  proposition,  des voxels  de $\mathcal{P}$ n'ont  aucunes
+autres contraintes que celle de la projection, $\mathcal{P}$ peut donc
+\^etre deconnécté ou avoir  des trous, la   forme du domaine  reste la
+m\^eme.
+
+
+
+\begin{conj}
+Soit  $\mathcal{P}(a,b,c,\mu)$ un morceau de  plan connexe, le polyèdre
+dans l'espace  des paramètres associé  à  $\mathcal{P}$ a  la forme du
+double-cône, c'est-à-dire~:
+\begin{itemize}
+\item il existe deux sommets caractéristiques  de coordonées
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$ et
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$~;
+\item les faces du polyèdre correspondent uniquement aux sommets des
+polygones d'appui de $\mathcal{P}$.
+\end{itemize}
+\end{conj}
+
+
+\begin{coro}[{\Huge de la conjecture ;-)}]
+Le nombre de  faces du polyèdre  dans  l'espace des paramètres  est le
+nombre de sommets des deux polygones d'appui du morceau de plan.
+\end{coro}
+
+
+
+
+
+
+
+\bibliography{Bib/tout,Bib/dea,Bib/dam,Bib/geodesiques,Bib/mybiblio,Bib/longueur}
+\end{document}

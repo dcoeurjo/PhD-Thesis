@@ -1,0 +1,2976 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Métriques discrètes}\label{chap-metriques}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+Dans  ce chapitre, nous  nous intéressons  aux  analyses globales  des
+objets  discrets ainsi  qu'aux   différentes métriques que l'on   peut
+associer à la grille.  Dans un premier  temps, nous étudions le calcul
+de    la    transformée   en   distance    euclidienne   en  dimension
+quelconque. Puis nous proposons une extraction de squelette de formes,
+objet      géométrique  très important    et  très    utilisé pour  la
+caractérisation d'objets.  Par   la suite, nous nous   intéressons aux
+notions de visibilité et de métrique géodésique en géométrie discrète.
+
+
+
+\section{Transformée  en distance}
+\label{sec:transf-en-dist}
+En  analyse de formes binaires, la  notion de  transformée en distance
+est un   outil   classique qui   est  apparu  avec  les tous  premiers
+algorithmes    \citep{ROSEN_66,ROSEN_68}.     L'énoncé   de      cette
+transformation est la suivante~: on étiquette  chaque point de l'objet
+par la   distance  entre  celui-ci et   le point  le  plus  proche  du
+complémentaire.  Une écriture  plus générale  de cette transformée  en
+distance correspond à l'étiquetage de tous les points  de la forme par
+la distance    minimale à la  frontière,  celle-ci  se  trouvant entre
+l'objet discret et   son complémentaire.  En  considérant  la distance
+minimale aux points du complémentaire, nous nous plaçons dans le cadre
+selon lequel la  frontière décrite précédemment est définie uniquement
+par des points du complémentaire.  Dans tous les cas, cette notion est
+liée  à la  métrique utilisée.  Pour   des raisons algorithmiques, les
+premières études considéraient des métriques approchées basées sur des
+masques de poids appelés  masques de chanfrein.   Il  est à noter  que
+plus la  métrique  utilisée se  rapproche  de la métrique euclidienne,
+plus  la description de la  forme   sera invariante  en rotation.   En
+d'autres  termes, l'utilisation de la   métrique euclidienne permet de
+palier l'anisotropie intrinsèque de la grille discrète.
+
+Pour la caractérisation  de forme, on extrait  de cette transformée en
+distance  un objet   géométrique  appelé {\it  squelette} ou  {\it axe
+médian}  qui  correspond  au plus  petit  sous-ensemble  de points  de
+l'objet qui permet de reconstruire la forme en appliquant le processus
+de transformée en  distance inverse (voir \citealt{ROSEN_66}). Ce {\it
+squelette} ou  {\it axe médian}  d'une  forme  correspond à la  notion
+d'axe  de   symétrie  généralisée  \citep{Blum:1964}.     En géométrie
+discrète, le  terme    {\it squelette} décrit   généralement  un objet
+topologique homotope à la forme  (nous  reviendrons sur ce point  plus
+tard).  Dans ce qui suit, nous construisons  un objet discret que l'on
+appellera  {\it squelette} mais qui ne  se base que sur des propriétés
+géométriques  (le  sens  de  ce   terme   est  issu  de   la géométrie
+algorithmique).  Nous  reviendrons  sur la  construction de cet  objet
+dans le paragraphe \ref{sec:median}.
+
+Nous commençons cette partie par quelques rappels sur la transformée
+en distance basée sur  des métriques de Chanfrein et sur la métrique
+euclidienne. Puis nous présentons un algorithme de calcul de
+transformée en distance euclidienne exacte optimal en temps pour des images
+$n$-dimensionnelles basé sur le calcul du diagramme de Voronoï
+discret.
+
+ 
+\subsection{Métriques de chanfrein}
+\label{sec:metr-de-chanfr}
+
+Dans un premier temps, l'idée est d'approximer la métrique euclidienne
+par des estimations locales de manière à  obtenir des algorithmes de
+transformée en distance très rapides. Par exemple, \citet{ROSEN_66}
+considéraient des distances $d_4$ et $d_8$ sur la grille, plus tard
+\citet{ROSEN_68} proposaient de combiner ces distances pour se
+rapprocher de la distance euclidienne. 
+
+La  distance   $d_4$ (resp.  $d_8$) est  caractérisée    par des poids
+affectés à 1 pour chaque 4-voisin (resp. pour chaque 8-voisin). Ainsi,
+la {\it  boule}  (ensemble de points à   une distance inférieure  à un
+certain seuil)  construite  sur  cette métrique  est un   carré tourné
+(respectivement  un    carré).  La   figure  \ref{fig:boules_metrique}
+représente les  boules de rayon 100  associées  à chaque métrique avec
+une palette de niveaux de gris cyclique.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=4.5cm]{boule_d4}}
+    \subfigure[]{\includegraphics[width=4.5cm]{boule_d8}}
+    \subfigure[]{\includegraphics[width=4.5cm]{boule_euc}}
+    \caption{Boules de rayon 100 pour les métriques~: $(a)$ $d_4$ (ou
+      distance de Manhattan), $(b)$ $d_8$ (ou distance de l'échiquier)
+      et $(c)$ distance euclidienne.}
+    \label{fig:boules_metrique}
+  \end{center}
+\end{figure}
+
+Le cadre théorique et pratique pour le calcul des poids d'un masque de
+chanfrein est le suivant~: on  commence par identifier un ensemble  de
+déplacements élémentaires  et on  essaye   d'optimiser les poids  pour
+minimiser l'erreur  par rapport à la  distance euclidienne et pour que
+ceux-ci forment  une distance   (inégalité triangulaire \ldots).    La
+description  de   ce      processus   général  a    été donnée  par
+\citet{borgefors,verwer,thiel,thiel_HDR,remy}. Ce    processus général
+est  ensuite appliqué sur  les  grilles par exemple  tridimensionnelle
+\citep{kiryati95,Thiel_IWCIA7,borgefors_IWVF4} ou pour   des   grilles
+anisotropiques \citep{sintorn}.
+
+L'intérêt majeur de ces approches est la simplicité de l'algorithme
+pour le calcul de la transformée en distance (notée WDT pour {\it
+  Weighted Distance Transform}).
+
+
+
+%%%%%%%%%%
+\subsection{Transformée en distance euclidienne}
+
+Nous nous intéressons maintenant à la transformée en distance avec une
+métrique euclidienne    (notée EDT   pour   {\it   Euclidean  Distance
+Transform}). Cette partie s'inscrivant   dans le cadre  d'une approche
+discrète, nous souhaitons ne manipuler que des nombres entiers et donc
+soit uniquement  le vecteur à coordonnées entières   entre le point de
+l'objet  considéré et son  plus  proche point dans  le complémentaire,
+soit la distance euclidienne au carré.
+
+\subsubsection{Approche par déplacements signés}
+
+Dans cette approche, \citet{danielson} propose un balayage de l'image
+effectué en deux passes avec des opérations locales pour mettre à
+jour le vecteur entre le point considéré et le point du complémentaire le plus proche (on
+parle alors de VDT pour {\it Vector Distance Transform}).
+Cet algorithme considère donc un certain voisinage ($4-$ ou
+$8-$voisins) mais ce choix introduit des erreurs dans l'étiquetage
+(voir figure \ref{fig:erreur_dani} pour le cas $4-$connexe, un
+schéma équivalent existe pour le cas $8-$connexe). Ainsi, cet
+algorithme est linéaire en le  nombre de pixels de la grille ($O(n^2)$ pour
+une image $n\times n$) mais l'étiquetage n'est pas sans erreur.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=4cm]{erreur_dani}
+    \caption[Erreur de la transformée de \citeauthor{danielson} sur 
+    un  voisinage en    $4-$connexité]{Erreur de  la   transformée  de
+    \citeauthor{danielson}   sur   un  voisinage     en  $4-$connexité
+    (algorithme 4SED de \citealt{danielson}.)~: les points $a$, $b$ et
+    $c$  sont des  points du  complémentaire et $q$,  $d$  et  $e$ des
+    points de l'objet.  Lors de la  propagation en $4-$connexité,  $d$
+    est plus proche de $a$ que  de $b$, $c$  et $e$ est plus proche de
+    $c$, $q$ sera noté ``plus proche de $a$ ou de $  c$'' alors que le
+    résultat exact serait $b$.}
+    \label{fig:erreur_dani}
+  \end{center}
+\end{figure}
+
+
+\citet{Yamada84b} a proposé  une  version parallèle de  cet algorithme
+qui  permet d'éviter ces  erreurs.  Par la suite, \citet{ragnemalm}  a
+proposé   un algorithme séquentiel  pour   la transformée en  distance
+euclidienne exacte mais avec  une complexité qui, dans  le pire cas, est
+en $O(n^3)$   pour    une image $n\times    n$.   Dans cet algorithme,
+\citeauthor{ragnemalm} propose un   parcours de pixels, non plus   par
+balayage de  l'image mais par propagation  de fronts d'ondes.  Dans le
+même cadre, \citet{cuisenaire_these} propose un algorithme rapide basé
+sur  une  propagation en  distance euclidienne. Cette  méthode n'est pas
+sans erreur   mais l'utilisation    de plusieurs  voisinages   dans  la
+résolution permet de réduire l'erreur d'approximation.
+
+\label{sec:appr-par-depl}
+
+Une   version   corrigée de   l'algorithme de  \citeauthor{danielson},
+optimale en temps a été proposé  par \cite{cuisenaire_opt}. Dans cette
+approche, les auteurs effectuent un post-traitement sur la transformée
+en distance de \citeauthor{danielson} pour corriger  les erreurs de la
+figure \ref{fig:erreur_dani} qui  sont facilement  détectables dans la
+transformée (de manière intuitive,  ce sont  des  {\it coins} dans  le
+diagramme de Voronoï).
+
+Des extensions pour des images 3D existent, par exemple
+\citet{MULL_92} pour la version 3D de l'approche de
+\citeauthor{danielson} et  \citeauthor{cuisenaire_these} a proposé une
+ approche par propagation de l'algorithme précédent.
+
+
+
+\subsubsection{Approche multi-dimensionnelle de  \citeauthor{SaitTori}}
+\label{sec:saito}
+
+\citet{SaitTori} ont proposé une approche basée sur la manipulation de
+distance au carré qui offre l'avantage d'être simple et valide quelle que soit la
+dimension de l'image.  
+
+Nous illustrons cet algorithme dans le cas 3D.  Pour cela, nous notons
+$\P$ l'ensemble des  points  composant le complémentaire   de l'objet
+dans une image $[1\ldots m_1]\times[1\ldots m_2]\times[1\ldots m_3]$.
+L'objectif est   de  calculer     la  transformée  en    distance
+$S=\{s_{ijk}\}$ telle que $s_{ijk}$ est la distance au carré  entre le
+point $(i,j,k)$ et le point de $\P$   le plus proche.    L'écriture  de cette transformée  est  la
+suivante, pour tout point $q$ de coordonnées $(i,j,k)$~:
+\begin{align*}
+  s_{q} &= \min_{p\in \P} \{dist^2(p,q) \} \\
+        &= \min_{p(x,y,z)\in \P} \{ (i-x)^2 + (j-y)^2 + (k-z)^2 \}
+\end{align*}
+
+Cette simple écriture ne nous permet pas de résoudre le problème mais
+nous laisse envisager une résolution dimension par dimension, à
+savoir une minimisation sur $x$, puis $y$ et enfin $z$. Pour le cas
+3D, nous obtenons l'algorithme suivant~:
+
+\begin{enumerate}
+\item Construction, à partir de l'image source et de $\P$, d'une
+transformée en distance au carré  selon l'axe des $x$. Nous notons
+cette transformée $G=\{g_{ijk}\}$, donnée par~:
+\begin{displaymath}
+  g_{ijk}=\min_{p(x,y,z)\in P} \{(i-x)^2 \}
+\end{displaymath}
+\item A partir de $G$, nous construisons la transformée notée
+$H=\{h_{ijk}\}$ en utilisant une procédure de minimisation selon l'axe
+des $y$. $H$ est donnée par~:
+\begin{displaymath} 
+  h_{ijk}=\min_{y} \{g_{iyk}+(j-y)^2, 1\leq y < m_2\}
+\end{displaymath}
+
+\item Enfin, nous construisons la transformée en distance au carré
+finale en appliquant une autre procédure de minimisation selon l'axe
+des $z$~:
+\begin{displaymath}
+  s_{ijk}=\min_z \{h_{ijz}+(k-z)^2, 1\leq z < m_3\}
+\end{displaymath}
+\end{enumerate}
+
+
+\begin{figure}[!h]
+  \begin{center}
+  \includegraphics[draft=false,width=12cm]{Fig/edt_saito}
+  \caption[Illustration de l'algorithme de \citeauthor{SaitTori} en
+2D]{Illustration de l'algorithme de \citeauthor{SaitTori} en
+2D~: de gauche à droite, l'image source où les pixels noirs sont les
+pixels du complémentaire, la transformée $G$ après la première passe,
+et la transformée finale après minimisation selon l'axe des $y$}
+\label{fig:saito}
+\end{center}
+\end{figure}
+
+Cet  algorithme très simple  est  directement extensible aux images de
+dimension $n$.  Dans ce cas,  on applique  la première phase calculant
+une  transformée en distance au  carré unidimensionnelle (étape 1 dans
+l'algorithme ci-dessus), puis  pour  chaque  dimension  supérieure, on
+minimise la transformée partielle calculée à l'étape précédente sommée
+avec des {\it  paraboles} (fonctionnelles $(j-y)^2$ et $(k-z)^2$) dans
+la dimension actuelle  (étape 2 et  3  de l'algorithme ci-dessus).  La
+figure \ref{fig:saito} illustre cet algorithme pour le cas 2D.
+
+En terme de complexité, nous pouvons remarquer que pour une image 3D,
+la première étape s'effectue en temps linéaire en le nombre de points de
+l'objet. Cependant, l'opération de minimisation pour chaque dimension
+supérieure implique un coût supplémentaire. Ainsi, les étapes 2 et 3
+ont chacune  une complexité en $O(n^4)$ pour une image $n\times n\times
+n$. Le coût final d'une transformée en distance pour une image en
+dimension $d$ est de $O(n ^{d+1})$. \citet{SaitTori} ont cependant
+proposé une optimisation qui réduit la complexité en
+$O(Av(\sqrt{s_{ijk}})n^3)$    où  $Av(\sqrt{s_{ijk}})$ représente la
+distance moyenne observée dans la transformée en distance de la
+forme.
+
+Par la suite, \citet{Hirata} et \citet{roerdnik} vont indépendamment
+optimiser l'opération de minimisation rendant le calcul optimal,
+c'est-à-dire linéaire en le nombre de points de la grille et donc en $O(n
+^d)$ pour une image $d-$dimensionnelle. 
+
+
+\subsection{Diagramme de Voronoï et transformée en distance euclidienne}
+
+Dans cette partie, nous proposons une autre approche pour le calcul de
+la  transformée en distance  euclidienne basée  sur la construction du
+diagramme de  Voronoï discret. Nous présentons   un algorithme qui est
+aussi optimal    en temps pour   des images  $n-$dimensionnelles.  Cet
+algorithme construit   une structure  géométrique  plus complexe   qui
+permet de proposer des algorithmes de transformée  en distance sur des
+grilles anisotropes ainsi que sur   des grilles d'hexagones. De  plus,
+nous  verrons dans la partie  \ref{sec:median} comment cette structure
+permet un calcul direct de l'axe médian de la forme.
+
+
+
+\subsubsection{Diagramme de Voronoï et triangulation de Delaunay en géométrie
+algorithmique}
+
+En géométrie  algorithmique  (non discrète),  le  diagramme de Voronoï
+d'un ensemble de sites ${\P}=\{p_i\}\subset \R^n$ est une partition de
+l'espace  en cellules, chacune  étant  associée {\`a}  un site avec la
+propriété  suivante  : un  point  $q$   appartient  {\`a}  la  cellule
+$\C_{p_i}$ associée  au  site $p_i$ si   et seulement si $dist(q,p_i)<
+dist(q,p_j)$    \footnote{$dist(p,q)$ correspond   {\`a}  la  distance
+euclidienne.}  pour tous les  points  $p_j\in \P$  et $i\neq j$  (voir
+figure \ref{fig:voronoi_delaunay}-(a) pour  un diagramme dans $\R^2$).
+Pour  {\^e}tre plus précis, le  diagramme de Voronoï est une partition
+de $\R^n$ en cellules  au sens des complexe simpliciaux (décomposition
+en points,  arêtes, faces,  hyper-faces,\ldots, cellules  de dimension
+$n$).
+
+Ce diagramme a été très étudié et des bornes sur la complexité des
+algorithmes de construction existent. Par exemple en 2D, la borne
+inférieure est en $\Omega(|{\P}| log |{\P}|)$ (voir \citealt{P16}).
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6.5cm]{voronoi_diagrammebis.ps}}
+    \subfigure[]{\includegraphics[width=6.5cm]{delaunaybis.ps}}
+    \caption[Diagramme de Voronoï et triangulation de Delaunay]{{\it
+(a)} diagramme de Voronoï dans  le plan et {\it (b)}
+triangulation de Delaunay (capture d'écran de {\tt VoroGlide},
+\citealt{voroglide}).}
+
+    \label{fig:voronoi_delaunay}
+  \end{center}
+\end{figure}
+
+Si l'on  considère un ensemble de   sites en {\it  position générale},
+c'est-{\`a}-dire  tels qu'il n'existe   aucun   quadruplet de sites
+cocycliques, de nombreuses propriétés  sur ce graphe  peuvent {\^e}tre
+prouvées   (les    lecteurs pourront se   référer   par  exemple {\`a}
+\citealt{P16}      ,     \citealt{boissonnat}      ou  encore    {\`a}
+\citealt{deberg}).    Par  exemple, chaque   sommet  du diagramme  est
+incident {\`a} exactement trois cellules.
+
+Si nous considérons le graphe  dual de ce  diagramme, c'est-{\`a}-dire  le
+graphe  tel  que  les  sommets  sont  des sites,   et  les ar{\^e}tes des
+adjacences entre  cellules du  diagramme, nous construisons  alors une
+triangulation des sites qui  est   appelée {\it triangulation  de
+Delaunay}   (voir  figure    \ref{fig:voronoi_delaunay}-(b)).    Cette
+triangulation a aussi de nombreuses propriétés en terme {\it d'aspect}
+des  triangles générés. Plus formellement, si  on trie tous les angles
+des  triangles  d'une triangulation $\mathcal{T}$   des sites, dans un
+tableau $\mathcal{A}(\mathcal{T})$, la triangulation  de Delaunay
+noté  $\mathcal{D}$  est  minimale,  c'est-{\`a}-dire
+$\mathcal{A}(\mathcal{D})\preceq \mathcal{A}(\mathcal{T})$ en
+ considérant l'ordre lexicographique pour la relation $\preceq$.
+
+
+\subsubsection{Diagramme de Voronoï, triangulation de Delaunay en
+  géométrie discrète et EDT}
+
+Nous définissons une version discrète très simple du diagramme de
+Voronoï et de la triangulation de Delaunay qui correspond
+ au plongement  de ces structures géométriques euclidiennes dans
+l'espace discret.
+
+\begin{defi}[Diagramme de Voronoï discret]
+ \label{defi:voro}
+ Soit  $P=\{p_i\}$  un ensemble   de sites   de  l'espace discret,  le
+ diagramme  de  Voronoï discret   est  une décomposition  de  l'espace
+ discret en sous-ensembles  $\{c_i\}$, tels que  chaque point de $c_i$
+ soit plus proche de $p_i$ que de chacun des $\{p_j\}$ avec $j\neq i$.
+\end{defi}
+
+Dans  ce qui suit,  nous  ne nous intéressons  pas  {\`a} la topologie
+associée  au   diagramme   de  Voronoï   mais   uniquement  {\`a}   sa
+construction.  Cette  définition ne donne  pas un diagramme unique, en
+effet, dans la cas  où un point est  équidistant de deux sites, il est
+arbitrairement associé à un    des deux sites. Par  contre,  lorsqu'un
+point discret est associé  à un site $p_i$,  nous savons que ce  point
+appartient à  l'adhérence  de   la  cellule $c_i$ dans  le   diagramme
+euclidien des sites $P$.
+
+A partir  de la définition \ref{defi:voro},  nous pouvons  définir une
+triangulation  de Delaunay discrète basée sur   les notions de droites
+discrètes.
+
+\begin{defi}[Triangulation de Delaunay discrète]
+   Soit  $P=\{p_i\}$ un ensemble de points discrets, la triangulation de
+   Delaunay discrète est telle que ses sommets sont les points
+$\{p_i\}$ et un segment discret existe, dans l'espace considéré, entre
+   deux sommets si ces deux sommets engendrent des cellules adjacentes
+   dans le diagramme de Voronoï discret associé {\`a} $P$.
+\end{defi}
+
+
+L'utilisation du diagramme de Voronoï pour le calcul de la transformée
+en distance en analyse d'image été montrée par \citet{BreuEtAl95}.  Si
+nous  considérons comme ensemble de  sites  $P$, l'ensemble des points
+discrets du complémentaire de  l'objet discret considéré, le diagramme
+de  Voronoï discret de  $P$ nous donne, en tout  point  de l'objet, le
+point de $P$   qui lui est   le plus proche.   Ainsi,  pour obtenir la
+transformée en distance, il  suffit d'effectuer un post-traitement sur
+le diagramme en étiquetant tous les points discrets par la distance au
+point de $P$ le plus proche donné par le diagramme. Ce post-traitement
+se fait en temps linéaire en le nombre de points discrets de l'objet.
+
+Résoudre le problème du calcul du  diagramme de Voronoï permet donc de
+résoudre   le problème du     calcul de la   transformée  en  distance
+euclidienne. Nous présentons dans le  paragraphe suivant le calcul  de
+transformée en  distance basé sur le  diagramme de Voronoï proposé par
+\citeauthor{BreuEtAl95}  pour   le   cas d'une  grille    régulière en
+dimension 2   pour ensuite l'étendre   en $nD$ et  sur  des grilles non
+nécessairement cubiques.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Two and Three dimensional Euclidean distance transform}
+%%
+%In this  section, we first present two  important contributions to the
+%EDT. The first one is a discrete Voronoï diagram based method proposed
+%by  Breu {\it et  al.} \citep{BreuEtAl95} and revised   by Guan {\it et
+%al.} \citep{Guan}. This approach is a remarkable  piece of work because
+%it presents an algorithm for both the discrete Voronoï diagram and the
+%EDT problems in 2D in a time proportional to the number of pixels. The
+%second one is proposed  by Saito {\it  et al.} \citep{SaitTori:94}  and
+%presents a  multidimensional algorithm  for   the EDT  problem.   This
+%algorithm  is not optimal   in  time  but provides  a  $n-$dimensional
+%generalisation.
+
+\subsection{EDT en dimension 2 basée sur le diagramme de Voronoï discret}
+
+\citet{BreuEtAl95} ont proposé un algorithme très élégant et très
+efficace pour le calcul du diagramme de Voronoï discret et donc pour
+le calcul de la transformée en distance euclidienne sans erreur dans
+le cas d'une image binaire 2D notée $[0 \ldots m_1]\times[0\ldots m_2]$.
+
+Dans un premier temps, cet  algorithme effectue un balayage des lignes
+de  l'image   de  $y=0$  {\`a} $y=m_2$.  A     chaque  étape $y=r$  de
+l'algorithme,   \citeauthor{BreuEtAl95}  maintiennent une structure de
+données    qui    contient   le    diagramme    de   Voronoï   discret
+$\mathcal{V}_{P_r}$  des  sites $P_r$.  Ces  sites  correspondent  aux
+points de $P$ dont l'ordonnée est inférieure ou égale à $r$ (voir   figure
+\ref{fig:breu} pour les notations de \citeauthor{BreuEtAl95}).
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=8cm]{Fig/edt_breu.ps}
+  \caption[Notations de \citeauthor{BreuEtAl95}]{Notations de
+    \citeauthor{BreuEtAl95} : $u,~v$ et $w$ sont des sites appartenant
+    {\`a} $P_r$ et $P_{r'}$, $\hat{uv}^{(r)}$ et $\hat{vw}^{(r)}$ sont
+    les  points intersections  de  la médiatrice  de  $[uv]$ et $[vw]$
+    respectivement,   et de la droite  $y=r$.   Dans cet exemple, nous
+    avons ${\L}_r=\{u,v,w\}$   et ${\L}_{r'}=\{u,w\}$  (voir  le texte
+    pour les explications).}
+\label{fig:breu}
+\end{center}
+\end{figure}
+
+
+A la fin de ce parcours, un autre  balayage de $y=m_2$ {\`a} $y=0$ est
+effectué pour fusionner les résultats et ainsi construire le diagramme
+de    Voronoï  {\`a} partir  de      diagrammes partiels (voir  figure
+\ref{fig:breu_seq}). Cette technique correspond à une réécriture, pour
+le  cas  discret, des  algorithmes  de  construction  du  diagramme de
+Voronoï par balayage de ligne   ({\it plane sweep algorithm} dans   la
+littérature), voir par exemple \cite{deberg}.
+
+
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[draft=false,width=14cm]{Fig/breu_seq}
+  \caption[Illustration de l'algorithme de \citeauthor{BreuEtAl95}]{Balayage de l'image en $y$ croissant (4 premières images)
+    avec les diagrammes de Voronoï partiels. Chaque cellule  a la
+    couleur du site auquel elle correspond, la partie hachurée
+    correspond aux pixels non-étiquetés et les droites en pointillées
+    sont  des médiatrices entre sites.}
+  \label{fig:breu_seq}
+\end{figure}
+
+
+Dans    la    suite,    nous   réutilisons     les      notations   de
+\citeauthor{BreuEtAl95}  : on note  ${\L}_r$ le sous-ensemble de sites
+$P_r$ dont  les cellules intersectent   la  droite $y=r$ (voir  figure
+\ref{fig:breu}).  Ainsi, le c{\oe}ur   de  l'algorithme réside en   un
+calcul  efficace des   sites de ${\L}_r$  {\`a}   partir des sites  de
+${\L}_{r-1}$ et  des nouveaux  sites présents  dans la  ligne $y=r$ de
+l'image.
+
+Cette   propagation efficace  est basée  sur   deux  observations  : la
+première est  qu'il ne peut y avoir  dans ${\L}_r$ qu'un seul site par
+abscisse. Dans le cas contraire, la médiatrice issue des deux sites de
+m{\^e}me abscisse, soit n'intersectera pas la  droite $y=r$, soit sera
+confondue avec celle-ci.  La seconde  observation est que si les sites
+de $P_r$    sont triés selon   leur abscisse,  cet ordre   est alors
+préservé sur  la droite $y=r$  pour les cellules   issues des sites de
+${\L}_r$.
+
+
+La première observation a pour conséquence que la liste ${\L}_r$ est
+telle que :
+\begin{displaymath}
+  |{\L}_r|\leq m_1
+\end{displaymath}
+La seconde nous dit que les cellules de $\L_{r-1}$ apparaîtront (si
+elles sont conservées) dans le même ordre dans ${\L}_{r}$.
+
+Avant de détailler  l'algorithme, nous présentons les conditions  pour
+qu'un  site   de ${\L}_{r-1}$  ne   soit plus  présent  dans  la liste
+${\L}_{r}$. Considérons  pour cela trois   sites $u,v,w \in  \Z^2$  de
+l'image tels  que \footnote{dans la suite,  les coordonnées d'un point
+$p$  sont notées $(p_x,p_y)$ si $p\in\R^2$  et  $(p_x,p_y,p_z)$ si
+$p\in\R^3$}
+$u_x<v_x<w_x$.  On dira que le site $v$ est {\it caché  par $u$ et $w$
+le  long  de  la droite $y=r$}    si la  cellule   associée {\`a}  $v$
+n'intersecte  pas   la droite $y=r$ alors   que c'est  le cas pour  les cellules
+associées  {\`a} $u$ et  $w$.  Cette propriété  est illustrée dans  la
+figure \ref{fig:breu} pour la droite $y=r'$.
+
+En se basant sur cette définition, nous pouvons formaliser l'approche de
+\citeauthor{BreuEtAl95} avec la proposition suivante :
+
+\begin{prop}
+  \label{prop1}
+  Étant donné un site $v$ d'un ensemble $\P$ de sites et une
+  droite $l$, $v$ n'appartient pas {\`a} la liste ${\L}_l$ si est seulement
+  si il existe au moins une paire de sites $u$ et $w$ de $P\backslash\{v\}$ tels que $u$ et $w$
+  cachent $v$ le long de $l$.
+\end{prop}
+
+\begin{mapreuve}
+  Cette      proposition      est     illustrée    par   la     figure
+  \ref{fig:preuve_cache}.  L'idée  est la  suivante  : si  la  cellule
+  associée {\`a} $v$ n'intersecte  pas $l$, alors  on trouve une paire
+  de sites  qui {\em cachent} $v$  sur $l$ en translatant $l$ jusqu'au
+  sommet  de  $C_v$  le  plus proche  (droite    $l'$ dans la   figure
+  \ref{fig:preuve_cache}).  Ainsi,   si  les  sites sont en   position
+  générale (il n'existe pas quatre points cocycliques), il n'existe que deux sites
+  adjacents  {\`a} ce sommet  de  $C_v$, ici $u$  et  $w$, et ces deux
+  sites {\em cachent} $v$ sur $l$.
+
+  Si plusieurs sites sont adjacents au sommet de $C_v$ considéré, il
+  suffit d'en choisir deux et ceux-ci vérifient la propriété de {\it
+    masquage} de $v$.
+
+  La preuve de la proposition dans l'autre sens de l'équivalence
+  logique est triviale~: si $u$ et $w$ cachent $v$, alors $C_v\cap
+  l=\emptyset$ par définition.
+\end{mapreuve}
+
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[draft=false,width=8cm]{Fig/preuve_cache.ps}
+  \caption[Illustration de la proposition \ref{prop1}]{Illustration de la preuve~: $C_v$ n'intersecte pas $l$ et
+    on calcule une paire de sites cachant $v$ en translatant la droite
+    $l$ vers un sommet de $C_v$. Les sites adjacents {\`a} ce sommet du
+    diagramme sont solutions du problème.}
+  \label{fig:preuve_cache}
+\end{figure}
+
+
+En d'autres termes, chaque {\it  disparition} de sites dans les listes
+${\L}_r$ est dirigée par le fait qu'un site est  caché par deux autres
+sites. Il nous faut donc un prédicat permettant de détecter ces cas.
+
+Si on note   $\hat{uv}^{(r)}$  l'intersection entre la  médiatrice  de
+$[uv]$  et la droite  $y=r$, $v$ est {\it  caché} par $u$ et $w$ (avec
+toujours $u_x<v_x<w_x$)     si  et     seulement  si  l'abscisse    de
+$\hat{uv}^{(r)}$  est supérieure {\`a} l'abscisse de $\hat{vw}^{(r)}$.
+Quand  il n'y a pas d'ambiguïté,  et pour simplifier les notations, on
+écrira  $\hat{uv}$ plutôt que   $\hat{uv}^{(r)}$. Formellement,  on a
+donc~:
+
+\begin{equation}
+  \label{eq:test}
+\hat{uv}_x\geq\hat{vw}_x
+\end{equation}
+
+Si nous détaillons les coordonnées de chaque élément, 
+$\hat{uv}$ est donné par :
+\begin{align}
+\label{eq1}
+\|u-\hat{uv} \| ^2 &= (u_x - \hat{uv}_x)^2+(u_y-r)^2 \\ 
+\|v - \hat{uv} \| ^2 &= (v_x -\hat{uv}_x)^2+(v_y-r)^2 
+\label{eq2}
+\end{align}
+
+Finalement, l'équation \ref{eq:test} est équivalente {\`a} \citep{BreuEtAl95}~:
+\begin{equation}
+  \label{eq3}
+  (w_x-v_x)(v_x^2-2r(v_y-u_y)+v_y^2-u_y^2) \geq (v_x-u_x)(w_x^2-v_x^2-2r(w_y-v_y)+w_y^2-v_y^2)
+\end{equation}
+
+Nous pouvons donc écrire maintenant un prédicat \INTERNNAME{caché\_par(u,v,w,r)}
+ qui permet de décider si  $u$ et $w$ {\it cachent} $v$ sur $y=r$ (voir
+ algorithme \ref{alg:cache_breu}).
+
+\begin{algorithm}[!ht]
+\caption{Prédicat \INTERNNAME{caché\_par} de \citet{BreuEtAl95}}
+\label{alg:cache_breu}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{caché\_par($u,v,w,r$)}
+\COMMENT{$v$ est-il caché par $u$ et $w$ sur la droite $y=r$ ?} 
+\STATE {\bf retourne} $ ((w_x-v_x)(v_x^2-u_x^2-2r(v_y-u_y)+v_y^2-u_y^2) \geq
+          (v_x-u_x)(w_x^2-v_x^2-2r(w_y-v_y)+w_y^2-v_y^2))$
+\end{algorithmic}
+\end{algorithm}
+
+Avec ce prédicat et la seconde observation de \citeauthor{BreuEtAl95},
+nous pouvons maintenant présenter le c{\oe}ur de  l'algorithme qui est la
+procédure de suppression  des  sites d'une  liste de  sites  candidats
+susceptibles d'appartenir {\`a}   la liste ${\L}_r$  étant  donnée une
+droite $y=r$. Dans la suite nous notons {\it Candidat$_r$} cette liste
+de sites possibles. En pratique, cette liste est composée des sites de
+${\L}_{r-1}$ et des sites   présents  sur la droite  $y=r$.  Autrement
+dit~:
+\begin{displaymath}
+  Candidat_r= {\L}_{r-1} \cup \{ p \in P \quad|\quad p_y=r\}
+\end{displaymath}
+
+Si les sites de {\it Candidat$_r$} sont triés par abscisse croissante,
+il suffit d'appliquer  le prédicat  \INTERNNAME{caché\_par} de manière
+gloutonne avec une  structure de  pile nous  permetant  de dépiler les
+sites    qui  seraient   cachés   par    d'autres   (voir   algorithme
+\ref{alg:algo_breu2D}).  Nous obtenons  ainsi  un algorithme   dont le
+co{\^u}t est linéaire en le nombre de sites dans $Candidat_r$.
+
+Remarquons que cet  algorithme   est similaire  à  celui  utilisé  par
+\aut{Graham}    pour    le      calcul     d'enveloppe   convexe (voir
+\citealt{cormen,deberg}).
+
+
+\begin{algorithm}[htbp]
+\caption{Procédure de suppression de sites de \citet{BreuEtAl95}}
+\label{alg:algo_breu2D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Suppression\_sites($Candidat_r$,$r$)} 
+\STATE ${\L}_r[1]=Candidat_r[1]$
+\STATE ${\L}_r[2]=Candidat_r[2]$
+\STATE k=2 , l=3 , c=$|Candidat_r|$
+\WHILE{$l\leq c$}
+\STATE $w= Candidat_r[l]$
+\WHILE{$k\geq 2$ et  \INTERNNAME{Caché\_par}(${\L}_r[k-1],{\L}_r[k],w,r$)}
+\STATE $k=k-1$
+\ENDWHILE
+\STATE $k=k+1$ , $l=l+1$
+\STATE ${\L}_r[k]=w$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+Or, d'après la première observation, la liste ${\L}_r$ a une taille bornée
+par $m_1$ et par conséquent c'est aussi le cas pour la liste $Candidat_r$. De
+plus, la construction de cette liste {\`a} partir de  ${\L}_{r-1}$ se fait
+en $O(m_1)$.
+
+Le   passage de ${\L}_{r-1}$  vers ${\L}_r$  se fait  donc en
+$O(m_1)$. Comme uniquement deux balayages sont nécessaires,  nous
+obtenons une complexité  finale pour la  construction du  diagramme de
+Voronoï discret  et de l'EDT en $O(m_1m_2)$,  c'est-{\`a}-dire
+linéaire en le 
+nombre de pixels de l'image ; ce  qui est optimal  pour le problème de la
+transformée en distance.
+
+Récemment, \citet{Guan}  ont    présenté   une  optimisation de    cet
+algorithme en considérant une approche basée sur des listes, et ramènent
+la complexité en $O(\sqrt{m_1m_2t})$  o{\`u}  $t$ représente le nombre  de
+sites mais  l'algorithme nécessite toujours une étape d'initialisation
+en $O(m_1m_2)$.
+
+
+Dans le paragraphe suivant, nous détaillons une version
+tridimensionnelle de cet algorithme avant de l'étendre finalement à des
+images en $nD$.
+
+
+
+%%%%%%%         ALGO 3D
+\subsection{EDT en dimension 3 basée sur le diagramme de Voronoï discret}
+
+Dans la suite, une image $\mathcal{I}$ en $n$ dimensions sera un
+sous-ensemble de $\Z^n$ noté $[1,m_1]\times\ldots\times[1,m_n]$.
+Nous formalisons tout d'abord la notion de {\it tube} dans une grille de
+$\Z^n$. La notion de tube est une extension en $nD$ des lignes, colonnes et
+hauteurs en 2D/3D.
+
+\begin{defi}[tube selon la $k\eme$ dimension dans une image en dimension $n$]
+  Un    tube    est    un    ensemble      de   $m_k$ points   du    domaine
+  $[1,m_1]\times\ldots\times[1,m_n]$  tel    que  les  coordonnées des
+  points ne différent que dans la $k$ dimension. Ce tube est noté~:
+\begin{displaymath}
+  T_{i_1,\ldots,i_{k-1},\bullet,i_{k+1},\ldots,i_m}=\{(i_1,\ldots,i_{k-1},i_k,i_{k+1},\ldots,i_n)\in\mathcal{I}~|~1\leq i_k \leq m_k\}
+\end{displaymath}
+\end{defi}
+
+Dans l'approche multidimensionnelle de \citeauthor{SaitTori}, les
+fusions de distances sont calculées le long de {\it tubes}
+orthogonaux.
+
+L'idée de la version 3D de l'algorithme de transformée en distance
+basée sur le diagramme de Voronoï discret est la suivante~: utiliser
+la décomposition en tubes et construire les diagrammes partiels dans
+chaque dimension. 
+
+Dans  \citet{SaitTori}, les auteurs ont présenté
+un algorithme dérivé de leur calcul de transformée en distance pour
+construire un tel diagramme. Dans notre approche, nous proposons une
+construction basée sur l'approche de \citeauthor{BreuEtAl95}
+permettant ainsi une construction en temps optimal ainsi qu'une
+extensibilité pour des grilles non-cubiques.
+
+Cette approche se décompose donc en trois étapes, une par dimension~:
+
+\begin{description}
+\item[Étape 1 :] lors de cette première étape,  nous calculons un
+  diagramme de Voronoï de dimension 1 dans les tubes parallèles à
+l'axe des $x$. En d'autres termes, nous étiquetons tous les pixels de
+l'objet par le plus proche pixel du complémentaire
+ayant les  mêmes coordonnées en $y$ et en $z$. Si un point de l'objet
+est équidistant  de  deux sites, nous choisissons arbitrairement un
+représentant, ce choix n'aura aucune importance pour la transformée en
+distance.
+
+Ce calcul de diagramme de Voronoï unidimensionnel se fait en deux
+parcours de chaque tube et donc le coût total de cette première étape
+est en  $O(m_1m_2m_3)$ (voir figure \ref{dcoeurjo_2D}-$(b)$).
+%$
+Dans le cas particulier où il n'y a pas de site de même $y$ et de même
+$z$, nous utilisons une étiquette spéciale notée $\emptyset$.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[draft=false,width=12cm]{Fig/edt_dcoeurjo}
+  \caption[Calcul du diagramme de Voronoï discret 2D avec suppression
+  de sites]{Illustration du calcul 2D~:  les sites sont étiquetés par
+    une lettre et on souhaite étiqueter les pixels de l'objet par le
+    site le plus proche. $(a)$ l'image binaire (les cases noires
+représentent les sites), $(b)$ résultat après
+    les deux  premiers balayages en ligne, $(c)$  résultat après
+    suppression des sites dans les colonnes. $(d)$ détail de la
+    procédure de suppression~: $C$ est caché par $A$ et $E$, $B$ est
+    caché par $A$ et $E$ le long de la colonne considérée.}
+  \label{dcoeurjo_2D}
+\end{center}
+\end{figure}
+
+
+\item[Étape 2 :] l'objectif est ici de construire des diagrammes de Voronoï discrets
+  dans chaque coupe $(x,y)$ de l'image 3D. Pour cela, nous considérons
+  un tube $T$ défini par~:
+
+\begin{displaymath}
+  T_{r,\bullet,t}=\{(x,y,z) \in \mathcal{I}~|~ x=r,~z=t,~y\in[1\ldots m_2]\}
+\end{displaymath}
+
+Chaque case  $(r,y,t)$ de ce tube contient les coordonnées du site
+le plus proche dans chaque ligne (au sens axe des $x$). Nous appellerons dans la suite, les
+sites présents dans ce tube des {\it candidats}. En d'autres termes,
+ces sites sont utilisés dans les diagrammes 1D  et sont candidats pour
+les diagrammes 2D définis dans les coupes.
+
+Ainsi, nous avons une liste de candidats telle que $|Candidat|\leq m_2$
+et nous pouvons faire les mêmes remarques que \citeauthor{BreuEtAl95}~:
+\begin{itemize}
+\item nous n'avons qu'un seul candidat par $y$ (par construction à
+  l'étape 1) ;
+\item l'ordre selon les ordonnées des sites dont les cellules
+  intersectent le tube dans le diagramme final est le même que celui
+  des candidats du tube.
+\end{itemize}
+
+Nous pouvons donc  appliquer la procédure de  suppression des sites de
+\citeauthor{BreuEtAl95} donné par l'algorithme  \ref{alg:algo_breu2D},
+de  manière  à supprimer  de la  liste $Candidat$  les  sites dont les
+cellules vont     disparaître      du    tube   $T$     (voir   figure
+\ref{dcoeurjo_2D}).  Il  nous   faut  cependant présenter  un  nouveau
+prédicat \INTERNNAME{caché\_par\_2D} étant donné que la suppression se
+fait verticalement et non horizontalement comme dans l'algorithme initial
+(voir algorithme \ref{alg:cache2D}).
+
+\begin{algorithm}[!ht]
+\caption{ Nouveau prédicat \INTERNNAME{caché\_par\_2D}}
+\label{alg:cache2D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{caché\_par\_2D($u,v,w,r$)}
+\COMMENT{$v$ est-il caché par $u$ et $w$ sur la droite $x=r$ ?}
+\STATE {\bf retourne} $ ((w_y-v_y)(v_y^2-u_y^2-2r(v_x-u_x)+v_x^2-u_x^2) \geq
+          (v_y-u_y)(w_y^2-v_y^2-2r(w_x-v_x)+w_x^2-v_x^2))$
+\end{algorithmic}
+\end{algorithm}
+
+Nous appliquons donc l'algorithme \ref{alg:algo_breu2D} avec ce
+prédicat et nous construisons ainsi des diagrammes de Voronoï discrets
+dans chaque coupe de l'image. Étant donné que cette suppression sur
+un tube se fait en temps linéaire, c'est-à-dire en $O(m_2)$ selon nos
+notations, le coût global de cette étape est donc en  $O(m_1m_2m_3)$.
+
+\item[Étape 3 : ]l'objectif de cette étape est de fusionner les différents diagrammes
+de Voronoï discrets 2D de chaque coupe pour construire le diagramme 3D.
+
+Nous considérons donc le tube $T'$ défini dans l'image  par~:
+\begin{equation}
+T'_{r,t,\bullet}=\{(x,y,z) \in \mathcal{I}~|~ x=r,~y=t,~z\in[1\ldots m_3]\}
+\end{equation}
+
+A chaque point $(r,t,z)$ de ce tube, nous avons les coordonnées du
+site le plus proche du voxel $(r,t,z)$ parmi les sites appartenant au plan
+parallèle à $Oxy$ et de hauteur $z$. Les sites du tube $T'$
+définissent alors une liste de candidats pour le diagramme partiel 3D
+le long de $T'$.
+
+Nous pouvons  faire les mêmes observations que \citeauthor{BreuEtAl95}
+pour le cas 3D~:
+
+\begin{itemize}
+\item nous n'avons qu'un seul candidat par $z$ (c'est-à-dire un par
+  coupe) ;
+\item l'ordre selon les coordonnées en  ``$z$'' des sites dont les cellules
+  intersectent le tube dans le diagramme final est le même que celui
+  des candidats du tube.
+\end{itemize}
+
+L'idée est encore ici d'appliquer une suppression de sites sur ce tube
+(voir figure \ref{dcoeurjo_3D}). Avant cela, il nous faut détailler le
+prédicat \INTERNNAME{caché\_par\_3D} qui sera utlisé. Celui-ci prend 
+en arguments trois points  $u,v,w\in\Z^3$  et le paramètre du tube 3D
+$(x=r,y=t)$. Il décide si le site $v$ est {\it caché} par $u$ et
+$w$ sur le long de la droite $(x=r,y=t)$.
+
+De la même façon que les équations (\ref{eq1}), (\ref{eq2}) et
+(\ref{eq3}), nous avons~:
+\begin{align}
+  \|u - \hat{uv} \| ^2 &= (u_x -r)^2+(u_y-t)^2+(u_z-\hat{uv}_z)^2\\
+  \|v - \hat{uv} \| ^2 &= (v_x -r)^2+(v_y-t)^2+(v_z-\hat{uv}_z)^2
+\end{align}
+
+Et donc~:
+\begin{equation}
+  \hat{uv}_z=\frac{v_z^2-u_z^2+(v_x-r)^2+(v_y-t)^2 - (u_x-r)^2 - (u_y-t)^2}{2(v_z-u_z)}
+\end{equation}
+ 
+Nous pouvons maintenant écrire le prédicat qui sera utilisé pour la
+suppression 3D (voir algorithme \ref{alg:cache3D}).
+
+\begin{algorithm}
+\caption{Prédicat \INTERNNAME{caché\_par\_3D}}
+\label{alg:cache3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{caché\_par\_3D($u,v,w,r,t$)}\\
+\COMMENT{$v$ est-il caché par $u$ et $w$ sur la droite $(x=r,y=t)$ ?}
+\STATE {\bf retourne} $ ((w_z-v_z)(v_z^2-u_z^2+(v_x-r)^2+(v_y-t)^2 - (u_x-r)^2 -(u_y-t)^2) \geq  (v_z-u_z)(w_z^2-v_z^2+(w_x-r)^2+(w_y-t)^2 - (v_x-r)^2 - (v_y-t)^2))$
+\end{algorithmic}
+\end{algorithm}
+
+En  changeant uniquement  le prédicat de l'algorithme \ref{alg:algo_breu2D},
+nous réutilisons celui-ci et obtenons ainsi un algorithme linéaire en
+la taille du tube, c'est-à-dire en $O(m_3)$, pour supprimer les sites
+non présents dans le diagramme final.
+
+En appliquant ce processus pour tous les tubes, nous avons une
+ complexité en $O(m_1m_2m_3)$ pour cette étape.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[draft=false,width=12cm]{Fig/edt_dcoeurjo_3D}
+  \caption[Construction du diagramme de Voronoï discret 3D]{Illustration de l'étape 3~: dans chaque coupe, les voxels
+    du tube sont étiquetés par le site le  plus proche dans la coupe et
+    on  utilise  la  suppression    de  sites 3D   pour  fusionner  les
+    diagrammes.}
+  \label{dcoeurjo_3D}
+\end{center}
+\end{figure}
+
+\item[Coût global]
+
+Étant donné que chaque étape de l'algorithme se fait en
+$O(m_1m_3m_3)$, le coût global du calcul du diagramme de Voronoï
+discret, et donc de la transformée en distance euclidienne 3D, se fait
+en $O(m_1m_3m_3)$ ce qui est donc linéaire en le nombre de voxels et
+optimal pour le problème.
+
+L'algorithme global pour le cas 3D est présenté dans l'algorithme \ref{algglobal3D}.
+
+
+\begin{algorithm}[!ht]
+\caption{Diagramme de Voronoï discret en 3D}
+\label{algglobal3D}
+\begin{algorithmic}[1]
+  \EXTERNNAME \INTERNNAME{Diagramme\_Voronoï\_discret\_3D($\mathcal{I}$)} 
+
+\ \\
+\COMMENT{Étape  1 : selon les lignes (axe $Ox$)}
+\FOR{$j$ de 1 à $m_2$}
+\FOR{$k$ de 1 à $m_3$}
+\STATE Calcul du diagramme de Voronoï unidimensionnel dans le tube  $T_{\bullet,j,k}$
+\ENDFOR
+\ENDFOR
+%\STATE \INTERNNAME{Partial\_Voronoï\_diargam\_2D(I,P)}
+
+\ \\
+\COMMENT{Étape 2 : selon les colonnes (axe $Oy$)}
+\FOR{$i$ de 1 à $m_1$}
+\FOR{$k$ de 1 à $m_3$}
+\STATE Appliquer la suppression de sites dans le tube $T_{i,\bullet,k}$\\
+ avec le prédicat \INTERNNAME{caché\_par\_2D}
+\ENDFOR
+\ENDFOR
+
+\ \\
+\COMMENT{Étape 3 : selon les hauteurs (axe $Oz$)}
+\FOR{$i$ de 1 à $m_1$}
+\FOR{$j$ de 1 à $m_2$}
+\STATE Appliquer la suppression de sites dans le tube $T_{i,,j,\bullet}$\\
+avec le prédicat \INTERNNAME{caché\_par\_3D}
+\ENDFOR
+\ENDFOR
+%\STATE \INTERNNAME{Partial\_Voronoï\_diargam\_3D(I,P)}
+
+\end{algorithmic}
+\end{algorithm}
+
+\end{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{EDT en dimension $n$ basée sur le diagramme de Voronoï discret}
+
+Dans ce paragraphe, nous  généralisons l'approche proposée en  3D pour
+des  images  $n$-dimensionnelles permettant  le calcul  du diagramme de
+Voronoï discret et de la transformée en  distance euclidienne en temps
+optimal.  Nous  prouvons  aussi  les différentes  observations  faites
+précédemment dans le cas $nD$.
+
+\subsubsection{Analyse théorique}
+
+\label{sec:analyse-theorique}
+
+Introduisons tout d'abord quelques notations.  Nous considérons par la
+suite un  diagramme  de Voronoï noté  ${\mathcal{V}}_{\mathcal{P}}$ en
+dimension $n$, c'est-àdire  ${\P}\subset\R^n$. Nous considérons aussi
+une  droite  $l$ dans    $\R^n$  et on  note  $\Pi_l$   la  projection
+orthogonale de points de $\R^n$ sur $l$. Sur cette droite, nous allons
+considérer une origine, notée $O$, et un vecteur unitaire de manière à
+introduire    un  ordre des  points     de $l$.   Nous noterons  aussi
+$\{p_i\}_{1..n}$  les sites de ${\P}$   et $\Q=\{q_i\} \subseteq {\P}$
+l'ensemble  des sites de $\P$ dont  la cellule  associée intersecte la
+droite $l$. Étant données les propriétés de convexité des cellules de
+Voronoï, on dispose également d'un ordre des cellules de $\Q$ le long
+de la droite $l$~: l'intersection d'un convexe avec une droite est un
+segment. A part dans les cas {\it dégénérés}, ces segments sont
+totalement ordonnés.
+
+Pour prouver les observations faites en 2D et en 3D (dans les étapes 2
+et 3), il nous faut montrer les deux points suivants~:
+\begin{itemize}
+\item si deux sites se projettent  orthogonalement sur $l$ au même point,
+  l'un de ces deux sites peut être supprimé pour résoudre le problème de
+  l'intersection de ${\mathcal{V}}_{\mathcal{P}}$ avec $l$ (première
+  observation de \citeauthor{BreuEtAl95}) ;
+\item  l'ordre des cellules  sur $l$ des  sites de $\Q$ est compatible
+avec   l'ordre  des projections  des sites  $\{p_i\}$  sur $l$, notées
+$\Pi_l(p_i)$ (seconde observation de \citeauthor{BreuEtAl95}).
+\end{itemize}
+
+De manière intuitive, ces deux propriétés sont presque triviales mais
+il apparaît qu'une preuve formelle de celles-ci n'est pas évidente.
+
+Tout d'abord, considérons deux points $A$ et $B$ de $\P$, notons $H$
+l'hyper-plan médiateur du segment $[AB]$ et $\overrightarrow{l}$ un
+vecteur directeur de $l$. Le premier lemme nous permet d'enlever de
+$\P$ les points pathologiques, c'est-à-dire ceux dont les projections
+sur $l$ sont confondues. Par la suite et pour simplifier les
+notations, on utilisera $\pi_A$ pour $\Pi_l(A)$ et $\pi_B$ pour
+$\Pi_l(B)$. Le lemme s'énonce alors de la façon suivante~:
+
+\begin{lem}
+  \label{lem_H}
+   Le  plan    euclidien $\overrightarrow{H}$ associé   au    plan affine    $H$   contient
+   $\overrightarrow{l}$ si et seulement si $\pi_A=\pi_B$
+\end{lem}
+
+\begin{mapreuve} 
+
+nous prouvons tout d'abord l'implication de gauche à droite. Nous
+supposons donc que  $\overrightarrow{l}\in \overrightarrow{H}$, et notons $M$ le milieu
+de $[AB]$ et $\Pi_l(M)=\pi_M$. Nous avons alors~:
+
+\begin{displaymath}
+  \overrightarrow{OA}=\overrightarrow{O\pi_M}+ \overrightarrow{\pi_M M} + \overrightarrow{MA}
+\end{displaymath}
+
+Donc, si nous notons $\Pi^*_l$ la projection vectorielle engendrée par
+$\Pi_l$, nous avons~:
+\begin{align*}
+  \Pi^*_l(\overrightarrow{OA})&=\Pi^*_l(\overrightarrow{O\pi_M})+ \Pi^*_l(\overrightarrow{\pi_M M}) + \Pi^*_l(\overrightarrow{MA})\\
+  &= \overrightarrow{O\pi_M} + \overrightarrow{0} + \overrightarrow{0}
+\end{align*}
+
+Nous avons $\Pi^*_l(\overrightarrow{MA})=\overrightarrow{0}$ parce que 
+$\overrightarrow{AM}$ est orthogonal à tout  vecteur appartenant à $\overrightarrow{H}$
+par définition,
+ainsi, comme   $\overrightarrow{l}\in   \overrightarrow{H}$,   $\overrightarrow{AM}$
+est orthogonal à $\overrightarrow{l}$     et donc $\Pi^*_l(\overrightarrow{MA})=\overrightarrow{0}$.
+
+De plus, nous avons de la même manière~:
+\begin{displaymath}
+   \Pi^*_l(\overrightarrow{OA})=\Pi^*_l(\overrightarrow{OB})=\overrightarrow{O\pi_M}
+\end{displaymath}
+
+Et donc finalement, $\pi_A=\pi_B=\pi_M$.
+
+Pour prouver l'implication inverse, supposons $\pi_A=\pi_B$. Nous
+avons donc  $\overrightarrow{\pi_M A}\perp\overrightarrow{l}$ et
+$\overrightarrow{\pi_M  B}\perp\overrightarrow{l}$
+ par définition de la projection. Ainsi,
+$\overrightarrow{l}$ est orthogonal au plan dans  $\R^n$ engendré
+par $(\pi_A,A,B)$. En particulier,
+$\overrightarrow{l}\perp\overrightarrow{AB}$ et comme  $\overrightarrow{H}$ contient
+tous les vecteurs orthogonaux à $\overrightarrow{AB}$,
+$\overrightarrow{l}$ appartient nécessairement à $\overrightarrow{H}$.
+\end{mapreuve}
+
+Nous notons  $\Sigma_A$ (resp.   $\Sigma_B$)  l'intersection entre  la
+cellule de  Voronoï   associée  à A   (resp. $B$)   et la  droite  $l$
+($\Sigma_A$  et $\Sigma_B$ peuvent   être  nuls).  A  partir du  lemme
+précédent, nous avons les corollaires suivants~:
+
+\begin{coro}
+  Si $\pi_A\neq\pi_B$, l'intersection entre $H$ et $l$ est réduite en
+  un point et les deux segments sur $l$, $\Sigma_A$ et $\Sigma_B$, sont
+  disjoints.
+\end{coro}
+
+La preuve se déduit directement du lemme \ref{lem_H}.
+
+\begin{coro}
+ \label{coro_pi}
+ Si $\pi_A=\pi_B$ nous avons deux cas possibles~:
+  \begin{itemize}
+  \item    soit     $dist(A,l)\neq    dist(B,l)$     et     donc    si
+  $\Sigma_A\neq\emptyset$  (resp.   $\Sigma_B\neq\emptyset$)     alors
+  $\Sigma_B=\emptyset$   (resp.    $\Sigma_A=\emptyset$),   et    donc
+  $B\not\in\mathcal{Q}$ (resp.$A\not\in\mathcal{Q}$)~;
+  \item soit $dist(A,l)=dist(B,l)$ et dans ce cas $\Sigma_A=\Sigma_B$
+    (les ensembles peuvent être éventuellement nuls) et donc soit  $A$
+    ou $B$ (arbitrairement) peut ne plus être considéré comme
+appartenant à $\mathcal{Q}$.
+  \end{itemize}
+\end{coro}
+
+\begin{mapreuve} 
+
+Le  premier  point de  ce corollaire est   direct, le second nécessite
+quelques détails. Montrons que $\Sigma_A=\Sigma_B$.
+
+Soit   $p$ un point de $\Sigma_A$.   Par définition,  $p$ appartient à
+$l$. Or, $l$  est incluse  dans $H$  d'après le lemme  \ref{lem_H}.  La
+cellule de  Voronoï $C_A$ engendrée  par  $A$ est entièrement  du même
+côté de $H$ donc $p$ est sur la frontière de $C_A$. Comme le diagramme
+de Voronoï est une  partition de l'espace,  il existe un site $X$  tel
+que $p$ soit sur la frontière de $C_X$. $A$ et  $X$ sont des sites 
+plus  proches   de  $p$   que   tout    autre site,  Or  nous    avons
+$dist(A,p)=dist(B,p)$  donc soit $X=B$,   soit $p$  est aussi  sur  la
+frontière  de $B$. Quel que  soit le  cas  de figure,  $p$ appartient à
+$\Sigma_B$. Nous obtenons $\Sigma_A\subseteq\Sigma_B$.
+
+De       la  même      manière,      nous     pouvons   prouver    que
+$\Sigma_B\subseteq\Sigma_A$ et donc que $\Sigma_A=\Sigma_B$.
+\end{mapreuve}
+
+
+Maintenant, étant donné un tube dans une image discrète $nD$, nous
+avons le corollaire~:
+
+\begin{coro}
+\label{cor_obs1}
+ Soit $T$ un tube selon la $k^{ième}$ dimension d'une image dans
+ $\Z^n$, soit $\mathcal{Q}$ la liste des sites de  ${p_i\in P}$  (dans ce
+ cas $P\subset \Z^n$) telle que 
+ $\C_{p_i}\cap T\neq \emptyset$, nous avons alors~:
+ \begin{equation}
+   \label{eq:tube}
+   |\mathcal{Q}| \leq m_k
+ \end{equation}
+\end{coro}
+
+
+D'après le corollaire \ref{coro_pi} et dans une optique de transformée
+en distance, nous pouvons considérer uniquement des sites de $\P$ tels
+que  $\pi_A\neq\pi_B$ (pour tout couple  $(A,B)$).
+
+Nous présentons maintenant le lemme montrant la préservation de
+l'ordre entre les cellules et la projection de sites sur $l$~:
+
+\begin{lem}
+  \label{lem_AB}
+  Supposons ${\P}=\{A,B\}$, $\pi_A\neq\pi_B$, $a\in\Sigma_A$ et
+  $b\in\Sigma_B$ ($a\neq b$), l'ordre des points $(\pi_A,\pi_B)$ sur $l$ est le
+  même que   $(a,b)$, ce qui s'écrit~:
+  \begin{equation}
+        \label{eq:7}
+    \overrightarrow{ab}=\kappa\overrightarrow{\pi_A\pi_B} \quad(\text{avec~}\kappa>0)
+  \end{equation}
+où  '.' est le produit scalaire de vecteurs.
+\end{lem}
+
+
+\begin{mapreuve} 
+
+Par définition, $A$   et $B$ sont de part   et d'autre de l'hyperplan $H$ et
+$\overrightarrow{AB}$ est normal au plan. Or, $a$  est du même coté de
+$H$ que $A$,  de même pour  $b$ qui est du même  coté de $H$  que $B$.
+Donc   la  composante   suivant    $\overrightarrow{AB}$   du  vecteur
+$\overrightarrow{ab}$ est positive. En d'autres termes~:
+\begin{equation}
+\label{eq:8}
+  \overrightarrow{ab}.\overrightarrow{AB}=\lambda\quad(\lambda>0)
+\end{equation}
+
+Par définition de la projection, la  composante suivant $
+\overrightarrow{\pi_A\pi_B}$ du vecteur  $\overrightarrow{AB}$ est $
+\overrightarrow{\pi_A\pi_B}$. Ainsi~:
+\begin{equation}
+\label{eq:9}
+  \overrightarrow{\pi_A\pi_B}. \overrightarrow{AB}= \| \overrightarrow{\pi_A\pi_B}\|^2=\mu \quad(\mu>0)
+\end{equation}
+
+En remplaçant $\overrightarrow{ab}$ par sa valeur (\ref{eq:7}) dans
+l'équation (\ref{eq:8}), nous obtenons
+
+\begin{align*}
+        \kappa\overrightarrow{\pi_A\pi_B}.\overrightarrow{AB}= \lambda
+\end{align*}
+
+C'est-à-dire~:
+\begin{displaymath}
+\kappa=\frac{\lambda}{\mu}>0
+\end{displaymath}
+
+\end{mapreuve}
+
+
+Nous pouvons maintenant conclure sur tous les points de $\P$ en
+appliquant le lemme précédent sur chaque paire de points de $\P$
+
+\begin{coro}
+  \label{obs}
+  Si les sites  $\{p_i\}_{1..n}$ de $\P$ sont tels que $\Pi_l(p_1) <
+  \ldots < \Pi_l(p_n)$, alors l'ordre des $\Sigma_{p_i}$ sur $l$ est
+  compatible.
+\end{coro}
+
+\begin{mapreuve} si on considère l'intersection de $\mathcal{V}_{\P}$,
+  pour chaque paire de points $(p,q)$ de $\P$ tels que
+  $\Pi_l(p)\neq\Pi_l(q)$, les cellules,  sur $l$, $\Sigma_p$ et
+$\Sigma_q$ sont des sous-ensembles (peut-être vides) des cellules du
+diagramme de Voronoï qui ne considère que les points $p$ et
+$q$. Ainsi, d'après le lemme  \ref{lem_AB}, l'ordre sur $l$ des
+projetés $\Pi_l(p)$ et $\Pi_l(q)$ est le même que celui des cellules
+$\Sigma_p$ et $\Sigma_q$. Étant donné que cette propriété est vraie
+pour tout couple de points de $\P$, elle est vraie pour tous les
+points de $\P$.
+\end{mapreuve}
+
+
+Sous l'hypothèse que  $\Pi_l(u) < \Pi_l(v) <\Pi_l(w)$, nous pouvons
+construire un prédicat \INTERNNAME{caché\_par\_$l$} qui permet de
+décider si $v$ est caché par $u$ et $w$ sur la droite $l$ et ce
+quelle que soit la dimension.
+
+Considérons les sites $\{p_i\}$ de ${\P}$ tels que~:
+\begin{equation}
+\label{eq:ordre}
+  \Pi_l(p_i) < \Pi_l(p_j)\qquad \forall~(i,j)~1\leq i<j \leq n
+\end{equation}
+
+Ainsi, en utilisant le prédicat \INTERNNAME{caché\_par\_$l$} et
+l'algorithme \ref{alg:algo_breu2D} de suppression de sites, nous avons
+le corollaire suivant~:
+
+\begin{coro}
+  Étant donné un ensemble de site ${\P}$ vérifiant l'équation
+  (\ref{eq:ordre}) et un prédicat \INTERNNAME{caché\_par\_$l$}, nous
+  calculons l'ensemble des sites  $\{q_i\}$ de $\Q$ tels que
+  $\Sigma_{q_i}\neq\emptyset$ en   $O(|{\P}|)$ avec l'algorithme \ref{alg:algo_breu2D}.
+\end{coro}
+
+
+\subsubsection{Description de l'algorithme}
+
+
+Étant donné que toutes les observations de \citeauthor{BreuEtAl95} ont
+été montrées en dimension quelconque  dans le paragraphe précédent,
+nous pouvons proposer un algorithme de calcul de diagramme de Voronoï
+discret et de transformée en distance euclidienne (voir algorithme
+\ref{alg:algonD}).
+
+
+\begin{algorithm}
+\caption{Diagramme de Voronoï discret en $nD$}
+\label{alg:algonD}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Diagramme\_Voronoï\_discret\_nD(I,P)} 
+\STATE Calcul des diagrammes de Voronoï discrets uni-dimensionnels comme initialisation
+\FORALL{dimension $k\geq 2$} 
+\FORALL{tube $T$ selon la dimension $k$}
+\STATE Construction du prédicat \INTERNNAME{caché\_par\_$T$}
+\STATE $Candidats$=\{sites des diagrammes de Voronoï discrets dans les
+$(k-1)$ dimensions le long du tube $T$\}
+\STATE Construction de la liste ${\L}_T$ à partir de $Candidats$ en
+utilisant  \INTERNNAME{caché\_par\_$T$} et l'algorithme \ref{alg:algo_breu2D}
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{theo}
+  \label{letheo}
+  L'algorithme \ref{alg:algonD} est correct et sa complexité est
+  linéaire en le nombre de points de l'image.
+\end{theo}
+
+\begin{mapreuve}
+la preuve de la correction de cet algorithme est similaire à celle
+proposée  par \citet{SaitTori} pour une approche basée sur des tubes
+le long des différentes dimensions. De plus, les preuves de la section
+\ref{sec:analyse-theorique} attestent la correction
+du processus de suppression de sites pour le cas $nD$ à toute étape $k$
+de l'algorithme.
+
+Concernant la preuve de linéarité, nous utilisons le corollaire
+\ref{cor_obs1} et le fait que l'algorithme \ref{alg:algo_breu2D} est
+linéaire en la taille de la liste d'entrée (le coût du prédicat
+\INTERNNAME{caché\_par\_$T$} est toujours $O(1)$ quelle que soit la
+dimension). Ainsi, pour chaque dimension $k$ de $1$ à $n$, le calcul
+des diagrammes de Voronoï discrets partiels se font en temps linéaire
+(en le nombre de points de l'image).
+
+Si  les    dimensions    de   l'image    binaire sont   données    par
+$[1,m_1]\times\ldots\times[1,m_n]$, l'algorithme  précédent a un  coût
+en $O(m_1m_2...m_n)$ ce qui est optimal pour le problème.
+\end{mapreuve}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%$\Pi_l(u)=\Pi_l(v)$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Analyse expérimentale}
+
+Dans un premier temps, nous illustrons la transformée en distance et
+le diagramme de Voronoï discret en dimension 2. Il est en effet plus
+simple d'observer les structures dans cette dimension qu'en dimension 3
+directement. 
+
+Considérons tout d'abord une distribution aléatoire de sites (voir
+figure \ref{fig:bruit}). Nous représentons donc le diagramme de
+Voronoï discret en affectant un niveau de gris pour chaque cellule. La
+figure \ref{fig:bruit}-$(c)$ présente la transformée en distance
+euclidienne exacte et pour des raisons  de
+lisibilité, nous utiliserons par la suite une palette de niveaux de
+gris réduite pour représenter cette transformée (figure
+\ref{fig:bruit}-$(d)$).
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,width=6cm]{Fig/bruit}}
+    \subfigure[]{ \includegraphics[draft=false,width=6cm]{Fig/bruit_voro}}
+    \subfigure[]{ \includegraphics[draft=false,width=6cm]{Fig/bruit_edt_norm}}
+    \subfigure[]{ \includegraphics[draft=false,width=6cm]{Fig/bruit_circ}}
+    \caption[Diagramme de Voronoï et EDT de sites distribués
+aléatoirement]{Diagramme de Voronoï et EDT  de sites distribués
+aléatoirement~: $(a)$ image binaire des sites, $(b)$
+      diagramme de Voronoï dans lequel un niveau de gris est affecté à
+chaque site, $(c)$ Transformée en distance euclidienne (histogramme 
+normalisé) et $(d)$  EDT
+avec une palette de niveaux de gris réduite pour mieux visualiser les fronts d'ondes.}
+    \label{fig:bruit}
+  \end{center}
+\end{figure}
+
+Dans la  figure   \ref{fig:sphere}, nous  calculons le   diagramme  de
+Voronoï ainsi que la transformée   en distance d'un disque. Pour  être
+plus précis,   les  sites considérés  dans ce    cas sont les   pixels
+complémentaires  de  l'objet.  Dans  ce  cas,  nous pouvons  voir très
+nettement  le faisceau des cellules du  diagramme de  Voronoï qui {\it
+convergent} vers le  centre  du disque. La  figure  \ref{fig:2spheres}
+considère une forme composée de deux disques joints.
+
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/sphere}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/sphere_voro}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/sphere_circ}}
+    \caption[Diagramme de Voronoï et EDT d'un disque]{Diagramme de
+      Voronoï et EDT d'un disque.}
+    \label{fig:sphere}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \subfigure[] {\includegraphics[draft=false,width=4.5cm]{Fig/2spheres}}
+    \subfigure[] { \includegraphics[draft=false,width=4.5cm]{Fig/2spheres_voro}}
+    \subfigure[]{ \includegraphics[draft=false,width=4.5cm]{Fig/2spheres_circ}}
+    \caption[Diagramme de Voronoï et EDT de deux disques avec
+ une intersection  non   vide]{Diagramme de Voronoï  et   EDT de  deux
+ disques avec une   intersection non vide~:  le disque  de  droite est
+ légèrement  plus grand que celui  de gauche ce qui permet d'expliquer
+ le non respect de la symétrie.}
+    \label{fig:2spheres}
+  \end{center}
+\end{figure}
+
+La figure \ref{fig:carre} illustre les algorithmes sur un rectangle
+plein. Dans l'illustration du diagramme de Voronoï, les phénomènes de
+dégradé sont dus à l'algorithme d'affectation d'un niveau de gris pour
+chaque cellule. Cependant, nous pouvons remarquer {\it le squelette} de la
+forme sur  le diagramme que nous formaliserons par la suite.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/carre}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/carre_voro}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/carre_circ}}
+    \caption[Diagramme de Voronoï et EDT d'un rectangle]{Diagramme de
+      Voronoï et EDT d'un rectangle~: $(a)$ image source, $(b)$ Diagramme
+      de Voronoï et $(c)$ EDT avec une palette de niveaux  de gris réduite.}
+    \label{fig:carre}
+  \end{center}
+\end{figure}
+
+Enfin, la figure \ref{fig:divers_edt2D} présente les différents
+algorithmes sur toute une variété d'objets synthétiques.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/homme}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/homme_voro}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/homme_circ}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/serpent}}
+    \subfigure[]{ \includegraphics[draft=false,width=4.5cm]{Fig/serpent_voro}}
+    \subfigure[]{ \includegraphics[draft=false,width=4.5cm]{Fig/serpent_circ}}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/grand}}
+    \subfigure[]{ \includegraphics[draft=false,width=4.5cm]{Fig/grand_voro}}
+    \subfigure[]{ \includegraphics[draft=false,width=4.5cm]{Fig/grand_circ}}
+    \caption[Diagramme de Voronoï et EDT d'objets
+    synthétiques]{Diagramme de Voronoï et EDT d'objets synthétiques.}
+    \label{fig:divers_edt2D}
+  \end{center}
+\end{figure}
+
+
+Pour illustrer les différents algorithmes en 3D, nous considérons tout
+d'abord l'image binaire de la figure \ref{fig:etoile}-$(a)$ qui se
+compose d'un cube discret, les sites sont placés à chaque sommet de
+celui-ci ainsi qu'à son centre. Les figures \ref{fig:etoile}-$(b)$ à
+\ref{fig:etoile}-$(d)$ représentent les différents diagrammes de
+Voronoï discrets partiels après respectivement la première phase
+d'initialisation, la fusion en $y$ puis la fusion en $z$. Les figures
+\ref{fig:etoile}-$(e)$ à \ref{fig:etoile}-$(g)$ correspondent à des
+visualisations du diagramme de Voronoï 3D suivant différents plans de
+coupe.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,width=4.5cm]{Fig/etoile_axe}}
+    \subfigure[]{   \includegraphics[origin=lt, angle=270,draft=false,width=4.5cm]{Fig/etoile_step1}}
+    \subfigure[]{   \includegraphics[origin=lt,angle=270,draft=false,width=4.5cm]{Fig/etoile_step2}}
+    \subfigure[]{  \includegraphics[origin=lt,draft=false,width=3.25cm]{Fig/res_etoile_1}}
+    \subfigure[]{  \includegraphics[origin=lt,draft=false,width=3.25cm]{Fig/res_etoile_2}}
+    \subfigure[]{  \includegraphics[origin=lt,draft=false,width=3.25cm]{Fig/res_etoile_3}}
+    \subfigure[]{  \includegraphics[origin=lt,draft=false,width=3.25cm]{Fig/res_etoile_4}}    
+    \caption[Illustration du diagramme de Voronoï discret 3D]{
+      Illustration du diagramme de Voronoï discret 3D :$(a)$ l'image
+      binaire avec les sites en gris, $(b)$ diagrammes de Voronoï
+      discrets uni-dimensionnels après la première phase d'initialisation selon l'axe
+      $Ox$, $(c)$ diagrammes de Voronoï discrets 2D après la fusion en
+      $y$, $(d)$ diagramme de Voronoï discret 3D et $(e)-(g)$ le
+      diagramme 3D avec des plans de coupe pour voir les structures internes.}
+    \label{fig:etoile}
+  \end{center}
+\end{figure}
+
+Dans la figure \ref{fig:3voxels}, nous illustrons le diagramme de
+Voronoï discret 3D et la transformée en distance euclidienne d'une
+grille ne contenant que trois sites.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+     \subfigure[]{     \includegraphics[angle=270,draft=false,width=4.25cm]{Fig/3voxels_sites}}
+     \subfigure[]{     \includegraphics[angle=270,draft=false,width=4.25cm]{Fig/3voxels_vor}}
+     \subfigure[]{     \includegraphics[angle=270,draft=false,width=4.25cm]{Fig/3voxels}}
+     \caption[Illustration du diagramme de Voronoï discret 3D et de la
+     transformée en distance]{Illustration du diagramme de Voronoï discret 3D et de la
+     transformée en distance~: $(a)$ image source avec trois sites,
+     $(b)$ diagramme de Voronoï discret 3D et $(c)$ la transformée en
+     distance (avec une palette réduite).}
+  \label{fig:3voxels}
+\end{center}
+\end{figure}
+
+
+Dans le cadre d'analyse de formes 3D, la figure \ref{fig:synth}
+présente un calcul de transformée en distance euclidienne sur un objet
+synthétique. Nous utilisons dans ce schéma un plan de coupe afin de
+voir ce qu'il se passe {\it à l'intérieur} de la forme. Pour
+cette image, nous pouvons observer les bons comportements de la
+transformée aussi bien sur les parties sphériques de la forme que sur
+la partie parallélepipédique.
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+   \subfigure[]{   \includegraphics[draft=false,width=6.5cm]{Fig/synth}}
+   \subfigure[]{   \includegraphics[draft=false,width=6.5cm]{Fig/res_synth}}
+         \caption[Transformée en distance euclidienne 3D]{Transformée
+           en distance euclidienne 3D~: $(a)$ image source et $(b)$
+           transformée en distance avec une palette réduite et un plan
+           de coupe.}
+  \label{fig:synth}
+\end{center}
+\end{figure}
+
+
+Finalement, nous pouvons aussi considérer la transformation inverse qui prendrait
+en entrée un squelette et qui reconstruirait la surface. La figure
+\ref{fig:hom} illustre ce processus de reconstruction par surface
+implicite de l'objet à partir d'un squelette.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{  \includegraphics[draft=false,width=4.25cm]{Fig/hom}}
+    \subfigure[]{  \includegraphics[draft=false,width=4.25cm]{Fig/hom_res}}
+    \subfigure[]{  \includegraphics[draft=false,width=4.25cm]{Fig/hom_res3}}
+         \caption[Reconstruction par surface implicite à partir d'un squelette]{Reconstruction
+           par surface implicite à partir d'un squelette~: $(a)$ le
+           squelette pouvant être vu comme un ensemble de sites, $(b)$
+           reconstruction d'une iso-surface à une distance 5 du
+           squelette et $(c)$ reconstruction à une distance 20.}
+  \label{fig:hom}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Diagramme de Voronoï discret et transformée en distance
+  sur des grilles non-cubiques}
+
+Dans notre approche, nous introduisons une structure géométrique
+complexe, le diagramme de Voronoï, entre l'objet binaire et sa
+transformée en distance. Cette étape supplémentaire nous permet
+d'étendre ces algorithmes pour des grilles non-cubiques. 
+
+
+Dans un premier temps, nous considérons des grilles parallépipédiques.
+En pratique, beaucoup d'appareils d'acquisition classiques en imagerie
+médicale produisent   des grilles qui   ne  sont  pas  isotropes.  Par
+exemple, pour certains types d'appareils   et pour certains types   de
+partie du  corps, les  rapports   entre les  directions peuvent  aller
+jusqu'à 3 ou 5.
+
+De nombreux  travaux    existent pour  résoudre    le problème de   la
+transformée  en distance  sur ce  type  de  grille. Dans  le  cas  des
+distances  de chanfrein,  \cite{coquin} et \citet{sintorn}  proposent, par  exemple, un
+calcul des  poids du masque  adapté  en fonction de facteurs  d'échelle
+entre les axes. Dans ce cas, si ce facteur  d'échelle varie entre deux
+images volumiques, il faut recalculer  les poids optimaux. Pour le cas
+de   la transformée  en   distance,  l'algorithme de \citet{SaitTori},
+optimisé par \citet{Hirata} et \citet{roerdnik}, permet de calculer la
+transformée exacte et résout ainsi le problème.  Nous montrons, par la
+suite,   comment notre  approche   permet elle  aussi  de  résoudre ce
+problème avant de passer à des espaces discrets plus complexes (grille
+hexagonale par exemple).
+
+
+ Soit $\P$ un ensemble de sites tel que $\P=\{(x,y,z)\in\Z^3\}$. Nous notons $\P_{\alpha\beta}$
+l'ensemble de sites $(x,\alpha y,\beta z)$ avec $(x,y,z)\in\Z^3$ et
+$\alpha$, $\beta\in\R^2$
+
+
+\begin{prop}
+  Soit $\mathcal{V}_{\P}$ le diagramme de Voronoï associé aux sites $\P$ et
+  $\mathcal{V}_{\P_{\alpha\beta}}$ le diagramme de Voronoï associé aux sites
+  $\P_{\alpha\beta}$, alors~:
+ \begin{displaymath}
+   \mathcal{V}_{\P_{\alpha\beta}}=\mathcal{E}_{\alpha\beta}(\mathcal{V}_(\P))
+ \end{displaymath}
+où $\mathcal{E}_{\alpha\beta}$ correspond à un changement d'échelle de
+$\alpha$ suivant $y$ et un changement d'échelle de $\beta$ suivant $z$.
+\end{prop}
+
+\begin{mapreuve}
+  La preuve est directe, on considère des points $p,~q,$ et $r$ de
+  $\P$ et $p',~q'$ et $r'$ leurs analogues\footnote{un point
+  (x,y,z) de $\P$ a pour analogue dans $\P_{\alpha\beta}$ le point $(x,y/\alpha,z/\beta)$.} dans
+$\P_{\alpha\beta}$, alors nous avons~:
+\begin{displaymath}
+ dist(p,q) < dist(p,r) \Leftrightarrow  dist(p',q') <dist(p',r')
+ \end{displaymath}
+
+où $dist$ est la distance euclidienne.
+
+Ainsi, si un point $p$ appartient à la cellule du site $q$ dans
+$\mathcal{V}_{\P}$, alors il appartient à la cellule du site $q'$ dans
+$\mathcal{V}_{\P_{\alpha\beta}}$, et réciproquement.
+\end{mapreuve}
+
+Finalement, nous pouvons utiliser exactement les mêmes algorithmes pour
+extraire le diagramme de Voronoï discret de la grille $\Z^3$. Il
+suffit de les transformer avec les changements d'échelle
+$\Z\times\alpha\Z\times\beta\Z$ et ainsi obtenir, après réécriture, la
+transformée en distance euclidienne sur ces grilles (voir figure
+\ref{fig:aniso}).
+Bien évidement, ce que nous avons illustré en 3D est aussi valable
+quelle que soit la dimension et donc les algorithmes proposés s'adaptent
+aussi  pour des grilles anisotropiques en dimension $n$.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[draft=false,width=4.5cm]{Fig/aniso3_init}
+    \includegraphics[draft=false,width=4.5cm]{Fig/anisobis3_voro}
+    \includegraphics[draft=false,width=4.5cm]{Fig/anisobis3_circ}
+         \caption[Diagramme de Voronoï et EDT sur une grille
+         anisotropique]{Diagramme de Voronoï et EDT sur une grille
+           anisotropique~: le facteur d'échelle entre l'axe $Ox$ et
+           l'axe $Oy$ est de 2.}
+  \label{fig:aniso}
+\end{center}
+\end{figure}
+
+
+
+Si nous considérons maintenant  des grilles non-cubiques, par  exemple
+des grilles hexagonales, très peu de solutions existent pour le calcul
+de la transformée en distance. Cependant, dans  le cas particulier des
+grilles hexagonales, de nombreux objets à analyser existent, notamment
+en physique.
+
+
+
+Tout d'abord, nous pouvons remarquer qu'à aucun  endroit de la méthode
+ni de  son analyse théorique le fait  que  les tubes soient parallèles
+aux axes de la  grille n'est utilisé.  En d'autres termes, nous pouvons
+très bien  envisager des  suppressions    de  sites, dans des     tubes
+orthogonaux, qui ne soient  pas  forcement parallèles aux  axes.  En  effet, nous
+pouvons effectuer le processus de fusion  avec un tube donné
+par  une équation du  type $y=\alpha x+\beta$, il   suffit dans ce cas
+d'adapter le prédicat   \INTERNNAME{caché\_par} pour tenir  compte  de
+l'équation.  Considérons pour  cela  une droite  réelle notée  $l$  et
+telle  que $y=\alpha x+\beta$, ainsi  que deux points  $u$ et $v$ tels
+que $\Pi_l(u)\neq\Pi_l(v)$  ce qui s'écrit  dans notre exemple $2(u_x-
+v_x)+2\alpha(v_y-u_y)\neq 0$. Dans  ce cas nous avons  les coordonnées
+du point $\hat{uv}$,  intersection de  la médiatrice  de  $[uv]$ et de
+$l$, qui sont données par~:
+
+\begin{displaymath}
+\hat{uv}=\left ( \frac{ u_x^{2}+ u_y^{2}- v_x^{2}- v_y^{2}+2\beta(v_y-u_y)}{ 2(u_x- v_x)+2\alpha(v_y-u_y)} , \frac{\alpha(v_x^2+v_y^2-u_x^2-u_y^2)+2\beta(u_x-v_x)}{ 2(u_x- v_x)+2\alpha(v_y-u_y)}\right )
+\end{displaymath}
+
+
+Ainsi,    il    est    facile      de   construire      un    prédicat
+\INTERNNAME{caché\_par\_$(\alpha,\beta)$} qui permet de tester,  étant
+donnés trois sites $u$, $v$ et $w$ tels que $\Pi_l(u)_y < \Pi_l(v)_y <
+\Pi_l(w)_y$ (on suppose $\alpha\neq 0$),  si la cellule associée à $v$
+est {\it  cachée} par les   cellules de $u$  et de  $w$  sur la  droite
+$l$. En  ne changeant  que ce  simple prédicat et la construction
+des  tubes (qui peut  être basée sur  les notions de droites discrètes
+présentées   dans  le chapitre   \ref{sec:droites-discretes-2d}), nous
+réutilisons   tous les  algorithmes  présentés pour   le diagramme  de
+Voronoï discret et la transformée en distance euclidienne.
+
+Bien évidemment,  utiliser  des tubes qui  ne sont  pas parallèles aux
+axes n'a pas beaucoup d'intérêt dans le cas de grilles orthogonales.
+Cependant, dans  le cas  de  grilles hexagonales, cette  propriété est
+fondamentale.  Considérons l'échantillonage  de la grille proposé dans
+la figure \ref{fig:hexa_tube}   qui consiste à  ajouter aux  points
+discrets du maillage certains points qui sont sur les arêtes {\it en
+  bas  à gauche}.  Ainsi, en utilisant une phase d'initialisation dans
+les tubes paramétrés par $y=\sqrt{3}x+b$ puis en appliquant le
+processus de suppression de sites avec le prédicat
+\INTERNNAME{caché\_par\_$(-1/\sqrt{3},b')$} dans les tubes orthogonaux
+aux précédents, nous obtenons un algorithme de calcul du diagramme de
+Voronoï discret sur notre maillage. Étant donné que l'échantillonage
+est linéaire en le nombre de points de la grille hexagonale d'origine, la
+complexité du calcul reste linéaire en le nombre de points et donc
+toujours optimal pour le problème. La figure \ref{fig:hexa} illustre
+ce calcul.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[draft=false,width=10cm]{Fig/hexa_grille_tube2.ps}
+       \caption[Rééchantillonage de la grille hexagonale pour le calcul
+       du diagramme de Voronoï discret]{Rééchantillonage de la grille
+         hexagonale pour le calcul    du diagramme de Voronoï discret}
+  \label{fig:hexa_tube}
+\end{center}
+\end{figure}
+ 
+Si maintenant nous revenons à notre grille initiale d'hexagones, nous
+construisons le diagramme de Voronoï discret pour cette grille en ne
+conservant du diagramme que les points qui sont au centre des
+hexagones. Nous obtenons ainsi le diagramme de Voronoï discret et la
+transformée en distance euclidienne en temps optimal pour ce type de
+grille.
+
+\begin{figure}[htbp]
+  \begin{center}
+    %\includegraphics[draft=false,width=4.5cm]{Fig/grille_h.ps}
+    \subfigure[]{\includegraphics[draft=false,width=6.5cm]{Fig/hexa2}}
+    \subfigure[]{\includegraphics[draft=false,width=6.5cm]{Fig/edt_hexa2}}
+         \caption[Diagramme de Voronoï et EDT sur une grille
+         hexagonale]{Diagramme de Voronoï et EDT sur une grille
+         hexagonale~: $(a)$ diagramme de Voronoï discret (les sites
+         sont le cellules noires) et $(b)$ transformée en distance euclidienne.}
+  \label{fig:hexa}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Conclusion et perspectives} 
+
+Nous avons montré dans cette partie un algorithme calculant la
+transformée en distance euclidienne exacte sur des images
+de dimension $n$ en temps optimal, c'est-à-dire en temps linéaire en
+le 
+nombre de points discrets de la grille. Cet algorithme se base sur la
+construction d'une étape intermédiaire qui est diagramme de Voronoï
+discret. Nous avons montré l'intérêt de cette construction dans le cas
+des grilles anisotropiques et des grille hexagonales.
+
+\section{Squelette de forme et axe médian}
+\label{sec:median}
+
+Maintenant que  nous avons des algorithmes optimaux  pour le calcul de
+la transformée en distance, nous allons extraire  de celle-ci un objet
+géométrique appelé {\it squelette} ou {\it  axe médian} qui permet une
+description géométrique et topologique  de la forme.  Nous  présentons
+donc  les  approches  classiques pour  construire   de tels objets  en
+géométrie discrète puis nous proposons un algorithme direct et optimal
+en temps basé sur le  diagramme de Voronoï discret  que nous venons de
+définir.
+
+\subsection{Axe médian et squelette en géométrie discrète}
+
+Comme      nous   l'avons    déjà    présenté    dans   le  paragraphe
+\ref{sec:transf-en-dist},   la   notion d'axe    médian   proposée par
+\citet{Blum:1964} correspond à une généralisation des axes de symétrie
+d'une forme. \citet{ROSEN_66} parlent  de  squelette de forme  qui est
+défini comme étant le sous-ensemble  minimal de la forme permettant la
+reconstruction de celle-ci en appliquant  une transformée en  distance
+inverse. 
+
+En  géométrie  discrète, nous trouvons généralement le terme {\it
+squelette} pour  décrire un objet topologique  homotope à la forme
+(nous reviendrons sur ce point plus tard). Dans ce qui suit et quand
+nous ne précisons pas, nous parlerons toujours de squelette
+géométrique.
+
+
+Nous pouvons définir formellement cette notion de {\it minimalité} en
+introduisant la notion de {\it boule maximale} pour une métrique donnée.
+
+\begin{defi}[Boule maximale]
+Une boule, au sens de la métrique considérée, de centre $p$ et de
+rayon $r$ est dite maximale si celle-ci est entièrement contenue dans
+la forme et qu'il n'existe aucune autre boule de la forme qui la contienne.
+\end{defi}
+
+Ainsi, l'axe médian se définit de la façon suivante~:
+
+\begin{defi}[Axe médian]
+L'axe médian d'une forme est l'ensemble des centres des boules maximales de celle-ci.
+\end{defi}
+
+Selon ces définitions, on peut tout de suite remarquer que le test qui
+permet de décider si un point $p$ est centre de boule maximale est
+primordial. Pour un point $p$, le rayon de la boule susceptible d'être
+maximale est bien évidement donné par la transformée en distance
+selon la métrique considérée. La figure \ref{fig:surfaces} illustre 
+cette  notion  de maximum local dans la carte de distance~: la
+transformée en distance est représentée sous forme de surface dont la
+hauteur est la valeur de la transformée. Sur ce type de schéma, une
+définition intuitive de l'axe médian correspond aux {\it crètes} des
+ces surfaces.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=6.5cm]{2spheres_edt_surf}}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=6.5cm]{carre_edt_surf}}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=6.5cm]{homme_edt_surf}}
+    \subfigure[]{\includegraphics[draft=false,angle=270,width=6.5cm]{serpent_edt_surf}}
+    \caption{Représentation surfacique de la transformée en distance~:
+      l'axe médian correspond {\it aux crètes} de ces surfaces.}
+  \label{fig:surfaces}
+\end{center}
+\end{figure}
+
+Pour calculer cet axe médian, plusieurs approches sont
+envisageables. Nous présenterons uniquement une approche récente de
+\citet{remy}. Étant donné un point de la transformée en distance,
+décider si celui-ci est centre de boule maximale consiste à regarder
+dans un certain voisinage s'il n'existe pas de centres de boules plus
+grosses contenant la première. De manière plus formelle, on considère
+un point $p$ de la transformée à une distance $d$ du bord et un point
+$q$ à une distance $d'$ du bord. L'idée est la suivante~: quelles sont
+les conditions sur $d'$ pour que la boule $B(q,d')$ contienne la boule
+$B(p,d)$ ?  Pour résoudre ce problème on peut pré-calculer les valeurs
+de $d'$ pour, étant donné le déplacement $\vec{pq}$ et la valeur $d$,
+décider si $p$ fait parti de l'axe médian. Ainsi, le test
+d'appartenance à l'axe médian s'effectue après une recherche dans une
+table de  correspondance pré-calculée (Look-Up Table  ou LUT dans la
+bibliographie). \citet{remy} propose donc une méthodologie générale
+pour le  calcul de  cette table  de  correspondance  pour des
+métriques  de chanfrein et le carré de la distance euclidienne.
+
+
+
+
+Il existe d'autres   types de squelettes   d'objets discrets, basé  par
+exemple sur des propriétés uniquement topologiques. Ainsi, le squelette
+{\it  topologique}  d'une  forme   peut se   définir comme   étant  le
+sous-ensemble minimal  de  points discrets  de  l'objet ayant la même
+homotopie que l'objet  global  (même nombre  de trous, même  nombre de
+composantes connexes\ldots).  Ce genre  de squelette  se construit
+par exemple avec des  suppressions séquentielles ou parallèles de  points
+de la forme vérifiant un certain  nombre de critères locaux (notion de
+{\it   point simple})    mais   garantissant une  propriété    globale
+d'homotopie (voir par exemple \citealt{christophe}).
+
+Nous ne nous   intéresserons par la suite qu'aux squelettes {\it
+  géométriques}
+
+
+\subsection{Squelette $n-$dimensionnel basé  sur le diagramme de Voronoï discret}
+
+Considérons dans un premier temps  une forme polygonale. Dans ce  cas,
+le  squelette et le diagramme  de  Voronoï généralisé intérieur de  la
+forme coïncident (voir   figure \ref{fig:squelette_polyg}). En  effet,
+les sommets   de ce diagramme  ainsi  que les arêtes sont   centres de
+boules  maximales pour  la forme.   Une  des premières approches   pour
+construire  ce   squelette a   été proposée  par   \citet{montanari}. 
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=7cm]{Fig/voro_squelette}
+     \caption[Squelette d'un polygone basé sur le diagramme de
+     Voronoï]{Squelette d'un polygone basé sur le diagramme de Voronoï
+       généralisé (extrait de \citealt{attali})}.
+    \label{fig:squelette_polyg}
+  \end{center}
+\end{figure}
+
+Dans le cas de formes quelconques, \citet{attali} propose un calcul de
+squelette   en  considérant le    diagramme  de Voronoï   interne d'un
+échantillonnage du bord    de  la forme.  Ce squelette    approxime le
+squelette  exact de la   forme    continue sous-jacente mais  a    des
+propriétés de convergence si l'on considère un échantillonnage tendant
+vers l'infini.
+
+
+De manière plus précise, étant donné un échantillonage et le diagramme
+de Voronoï de celui-ci, le squelette peut être extrait du diagramme
+selon plusieurs approches (voir \citealt{attali})~:
+
+\begin{itemize}
+\item ensemble des sommets du diagramme inclus dans la forme
+\item ensemble des éléments du diagramme (sommets et arêtes) inclus
+  dans la forme
+\item intersection entre le diagramme et la forme
+\item dual de la forme
+\end{itemize}
+
+Dans les algorithmes présentés précédemment, non seulement nous avons
+une transformée en distance sans erreur en temps linéaire en le nombre de
+points de la forme, mais nous avons surtout dans le même temps le
+diagramme de Voronoï discret de l'ensemble des points du
+complémentaire. Il est donc tout à fait normal de construire un
+squelette directement sur ce diagramme plutôt que sur la transformée
+en distance. L'information primordiale pour une extraction de
+squelette que n'ont pas les autres algorithmes de transformée en
+distance, c'est le lien entre tout point de la forme et le point du
+complémentaire le plus proche.
+
+Nous définissons donc notre squelette de la manière suivante~:
+
+\begin{defi}[Squelette basé sur diagramme de Voronoï discret]
+  Étant donnée une forme \sloppy discrète et le diagramme de Voronoï discret de
+  son complémentaire, le squelette associé à cette forme est
+  l'ensemble des points discrets sommets ou sur les arêtes du
+  diagramme de Voronoï discret.
+\end{defi}
+
+
+Comme le souligne \citeauthor{attali}, un squelette défini de la sorte
+ne peut pas être utilisé directement, il  faut  le simplifier. Une
+des difficultés introduites  par le diagramme   discret est que nous  ne
+connaissons pas  la structure globale  du graphe du diagramme de Voronoï, nous
+savons  uniquement pour tout point, la cellule à laquelle il appartient.
+Ainsi, nous ne pouvons utiliser que des critères locaux pour la
+simplification du squelette. Nous considérons donc les  filtrages
+locaux du squelette proposés par \citeauthor{attali}. Pour cela, nous
+reprenons les définitions suivantes (voir figure \ref{fig:etanch})~:
+
+\begin{defi}[Fonction d'étanchéité \citep{attali}]
+  Soit $X$ une forme continue et $Sk(X)$ son squelette. La fonction
+  d'étanchéité $\rho(.)$ est la fonction qui à chaque point $s$ du
+  squelette associe le rayon de la boule maximale centrée en $s$.
+\end{defi}
+
+Cette fonction correspond à la donnée de la transformée en distance en
+tout point du squelette.
+
+\begin{defi}[Angle bissecteur \citep{attali}]
+\label{defi:bissect}
+  Soit $X$ une forme continue et $Sk(X)$ son squelette. Soit $s$ un
+  point du squelette. La boule maximale centrée en $s$ possède deux
+  points de contact $p_0$ et $p_1$ avec la frontière de $X$. On
+  appelle angle bissecteur  l'angle $\widehat{p_0sp_1}$ compris entre
+  0 et $\pi$. Par la suite, on note $\alpha(s)$ l'angle bissecteur au
+  point $s$. L'angle bissecteur aux points terminaux et multiples se
+  calcule par passage à la limite.
+\end{defi}
+
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=5cm]{Fig/etanch.ps}
+     \caption{Illustration de la fonction d'étanchéité et l'angle
+       bissecteur de \citet{attali}.}
+    \label{fig:etanch}
+  \end{center}
+\end{figure}
+
+
+De manière informelle, on ne voudrait garder comme points du squelette
+que des points qui sont  centres de boules maximales {\it assez
+  grosses} et qui ne sont pas des extrémités {\it trop vives} du squelette. Nous
+filtrons donc les points du squelette construits précédemment avec
+deux seuils $\alpha_0$ et $\rho_0$ et nous gardons  les points dont
+l'angle bissecteur $\alpha(s)$ et l'étanchéité $\rho(s)$ vérifient~:
+\begin{displaymath}
+  \alpha(s) > \alpha_0\quad\text{et}\quad \rho(s)>\rho_0
+\end{displaymath}
+
+
+Nous appliquons cet algorithme d'extraction de squelette sur des
+formes géométriques les plus diverses. La figure \ref{fig:med_sphere},
+représente le calcul du squelette d'un disque. Pour illustrer le
+processus de simplification du squelette, nous représentons tous les
+points de celui-ci sur un graphe dans lequel en abscisse se trouve la
+valeur de l'angle bissecteur et en ordonnée la valeur de la
+fonction d'étanchéité. Ainsi, un filtrage correspond à extraire les
+points de ce graphe contenus dans une certaine fenêtre (figure
+\ref{fig:med_sphere}-$(c)$). Pour le cas du disque, on peut observer
+que le centre de celui-ci est très isolé des autres points sur ce graphe ce qui permet
+de l'extraire facilement pour construire le squelette.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[origin=lt,width=6.5cm]{Fig/sphere_med_2}}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/sphere_med_1}}
+    \subfigure[]{\includegraphics[origin=lt,angle=270,width=8cm]{Fig/sphere_graphebis}}
+    \caption[Squelette d'un disque]{Squelette d'un disque~:$(a)$ points du squelette sans
+      simplification, $(b)$ squelette après simplification avec
+$\alpha_0=1.5$ et $\rho_0=10$, et $(c)$
+      graphe des paramètres $\alpha(s)$ et $\rho(s)$ avec les seuils.}
+    \label{fig:med_sphere}
+  \end{center}
+\end{figure}
+
+
+La figure \ref{fig:med_2spheres} illustre le calcul du squelette sur
+une forme composée de deux disques d'intersection non vide. On peut noter que ces
+disques n'ont pas exactement le même rayon et les centres ne sont pas
+exactement sur l'horizontale. Dans la figure
+\ref{fig:med_2spheres}-$(c)$, on notera que le squelette {\it attendu}
+se localise assez bien sur le graphe des paramètres. Les formes {\it
+  hyperboliques} que l'on peut observer dans ces graphes s'expliquent
+par le fait que si on cherche l'ensemble des points d'un squelette
+généré par deux points du complémentaire distants de $d$, nous obtenons
+la fonctionnelle \citep{attali}~:
+\begin{displaymath}
+  \rho=\frac{d}{2sin\frac{\alpha}{2}}
+\end{displaymath}
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/2spheres_med_1}}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/2spheres_med_2}}
+    \subfigure[]{\includegraphics[origin=lt,angle=270,width=8cm]{Fig/2spheres_graphebis}}
+    \caption[Squelette de deux disques joints]{Squelette de deux disques joints~: $(a)$ points du squelette sans
+      simplification, $(b)$ squelette après simplification avec
+$\alpha_0=1$ et $\rho_0=10$,  et $(c)$
+      graphe des paramètres $\alpha(s)$ et $\rho(s)$ avec les seuils.}
+     \label{fig:med_2spheres}
+  \end{center}
+\end{figure}
+
+
+Finalement, les figures \ref{fig:med_carre} et \ref{fig:med_homme}
+illustrent le calcul du squelette sur un carré et une
+forme {\it humanoïde}.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/carre_med_1}}
+    \subfigure[]{\includegraphics[origin=lt,angle=270,width=6.5cm]{Fig/carre_graphebis}}
+    \caption[Squelette d'un rectangle]{Squelette d'un rectangle~: $(a)$ squelette après
+      simplification avec $\alpha_0=0.7$ et $\rho_0=10$,  et $(b)$  graphe des paramètres $\alpha(s)$ et $\rho(s)$ avec les seuils.}
+    \label{fig:med_carre}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/homme_med_1}}
+    \subfigure[]{\includegraphics[width=6.5cm]{Fig/homme_med_2}}
+    \subfigure[]{\includegraphics[origin=lt,angle=270,width=8cm]{Fig/homme_graphebis}}
+    \caption[Squelette d'une forme synthétique]{Squelette d'une forme synthétique~: $(a)$ points du squelette sans
+      simplification, $(b)$ squelette après simplification avec
+$\alpha_0=0.7$ et $\rho_0=15$,  et $(c)$
+      graphe des paramètres $\alpha(s)$ et $\rho(s)$ avec les seuils.}
+    \label{fig:med_homme}
+  \end{center}
+\end{figure}
+
+
+\subsection{Conclusion et discussion}
+
+Nous avons présenté une  définition de squelette  discret basée sur la
+notion   de  diagramme de  Voronoï  discret.    Nous  obtenons donc un
+algorithme d'extraction  qui  ne nécessite  pas  de structure  de type
+table de  correspondance ({\it Look-up  table})  et qui  construit  le
+squelette en  temps  optimal (linéaire  en le   nombre  de  points  de
+l'image).  Nous    avons   aussi  utilisé  quelques     techniques  de
+simplification   de    squelette   sur     des  critères    locaux  de
+\cite{attali}. Ce  travail  nous a  permis  de vérifier la faisabilité
+pratique de cette technique de construction de squelette.
+
+De plus, ce  squelette peut s'extraire  de la même manière quelle  que
+soit la dimension de l'image et pour des formes de grilles variées. En
+effet,   la construction du  diagramme  de Voronoï discret, comme nous
+l'avons vu précédemment, se fait en  temps optimal.  Les techniques de
+simplification de squelette   présentées s'adapte aussi  en  dimension
+supérieure (voir \citealt{attali} pour le cas 3D).
+
+
+
+Nous avons donc un algorithme optimal en temps pour toute dimension
+qui permet d'extraire un squelette d'une forme discrète.
+
+Dans le schéma proposé,  nous n'avons appliqué que des simplifications
+locales du squelette sans aucune préservation de quelconque propriété
+topologique. Ce travail de simplification globale apparaît donc comme
+une perspective importante de cette approche.
+
+Au niveau des simplifications locales du squelette,  de nombreuses
+autres approches peuvent être envisagées. On peut, par exemple, proposer
+une simplification par {\it hysterisis} se référant à des techniques
+classiques de détection de contour en analyse d'images. Ainsi, un tel
+processus de simplification manipulerait deux
+paires de seuils $(\alpha_0,\rho_0)$ et $(\alpha_1,\rho_1)$ et aurait
+le fonctionnement suivant~:
+\begin{enumerate}
+\item si  $\alpha(s) > \alpha_1$ et $\rho(s)>\rho_1$, le point du
+  squelette est conservé
+\item  si $\alpha(s) < \alpha_0$ et $\rho(s)<\rho_0$, le point du
+  squelette est supprimé
+\item dans le cas intermédiaire, on regarde s'il existe un chemin
+  d'une certaine taille joignant le point $p$ et un point satisfaisant
+  la première règle. On peut même {\it diriger} la recherche de ce
+  chemin en regardant dans la direction de la médiatrice du segment
+  $[p_0p_1]$ de la définition \ref{defi:bissect} (voir figure
+  \ref{fig:hyste} pour une illustration dans le graphe des paramètres
+  du nouveau filtre).
+\end{enumerate}
+
+Sur le plan méthodologique, une perspective intéressante serait la
+comparaison de ce type de squelette avec les axes médians calculés par
+table de correspondance. Au delà de cette comparaison,
+\cite{Thiel_IPC1} ont illustré une extraction de squelette utilisant à
+la fois le diagramme de Voronoï continu et l'axe médian associés à la
+forme. Une tel calcul hybride de squelette se basant sur notre
+diagramme de Voronoï discret nous semble être une perspective importante.
+
+
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=8cm]{Fig/hysteresis}
+    \caption{Illustration sur le graphe des paramètres de la
+      simplification du squelette par hysteresis.}
+    \label{fig:hyste}
+  \end{center}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Visibilité et géodésiques discrètes}
+
+Dans cette partie, nous nous intéressons aux  notions de visibilité en
+géométrie discrète et de métrique géodésique.  L'intérêt de définir de
+tels outils est double~: d'une  part nous augmentons le modèle discret
+d'un nouvel  outil d'analyse, mais nous  répondons  aussi à  un besoin
+pratique dans de nombreuses applications (par exemple l'angioscopie
+virtuelle imagerie médicale).
+
+En   géométrie algorithmique  classique,  la  notion  de visibilité se
+définit   de la manière suivante~:  étant   donné un  domaine avec des
+obstacles polygonaux,  un  point est  {\it visible} d'un  autre  si le
+segment  entre ces  deux  points ne  rencontre aucun obstacle.   En se
+basant sur cette définition, nous  pouvons définir la notion de chemin
+géodésique.  Considérons  deux points et  le graphe de visibilité dont
+les  sommets  sont les sommets   des obstacles polygonaux  et les deux
+points considérés. Les arêtes de ce graphe correspondent à la relation
+binaire   de visibilité, et   sont   pondérées  par la    distance
+euclidienne.  Ainsi, le chemin géodésique (ou plus court chemin) entre
+les deux points   correspond au  plus   court chemin  dans le   graphe
+précédent    \citep{deberg,cormen}.  La figure   \ref{fig:visi_geodes}
+illustre ces différentes définitions.
+
+ \begin{figure}[htbp]
+   \centering
+   \includegraphics[width=12cm]{visi_geodes}
+   \caption{Illustration des définitions~: à gauche, tous les points
+     dans la  zone  bleue sont  visibles du  point   rouge.  A droite,
+     construction du graphe de visibilité et  du plus court chemin (en
+     gras) entre le point rouge et le point bleu.}
+   \label{fig:visi_geodes}
+ \end{figure}
+
+En géométrie discrète, nous  considérons un domaine dont les obstacles
+sont des ensembles  de pixels  connexes.   Une première  définition de
+visibilité   discrète      a          été        proposée          par
+\cite{soille91,soille94,soillebook}. Celle-ci se  base sur le tracé de
+droite de \cite{bres65}~:  le test de  visibilité consiste à tracer le
+segment  de \citeauthor{bres65}  entre les deux   pixels et à vérifier
+qu'aucun obstacle n'est rencontré.  En se basant sur cette définition,
+\aut{Soille} propose   aussi  un calcul  de chemin   géodésique.  Nous
+reviendrons sur cette approche ultérieurement.
+
+Par la  suite, \cite{lenoirthese} propose une  approche  basée sur des
+notions de  combinatoire  et de graphe.    Dans le cas   2D, le chemin
+géodésique  entre deux points est  défini de  la manière suivante~: on
+commence  par dénombrer tous les chemins  4-connexes joignant les deux
+points considérés.  Ensuite,  à chaque  pixel   visité par un   chemin
+4-connexe, nous  affectons une   valeur numérique qui    correspond au
+nombre de chemins qui passent par ce point.  Finalement, le plus court
+chemin correspond au  chemin qui maximise la somme  de ces valeurs. En
+d'autres termes,  ce chemin géodésique  passe par les  pixels {\it les
+plus empruntés}.     Ce  processus se  généralise   très  bien sur des
+surfaces.  \aut{Lenoir} a  montré   que  cette  définition  de  chemin
+géodésique   sur une grille 2D  sans  obstacle correspond à une droite
+discrète 2D.  Cependant, dans le cas surfacique ou avec des obstacles,
+aucune équivalence avec des droites ni aucune propriété métrique de la
+distance ainsi définie n'est proposée.  Cette approche à l'avantage de
+ne se baser que  sur le graphe d'adjacence  des points et peut donc se
+généraliser à d'autres grilles régulières.
+
+
+Dans ce qui  suit, nous proposons une  définition  de visibilité basée
+sur la notion  de droite discrète (voir  chapitre \ref{chap-droites}).
+Cette proposition permet  l'utilisation  d'algorithmes   efficaces
+pour le  test  de visibilité   ainsi  que pour le calcul   de  chemins
+géodésiques.
+
+Dans  un premier temps  nous présentons les différentes définitions et
+le calcul de  visibilité proposé.    Nous décrivons  par la suite   un
+algorithme efficace pour le   calcul de chemins géodésiques   basé sur
+notre définition de  visibilité.  Enfin, nous donnons  quelques pistes
+pour la généralisation en dimension 3.
+
+Cette partie correspond aux articles \cite{dcoeurjo_DGCI2002} et
+\cite{dcoeurjo_PRL2002}.
+
+
+\subsection{Visibilité dans des domaines discrets}
+
+\subsubsection{Notations et définitions}
+
+Dans  ce qui   suit,   nous notons  $\mathcal{D}$  un  domaine discret
+correspondant à   un   ensemble de  pixels   $k-$connexes.  On  notera
+$\bar{\mathcal{D}}$    le   complémentaire    de   $\mathcal{D}$.   Ce
+complémentaire  sera appelé par  la suite indifféremment le {\it fond}
+ou {\it l'ensemble des obstacles}.  Par la  suite, nous considérons un
+domaine $\mathcal{D}$ 8-connexe.
+
+
+Par analogie avec le cas polygonal, nous définissons la visibilité
+discrète de la façon suivante~:
+
+\begin{defi}[Visibilité discrète]
+Soient $s$ et $t$ deux pixels de $\D$, la visibilité discrète est une
+relation binaire  $v \subseteq
+\mathcal{D}\times \mathcal{D}$ telle que nous avons $v(s,t)$  si et
+seulement s'il existe un segment de  droite discrète 8-connexe
+joignant $s$ et $t$ dont les pixels appartiennent à $\D$.
+\end{defi}
+
+
+Avant de continuer avec le problème d'étiquetage en visibilité,
+rappelons les liens entre les droites discrètes et l'intersection de
+bandes dans l'espace des paramètres vus au paragraphe
+\ref{sec:approche-dual}.
+
+La discrétisation {\it   Grid Intersect Quantization} (ou  GIQ)  d'une
+droite réelle d'équation  $y=\alpha x+\beta$ est l'ensemble des points
+discrets vérifiant~:
+\begin{displaymath}
+\Delta(\alpha,\beta)=\{ (x,y)\in \mathbb{Z}^2 | -\frac{1}{2}\leq\alpha x+\beta-y<\frac{1}{2}\}
+\end{displaymath}
+
+Le choix du processus de discrétisation n'a aucune influence sur la
+méthode. Nous avons choisi GIQ pour sa propriété {\it d'approximation
+  au plus proche} de la droite réelle.
+
+
+Dans l'espace des paramètres, l'équation précédente nous permet de
+définir l'ensemble des droites réelles dont les discrétisations
+contiennent un pixel $p(x,y)$:
+\begin{displaymath}
+S_p=\{ (\alpha,\beta)\in \mathbb{R}^2 | -\frac{1}{2}+y\leq\alpha x+\beta<\frac{1}{2}+y\}
+\end{displaymath}
+
+Ainsi,  un pixel  de $\D$  définit  une {\it bande} dans  l'espace des
+paramètres délimitée     par les  contraintes    $L_1:  \alpha x+\beta
+-y\geq-1/2$ et $L_2:  \alpha   x+\beta -y<1/2$.  Rappelons  que   pour
+savoir si un ensemble de pixels est  un morceau de droite discrète, il
+suffit  de vérifier  que   l'intersection des bandes  données  par les
+pixels est non-vide dans l'espace des paramètres. Le domaine résultant
+de  cette intersection  définit  toutes les  droites  réelles dont les
+discrétisations  contiennent   l'ensemble  de  pixels  considéré (voir
+l'exemple donné figure \ref{fig:dual_visi}).
+
+On notera par  la  suite $\mathcal{S}(s,t)$ l'intersection des  bandes
+$S_s$ et $S_t$, respectivement associées à deux pixels $s$ et $t$.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{dual}
+    \caption[Exemple de domaine $\mathcal{S}(s,t)$ des pixels $(0,0)$
+      et $(3,2)$]{Exemple de domaine $\mathcal{S}(s,t)$ des pixels $(0,0)$
+      et $(3,2)$~: le  domaine  $\mathcal{S}(s,t)$ est défini par les
+      inéquations  $\{\beta <1/2,\beta\geq-1/2, \beta <-3\alpha+5/2,\beta\geq-3\alpha+3/2\}$.}
+    \label{fig:dual_visi}
+  \end{center}
+\end{figure}
+
+
+En ce qui concerne le problème de visibilité entre $s$ et $t$ dans des
+domaines non-convexes, l'objectif est d'analyser les contraintes liées
+aux obstacles  et  aux deux  pixels  $s$  et  $t$ dans  l'espace   des
+paramètres.
+
+\subsubsection{Domaine de visibilité}
+
+Soit $o$  un pixel obstacle  ({\it  i.e.}  $o\in\BD$).  L'ensemble des
+droites réelles dont la discrétisation ne contient pas le pixel $o$ se
+décrit simplement dans   l'espace des paramètres.  En  effet,  il nous
+suffit de  considérer  les négations  des  contraintes $L_1$  et $L_2$
+précédentes.  Ainsi, nous    associons à un  pixel  obstacle   $o$ les
+contraintes    $\bar{L}_1(o):   \alpha    x+\beta     -y<-1/2$      et
+$\bar{L}_2(o):\alpha x+\beta -y\geq 1/2$.
+
+Maintenant, pour  décider si le pixel $o$  {\it empêche} la visibilité
+entre  $s$ et $t$,    il nous suffit   de tester  si le domaine,  dans
+l'espace  des paramètres, $L_1(s)\cap   L_2(s)\cap L_1(t)  \cap L_2(t)
+\cap (\bar{L}_1(o) \cup \bar{L}_2(o))$ est vide ou non.
+
+Plus      généralement,         nous      considérons    un   ensemble
+$\mathcal{O}=\{o_i\}_{i=1..n}$, sous-ensemble  de    $\BD$, de  pixels
+obstacles  tel que toutes les abscisses  de ces  points sont comprises
+entre les  abscisses  de  $s$ et   de $t$ (tous  les autres  obstacles
+pouvant   être supprimés   du problème   de  visibilité   entre $s$  et
+$t$). Ainsi nous avons~:
+
+\begin{lem}
+Soient $s$ et $t$  deux points de $\D$,  $s$ et $t$ sont visibles dans
+$\D$ si et seulement si~:
+\begin{displaymath}
+  \mathcal{S}(s,t)\cap \left (  \bigcap_{i=1..n}(\bar{L}_1(o_i)\cup \bar{L}_2(o_i))\right ) \neq \emptyset
+\end{displaymath}
+\end{lem}
+
+La preuve de ce lemme est directement induite de la définition de la
+visibilité. Le domaine issu de cette intersection est appelé {\bf
+  domaine de visibilité} de $s$ et $t$ (voir figure \ref{coupures}).
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/coupuresbis.ps}
+    \caption[Domaine de visibilité associé à un ensemble de
+    pixels]{Domaine de visibilité associé à un ensemble de pixels~: le
+    domaine en  gris  clair  correspond  à $\mathcal{S}(s,t)$  et   le
+    polygone noir au  domaine de visibilité associé  à $s$, $t$ et aux
+    pixels bloquants $a,~b,~c$ et $d$. Les contraintes non tracées
+correspondent aux contraintes n'intersectant pas $\mathcal{S}(s,t)$.}
+    \label{coupures}
+  \end{center}
+\end{figure}
+
+
+Dans ce qui suit, nous  cherchons à caractériser l'ensemble des pixels
+les  plus  contraignants pour notre  problème.  Plus formellement, ces
+pixels sont ceux définis comme suit~:
+
+\begin{defi}[Pixel bloquant]
+  Un pixel  $o$ de $\mathcal{O}$   et dit {\bf bloquant} pour le
+  test de visibilité $v(s,t)$ si nous avons~:
+  \begin{displaymath}
+    \mathcal{S}(s,t) \cap\left ( \bar{L}_1(o)\cup \bar{L}_2(o)\right )  \neq  \mathcal{S}(s,t)
+  \end{displaymath}
+et l'abscisse de $o$ est entre les abscisses de $s$ et $t$.
+\label{def_b}
+\end{defi}
+
+Nous pouvons présenter un premier lemme~:
+\begin{lem}
+\label{lembloquant}
+  Soit  $o$ un pixel bloquant  pour  le test de   $v(s,t)$, ou bien le
+  domaine  $\mathcal{S}(s,t)\cap(\bar{L}_1(o)\cup  \bar{L}_2(o))$  est
+  vide, ou bien il n'a qu'une seule composante connexe.
+\end{lem}
+
+\begin{mapreuve}
+
+Nous considérons le domaine  $\mathcal{S}(s,t)$ et un pixel bloquant
+$o$ tel que $o$, $s$ et $t$ ne sont pas alignés (dans le cas
+contraire, le domaine de visibilité est vide).
+
+Nous montrons que  soit $\bar{L}_1(o)$ soit  $\bar{L}_2(o)$ intersecte
+le domaine   $\mathcal{S}(s,t)$ mais jamais  les  deux.  Sans perte de
+généralité, nous pouvons considérer  les différents cas illustrés dans
+la figure \ref{preuve_2_1}-$(a)$.   Étant donné que l'abscisse  de $o$
+doit être entre   celle de  $s$  et   $t$, la  pente des   contraintes
+$\bar{L}_1(o)$  et   $\bar{L}_2(o)$ doit  nécessairement  être comprise
+entre les pentes des contraintes associées  à $s$ et $t$. Nous pouvons
+donc  supprimer    les      deux   premiers  cas   de      la   figure
+\ref{preuve_2_1}-$(a)$.
+
+
+De plus, par construction,  la hauteur verticale  entre $L_1$ et $L_2$
+est égale à 1.  Ainsi,  l'intersection en $a'$ entre $\bar{L}_1(o)$ et
+la droite verticale passant par $b$  implique que l'intersection $b'$,
+entre $\bar{L}_2(o)$ et cette même droite  verticale, est en dehors du
+segment $[ab]$ (voir  figure \ref{preuve_2_1}-$(b)$).  De  plus, étant
+donné  que   la pente  de  $\bar{L}_2(o)$  est plus  grande, en valeur
+absolue,  que celle  de la  droite $(cb)$, $\bar{L}_2(o)$  ne peut pas
+intersecter le domaine $\mathcal{S}(s,t)$.
+
+De la même manière, si  $\bar{L}_2(o)$  coupe le domaine, la
+contrainte  $\bar{L}_1(o)$ ne le coupe pas. Le dernier cas de figure
+de la figure \ref{preuve_2_1}-$(a)$ n'est donc pas valide.
+
+Finalement,  $\mathcal{S}(s,t)\cap(\bar{L}_1(o)\cup\bar{L}_2(o))$  est
+égal,    soit    à  $\mathcal{S}(s,t)\cap\bar{L}_1(o)$,      soit    à
+$\mathcal{S}(s,t)\cap\bar{L}_2(o)$. Ce  domaine correspond  donc à une
+intersection  de contraintes linéaires,   il   n'a donc  qu'une  seule
+composante connexe qui est de plus convexe.
+\end{mapreuve}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=8.25cm]{Fig/preuve_2}}
+    \subfigure[]{\includegraphics[width=3.1cm]{Fig/preuve_2bis.ps}}
+     \caption[Illustration de la preuve du lemme
+     \ref{lembloquant}]{Illustration de la preuve du lemme
+       \ref{lembloquant}~: $(a)$ différents cas de figure qui
+       introduisent deux composantes connexes et $(b)$ notation pour
+       la preuve du lemme.}
+     \label{preuve_2_1}
+  \end{center}
+\end{figure}
+
+
+D'un  point  de vue géométrique,  si  un pixel   $o$ est bloquant pour
+$v(s,t)$ (avec $[st]$  dans le premier  octant) et si celui-ci  est au
+dessus  du segment $[st]$, seule  la  contrainte $\bar{L}_1$ doit être
+prise en compte. De la même manière, si  $o$ est sous $[st]$, seule la
+contrainte  $\bar{L}_2$ intervient (voir  figure \ref{coupures} pour
+une illustration).
+Cette remarque nous permet d'avoir une première caractérisation
+géométrique de cet ensemble de pixels bloquants.
+
+
+Nous   pouvons      étendre      cette   analyse    proposée      dans
+\cite{dcoeurjo_DGCI2002,dcoeurjo_PRL2002} par le théorème suivant~:
+
+\begin{theo}
+\label{theo:domaine_visi}
+  Étant  donné $s$ et   $t$ dans $\D$, le   nombre de pixels bloquants
+  suffisant pour évaluer $v(s,t)$ est au plus de  deux.  Le domaine de
+  visibilité est calculé à  partir de $\mathcal{S}(s,t)$ avec  au plus
+  quatre contraintes.
+\end{theo}
+
+\begin{mapreuve}
+
+Pour plus de clarté,  nous choisissons la représentation  arithmétique
+des   droites discrètes.  Nous  avons déjà   montré dans le paragraphe
+\ref{sec:comp-dual-arith}  les  liens  entre cette   représentation et
+l'analyse duale.
+
+Sans  perte  de généralité,  soit  $[st]$  dans le   premier octant et
+$(a,b)\in\Z^2$  tel  que  $a/b$  est    la pente   de  $[st]$    (avec
+$pgcd(a,b)=1$). Une  droite discrète naïve  (8-connexe)  qui passe par
+$s$ et $t$ est composée de l'union de $b$ pointillés consécutifs parmi
+les $2b-1$ pointillés~:
+\begin{align*}
+ax-by&=-b+1\\
+...&\\
+ax-by&=b-1
+\end{align*}
+
+Un pixel obstacle $o(x_o,y_o)$ de reste $r=ax_o-by_o$ invalide tout le
+pointillé   $r$  de   l'ensemble $\{-b+1,\ldots,b-1\}$.    De plus, si
+celui-ci   est   tel  que  $r<0$,   il  invalide  tous  les pointillés
+$\{-b+1,\ldots,r\}$. En effet,  nous ne pouvons pas trouver $b$ pointillés
+consécutifs dans cet ensemble. Ainsi, un  autre pixel obstacle dont le
+reste  est dans cet  ensemble ne  sert plus  pour $v(s,t)$ puisqu'il a
+déjà été exclu par $o$.
+
+De même, si $r>0$, tous les pointillés de l'ensemble
+$\{r,\ldots,b-1\}$ sont invalidés ainsi que tous les pixels obstacles
+dont le reste est dans cet ensemble.
+
+Ainsi, parmi l'ensemble $\mathcal{O}$ des pixels bloquants, seuls deux
+pixels nous intéressent~:
+\begin{itemize}
+\item parmi les pixels bloquants de restes négatifs,  celui dont le
+  reste $r_{max}$ est maximal. Ce point est noté $o_{max}$.
+\item Parmi les pixels bloquants de restes positifs, celui dont le
+  reste $r_{min}$ est minimal, noté $o_{min}$. 
+\end{itemize}
+
+Ainsi, il existe une droite discrète si et seulement s'il reste $b$
+pointillés non invalidés et donc si~:
+\begin{displaymath}
+  r_{min}-r_{max}+1\geq b
+\end{displaymath}
+
+Si nous revenons au  domaine de visibilité $\mathcal{S}(s,t)$,  quatre
+points  sont nécessaires. Ils   correspondent aux pixels bloquants  de
+reste $r_{max}$ et $r_{min}$ d'abscisse minimale et maximale entre $s$
+et $t$.   De  plus, grâce au  lemme  précédent,  une seule contrainte,
+$\bar{L}_1$  ou $\bar{L}_2$, est   à   prendre en compte.   Ainsi,  le
+domaine  de    visibilité  est    exactement  calculé   à   partir  de
+$\mathcal{S}(s,t)$  et des  quatres   contraintes issues  des   pixels
+bloquants précédent.
+
+\end{mapreuve}
+
+
+Une  illustration      de ce  théorème   est  donnée    dans  la figure
+\ref{coupures}~: les  pixels $c$  et  $d$ sont tous  les  deux sur  le
+pointillé d'abscisse  $r_{max}$ pour le  segment $[s,t]$. De même, les
+points $a$ et $b$ sont sur le pointillé $r_{min}$.
+
+
+\subsubsection{Algorithme de calcul de visibilité}
+
+Dans ce paragraphe,  nous présentons un algorithme efficace permettant
+de  calculer la classe   d'équivalence  de la relation de   visibilité
+associée à un  pixel source $s$.  En  d'autres termes,  étant donné un
+point  $s$ de $\D$,  nous voulons marquer tous les  pixels de $\D$ qui
+sont visibles de $s$. Pour cela, nous  proposons deux algorithmes~: le
+premier correspond au calcul de la classe  de visibilité basée sur les
+définitions ci-dessus.  Le second  algorithme se base sur une  version
+modifiée de la définition de visibilité mais permet un étiquetage plus
+efficace du domaine.
+
+L'algorithme   \ref{alg:visibilite} présente donc une   implémentation
+directe des définitions   et théorèmes précédents.   Cet algorithme se
+base  sur un parcours  en largeur  du  domaine $\D$, implémenté par la
+structure   de  file  FIFO.  À   chaque  étape   de l'algorithme, nous
+maintenons une liste des obstacles $\mathcal{O}$ et nous étiquetons en
+visibilité tous les pixels de $\D$ rencontrés.
+
+\begin{algorithm}
+\caption{Classe d'équivalence de visibilité à partir d'une source $s$}
+\label{alg:visibilite}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Calcul\_Visibilité$(s,\mathcal{D})$} 
+\STATE Soit $Q$ une file
+\STATE Soit $\mathcal{O}$ une liste de pixels obstacles
+\STATE {\sc $Q$.Ajouter$(s)$}
+\WHILE{$Q$ non vide}
+\STATE $t=${\sc $Q$.Premier\_element()}
+\FORALL{$p$, $8-$voisin de $t$ non étiqueté {\tt fermé} ou {\tt visible}}
+\IF{$p$ est un obstacle}
+\STATE  {\sc $O$.Ajouter$(p)$}
+\ELSE
+\STATE Soit $(a,b,c,d)$ les quatre contraintes de $\mathcal{O}$ décrit
+dans le théorème \ref{theo:domaine_visi}
+\STATE Évaluer $v(s,p)$ avec $(a,b,c,d)$
+\IF{ $p$ est visible de $s$}
+\STATE Marquer $p$ comme étant {\tt visible}
+\STATE {\sc $Q$.Ajouter$(p)$}
+\ELSE
+\STATE Marquer $p$ comme étant {\tt fermé}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+Analysons la complexité de cet  algorithme, pour cela nous notons  $n$
+le  nombre de pixels de  $\D$. Dans l'algorithme \ref{alg:visibilite},
+le maintien  de la file FIFO  et de la liste des  obstacles se fait en
+temps    constant    à     chaque   étape.    Grâce      au   théorème
+\ref{theo:domaine_visi},   le test de   visibilité $v(s,p)$ se fait en
+$O(1)$ si nous connaissons le  quadruplet $(a,b,c,d)$.  Finalement, le
+point clef   de  la  complexité est  donné   par la  ligne 10   de cet
+algorithme  qui consiste à extraire  de $\mathcal{O}$ le quadruplet de
+pixels  bloquants.  Or,  aucune  structure de  données  ne nous  permet
+d'accéder  à ces éléments  rapidement  dans  le  cas de  la visibilité
+présenté ci-dessus.  Ainsi, si nous  notons $m$ le nombre d'obstacles,
+la  complexité globale de cet  algorithme est en  $O(nm)$,  ce qui est
+assez coûteux, surtout dans un objectif de calcul de géodésiques.
+
+
+ 
+Nous proposons maintenant un second algorithme basé sur une définition
+légèrement différente de la  visibilité. Celle-ci nous permet  de mettre en place
+une structure de données efficace.   Nous définissons ainsi la notion de
+visibilité restreinte~:
+
+\begin{defi}[Visibilité restreinte]
+Soient $s$  et $t$ deux  pixels  de $\mathcal{D}$, {\bf  la visibilité
+restreinte}    est     une     relation    binaire   $v^*    \subseteq
+\mathcal{D}\times\mathcal{D}$  telle que nous  avons $v^*(s,t)$  si et
+seulement s'il existe une demi-droite réelle qui passe 
+par $s$  et dont la  discrétisation contient   $t$ et aucun  pixel  de
+$\BD$.
+\end{defi}
+
+
+Dans cette définition, nous contraignons donc l'ensemble des droites à
+passer  exactement  par $s$. Cette  version   de la visibilité  est un
+affaiblissement de la précédente puisque la  relation binaire que l'on
+obtient n'est plus symétrique. Cependant, cette définition nous permet
+de proposer  une structure de données  et un algorithme  permettant un
+étiquetage en visibilité très efficace.
+
+Supposons donc que tous les pixels obstacles sont triés dans un ordre
+polaire de centre $s$  dans le sens trigonométrique. Nous avons
+donc~:
+
+\begin{prop}
+Soient  un ensemble de pixels obstacles triés en ordre polaire de
+centre $s$ et un point $t$. Nous notons $u$ le successeur de $t$  dans
+le tri polaire et $l$ son prédécesseur. Nous avons alors~:
+\begin{displaymath}
+  v^*(s,t) \Leftrightarrow \mathcal{S}^*(s,t) \cap \bar{L}_1(u) \cap \bar{L}_2(l) \neq \emptyset
+\end{displaymath}
+\end{prop}
+où  $\mathcal{S}^*$ correspond au domaine des droites vérifiant la
+contrainte de la visibilité restreinte.  Ce domaine correspond à un
+segment dans l'espace des paramètres.
+
+La preuve de cette     proposition  est directement induite     de  la
+définition de $v^*$ ainsi que des lemmes précédents.  Remarquons enfin
+que le tri polaire  des pixels obstacles  peut se calculer entièrement
+en nombres entiers (voir par exemple \citealt{cormen}).
+
+
+Nous pouvons maintenant présenter l'algorithme du calcul de visibilité
+(voir algorithme \ref{alg:visi_rest}).
+
+
+\begin{algorithm}
+\caption{Classe d'équivalence de visibilité restreinte à partir d'une source $s$}
+\label{alg:visi_rest}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Calcul\_Visibilité\_restreinte$(s,\mathcal{D})$} 
+\STATE Soit $Q$ une file FIFO
+\STATE Soit $\mathcal{O}$ une liste de pixels obstacles triés en polaire de
+centre $s$
+\STATE {\sc Ajout\_file$(s,Q)$}
+\WHILE{$Q$ non vide}
+\STATE $t=${\sc Premier\_element($Q$)}
+\FORALL{$p$, $8-$voisin de $t$ non étiqueté {\tt fermé} ou {\tt visible}}
+\IF{$p$ est un obstacle}
+\STATE  {\sc Ajout\_tri\_polaire$(p,{\mathcal{O}})$}
+\ELSE
+\STATE Soit $u$ le successeur de $p$ dans le tri polaire
+$\mathcal{O}$
+\STATE Soit $l$ le prédécesseur  de $p$ dans le tri polaire $\mathcal{O}$
+\STATE Évaluer $v^*(s,p)$ avec $\mathcal{S}^*(s,p) \cap \bar{L}_1(u)
+\cap \bar{L}_2(l) \neq \emptyset$
+\IF{ $p$ est visible de $s$}
+\STATE Marquer $p$ comme étant {\tt visible}
+\STATE {\sc Ajout\_file$(p,Q)$}
+\ELSE
+\STATE Marquer $p$ comme étant {\tt fermé}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+Dans cet algorithme, le  test de visibilité  s'effectue aussi en temps
+constant mais cette fois, l'extraction, à partir de $\mathcal{O}$, des
+pixels    bloquants {\it   intéressants}    pour  notre définition  de
+visibilité  se  fait en $O(log(m))$ au   lieu de $O(m)$.  De  plus, le
+maintient de  la liste triée, c'est-à-dire  le coût de l'insertion d'un
+obstacle,  se fait  lui  aussi  en $O(log(m))$.   Finalement,  le coût
+global de cet algorithme est en $O(nlog(m))$.
+
+Nous pouvons encore optimiser le coût moyen de ce dernier avec la
+remarque suivante~: lors du parcours en largeur du graphe, quand nous
+insérons les $8-$voisins de $t$ dans la structure, nous mémorisons le
+cône  $(s,u,l)$ qui correspond à la localisation de $t$ dans
+$\mathcal{O}$. Ainsi, lorsque nous dépilerons les fils de $t$, nous
+mettrons à jour leur localisation à partir de $(s,u,l)$. De cette
+façon, nous obtenons un coût de mise-à-jour très faible. 
+
+Dans une analyse au pire cas, cette optimisation ne permet pas de
+réduire la complexité, cependant, si nous considérons des ensembles pixels
+obstacles assez compacts dans $\D$, le coût effectif de cette mise à
+jour sera très faible.
+
+\subsection{Plus court chemin discret et métrique géodésique discrète}
+
+Nous  pouvons maintenant définir   les notions de chemins  géodésiques
+discrets basées sur le calcul de visibilité.
+
+\subsubsection{Définitions  et état de l'art}
+
+Dans un premier temps, rappelons les deux grandes approches pour les
+définitions de métriques discrètes vues précédemment~:
+\begin{itemize}
+\item approches par masque (métriques de chanfrein)~: on considère un
+  ensemble de déplacements élémentaires pondérés~;
+\item approches basées sur une gestion de déplacement vectoriels
+  $(d_x,d_y)$.
+\end{itemize}
+
+Dans  le cas de  la métrique géodésique, les  approches basées sur des
+masques offrent une solution très efficace. En effet, à partir de $\D$
+et des déplacements élémentaires  considérés, nous  pouvons construire
+un graphe  d'adjacence pondéré sur   lequel nous pouvons appliquer  un
+algorithme classique  de plus court chemin dans  un graphe comme celui
+de \aut{Dijkstra}  \citep{piper}.  Pour  implémenter cet algorithme de
+plus court  chemin, nous pouvons utiliser des  {\bf files de priorité}
+(ou {\it bucket lists} en  anglais).  Cette structure est classique en
+algorithmique (voir par   exemple \citealt{cormen})  et son  utilisation
+pour le calcul de  distance géodésique par  masque a été  proposée par
+\cite{verwer_uniform}.  Celle-ci nous permet   d'avoir un algorithme à
+coût uniforme   pour l'étiquetage en    distance géodésique. 
+
+Cette  structure, illustrée figure  \ref{bucket}, est construite de la
+façon   suivante~: nous   considérons  une collection   de  files FIFO
+indicées par  un entier $d$.  Pour notre  problème, tous les pixels se
+trouvant dans  la file d'indice $d$  sont à une  distance $d$ de notre
+point  d'origine.   Le principe  de  l'algorithme de plus court chemin
+basé sur cette technique   est le suivant~: l'algorithme  commence par
+ajouter le  point $s$ dans la  file  d'indice $0$.   Ensuite, à chaque
+étape on dépile un pixel  $p$, encore non visité,  de la file d'indice
+minimum non vide, notée  $d_{min}$, et pour  chaque voisin $n$ de $p$,
+nous ajoutons    $n$  à    la  file  d'indice   $d_{min}+weight(p,n)$.
+$Weight(p,n)$ correspond au  poids  associé au déplacement  $\vec{pn}$
+dans le masque de chanfrein utilisé.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=8cm]{bucket}
+   \caption{Structure de files de priorité~: ensemble de files FIFO
+     indicées par la distance au pixel source $s$.}
+    \label{bucket}
+  \end{center}
+\end{figure}
+
+Cette    structure permet  donc   une implémentation  très efficace de
+l'algorithme   de  \aut{Dijkstra}. De      plus, \cite{verwer_uniform}
+proposent  une gestion des allocations  des  files très efficaces, par
+exemple, nous pouvons réutiliser  les files de manière circulaire  une
+fois que celles-ci sont vides.
+
+Dans  une approche basée  sur  la distance euclidienne,  \cite{moreau}
+propose un étiquetage du domaine en maintenant des listes de pixels du
+front de propagation.   Ce processus  de  propagation se base sur  une
+construction incrémentale de  cercles à rayon croissant.  Ainsi, quand
+aucun obstacle n'est rencontré, le processus  construit des cercles de
+rayon croissant en étiquetant le pixels par la distance euclidienne au
+centre du cercle.  Si un obstacle est rencontré on subdivise le cercle
+en arcs avec la possibilité   d'initialiser de nouveaux centres d'arcs
+de  cercle.  La structure de données  de cet algorithme n'est cependant
+pas évidente à   manipuler et des  processus coûteux  en temps peuvent
+apparaître lors de la fusion ou de la subdivision d'arcs.
+
+En se basant sur l'utilisation de  sa transformée en distance euclidienne par
+propagation     (voir        paragraphe      \ref{sec:appr-par-depl}),
+\cite{cuisenaire_these}  propose un  algorithme de calcul  de distance
+géodésique que l'on peut qualifier de local.   En effet, étant donné un
+certain rayon $r$, tous les pixels dans  la boule euclidienne de rayon
+$r$ centré sur le  pixel source $s$  sont étiquetés par cette distance
+euclidienne.  Ensuite, le processus  de propagation est itéré avec les
+pixels non étiquetés sur le front de propagation.   Ainsi, si le rayon
+choisi est grand, la distance calculée dans les domaines où il y a peu
+d'obstacles   sera  une     bonne    approximation de    la   distance
+euclidienne. Cependant, l'approximation sera mauvaise dans les parties
+fortement   contraintes.  Ainsi, la   qualité  de l'approximation  est
+fonction du domaine $\D$ et du rayon $r$ choisis.
+
+Enfin, \cite{soille91,soille94,soillebook} propose l'utilisation de la
+notion de visibilité pour l'estimation de chemins géodésiques. Dans le
+paragraphe suivant, nous présentons une approche similaire mais 
+utilisant le calcul efficace de visibilité présenté ci-dessus.
+
+
+
+\subsubsection{Algorithme d'étiquetage en distance géodésique}
+
+L'idée  principale  de l'algorithme est  la   suivante~: pour tous les
+points visibles  depuis   le   point source $s$,   l'étiquetage   en
+distance géodésique est trivial  puisqu'il correspond exactement  à la
+distance   euclidienne calculée à  partir   du vecteur de  déplacement
+$(d_x,d_y)$. Par contre, si  un point $p$  n'est pas visible depuis la
+source,  nous    initialisons  un nouveau   processus  d'étiquetage en
+visibilité à  partir de $p$.   Ainsi, nous  étiquetons en distance les
+pixels   visités, visibles de  $p$,  par la distance  entre  $p$ et la
+source originale $s$ à laquelle nous  ajoutons la distance euclidienne
+entre ces points et $p$.
+
+Définissons tout d'abord la notion de chemin géodésique discret~:
+
+\begin{defi}[Chemin géodésique discret]
+ Un chemin géodésique discret entre deux points $s$ et $p$ de $\D$ est
+ une séquence de pixels $\{p_i\}_{i=0..n+1}\in\D$,
+ avec $p_0=s$ et $p_{n+1}=t$, telle que~:
+  \begin{displaymath}
+    v(p_{i},p_{i+k})\quad\text{pour}\quad
+    k=\{-1,0,1\}\quad\text{et}\quad i=1..n
+  \end{displaymath}
+et telle que la distance géodésique  $d_{geodes}(s,t)$ est
+minimale. Cette distance est définie par~:
+\begin{displaymath}
+    d_{geodes}(s,t)=\sum_{i=0}^{n} d_{euc}(p_{i},p_{i+1})
+  \end{displaymath}
+où $d_{euc}(a,b)$ représente la distance euclidienne classique.
+\end{defi}
+
+
+En d'autres  termes, un chemin géodésique discret  est une séquence de
+segments de droite discrète de longueur minimale joignant $s$ et $t$.
+La    métrique géodésique  proposée pour    cette  séquence de segments
+correspond exactement à celle utilisée pour  estimer la longueur d'une
+courbe discrète basée sur une  segmentation en droites discrètes (voir
+paragraphe \ref{sec:longueur-et-aire}).
+
+
+Afin d'obtenir un algorithme d'étiquetage efficace, nous utilisons la
+structure de files de priorité de \citeauthor{verwer_uniform} dont les
+indices sont donnés par $ \left \lceil d_{geodes}(s,p)\right \rceil$.
+Cette métrique est consistante avec l'algorithme de \aut{Verwer} car
+elle satisfait l'inégalité triangulaire \citep{moreau}~:
+\begin{displaymath}
+  \text{for~} a,b,c\in\mathbb{R}\qquad a+b\geq c \Rightarrow \lceil a\rceil+\lceil b\rceil\geq\lceil c\rceil
+\end{displaymath}
+
+Toujours dans un souci d'efficacité, nous utilisons la visibilité
+restreinte $v^*(s,t)$. Pour chaque pixel $p$ dans la structure de
+file, nous mémorisons~: ses coordonnées, les coordonnées du point source
+$s_i$ duquel $p$ est visible et la distance géodésique $d_{geodes}(s,s_i)$.
+Nous maintenons aussi une structure triée de pixels obstacles associés
+à chaque propagation en visibilité.
+
+L'algorithme \ref{alg:geodes} présente la méthode proposée.
+
+
+
+\begin{algorithm}
+\caption{Étiquetage en distance géodésique à partir d'une source $s$.}
+\label{alg:geodes}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Calcul\_Géodésique$(s,\mathcal{D})$} 
+\STATE Soit $Bucket[i]$ un ensemble de  files FIFO
+\STATE Soit $\mathcal{O}[i]$ un ensemble de listes de pixels bloquants triés en
+polaire
+\STATE Soit $d_{min}$ l'indice minimal des files non vides initialisé
+à $0$
+\STATE {\sc Ajout\_file$(s,Bucket[d_{min}])$}
+\WHILE{ il reste une file non  vide}
+\IF{ la file $Bucket[d_{min}]$ est vide}
+\STATE ajuster $d_{min}$
+\ENDIF
+\STATE $t=${\sc Premier\_element($Bucket[d_{min}]$)}
+\FORALL{$p$, $8-$voisin de $t$ non étiqueté {\tt fermé} ou {\tt visible}}
+\STATE  Soit $i$ l'indice de la liste d'obstacles associé à la source $s_i$ de $t$
+\IF{$p$ est un obstacle}
+\STATE {\sc Ajout\_tri\_polaire$(p,\mathcal{O}[i])$}
+\ELSE
+\STATE Soient $u$ et $l$ la localisation de $p$ dans le tri polaire $\mathcal{O}[i]$
+\STATE Évaluer $v^*(s,p)$ avec $\mathcal{S}^*(s,p) \cap \bar{L}_1(u)
+\cap \bar{L}_2(l) \neq \emptyset$
+\IF{ $p$ est visible de $s$}
+\STATE Marquer $p$ comme étant {\tt visible}
+\STATE Calculer la distance géodésique $d'$ de $n$
+\IF{ $d'>d_{min}$}
+\STATE {\sc Ajout\_file$(p,Bucket[\lceil d'x \rceil])$}
+\ENDIF
+\ELSE
+\STATE Marquer $p$ comme étant {\tt fermé}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+ 
+\subsection{Analyse expérimentale et discussion}
+
+Dans notre analyse expérimentale, nous avons appliqué l'algorithme
+précédent sur un certain nombre de domaines binaires. Ainsi, la figure
+\ref{res1} présente les résultats de l'étiquetage en distance
+géodésique avec les métriques $d_4$, $d_8$ et la métrique géodésique
+proposée. Les distances sont représentées avec une palette de niveaux
+de gris réduite afin de mieux observer les fronts de propagations.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/result}
+    \caption[Analyse expérimentale de l'étiquetage en distance
+    géodésique]{Analyse   expérimentale de  l'étiquetage  en  distance
+    géodésique~:   de gauche à droite,  les  domaines  discrets et le
+    point source (pixel blanc   isolé), l'étiquetage avec  la distance
+    $d_8$, avec la distance $d_4$ et enfin avec la distance géodésique
+    proposée.}
+    \label{res1}
+  \end{center}
+\end{figure}
+
+Dans  la  figure \ref{res2},   au lieu  d'étiqueter  par  la  distance
+géodésique, tous les  pixels de même couleur  sont dans la même classe
+d'équivalence de  visibilité.  Ces  illustrations  nous  permettent de
+proposer une  solution au problème  {\it jouet} classique de placement
+du nombre minimal de  gardes dans un musée.   En effet, chaque couleur
+correspond à la zone de visibilité de chaque garde  et le domaine $\D$
+correspond au musée. Ainsi,  si le premier garde  est fixé (source $s$
+du problème) nous  sommes capable  de  calculer le nombre minimal   de
+gardes pour couvrir tout le domaine et de placer ceux-ci.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=13cm]{Fig/result2bis}
+    \caption[Diagramme de visibilité discrète]{Diagramme de visibilité
+      discrète~: tous les pixels de même couleur sont dans la même classe
+d'équivalence de visibilité, les domaines et points sources sont ceux
+de la  figure \ref{res1}.}
+    \label{res2}
+  \end{center}
+\end{figure}
+
+La figure \ref{angio}  présente une application  de ces algorithmes en
+imagerie médicale.    L'objectif est  ici  de mesurer  la  longueur de
+vaisseaux sanguins dans des images angiographique segmentées.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=14cm]{Fig/angio}
+    \caption[Application de la distance géodésique en imagerie
+    médicale]{Application de la distance géodésique en imagerie
+    médicale~: de gauche à droite, l'image angiographique de vaisseaux
+    sanguins,  le domaine binaire issu d'une segmentation et
+    l'étiquetage en distance géodésique.}
+    \label{angio}
+  \end{center}
+\end{figure}
+
+Enfin,   si nous  appliquons cet  algorithme  d'étiquetage en distance
+géodésique à partir de plusieurs sources,  le résultat obtenu est très
+proche  d'une transformée    en  distance euclidienne   de  ces points
+sources. Cependant, étant donné  que notre processus de propagation du
+domaine se fait localement, nous ne pouvons pas éviter les erreurs de type
+\aut{Danielson}  présentés  dans  les paragraphes  précédents. 
+
+
+\subsection{Vers une extension en 3D}
+\label{section3D}
+
+Une extension naturelle  de ce travail  consisterait en une analyse de
+la  visibilité et des chemins  géodésiques  en dimensions supérieures.
+Nous nous intéressons ici  au cas de la dimension  3 et considérons un
+domaine ${\mathcal{D}}$ de voxels 26-connexes.
+
+Dans le cas des approches basées sur des distances de chanfrein, des
+algorithmes efficaces peuvent être proposés pour l'étiquetage en
+distance géodésique. En effet, nous nous ramenons de toute façon à un
+problème de graphe  \citep{kiryati93,sven}.
+
+
+Dans notre approche  de chemins géodésiques  basés sur la  visibilité,
+nous pouvons reprendre les mêmes définitions~: on dira que deux voxels
+sont visibles s'il existe un segment de droite discrète 26-connexe tel
+que tous les voxels sont dans $\D$, passant par  les deux voxels. Nous
+renvoyons le  lecteur  au chapitre \ref{sec:droites-discretes-3d} pour
+plus de détails sur les droites discrètes 3D.  Cependant, l'étiquetage
+en visibilité dans des domaines non-convexes 3D  est plus complexe que
+dans le cas 2D.   Pour illustrer cela, regardons une  version 3D de la
+visibilité   restreinte.  Nous cherchons  donc   à décrire les droites
+réelles passant exactement par le  centre d'un voxel   $s$ et dont  la
+discrétisation contient un voxel $t$ de $\D$ et aucun point de $\BD$.
+
+Sans perte de généralité, nous nous plaçons dans le premier $48\eme$ d'espace,
+c'est-à-dire nous considérons $\vec{st}=(a,b,c)^T$ tel que $a\geq  b\geq
+c>0$. Ainsi, une droite qui passe  par $s$ et qui intersecte le carré
+de longueur de coté 1 centré en $t$ dans le plan $(Oyz)$ est solution au
+problème de visibilité restreinte (voir figure \ref{cone3D}-$(a)$). Si
+maintenant nous ajoutons des obstacles dans le même  $48\eme$
+d'espace, nous construisons des pyramides similaires et le point $t$
+sera visible de $s$ s'il existe une droite passant par $s$,
+qui intersecte le carré centré en $t$ mais ne coupe pas les carrés
+associés aux obstacles.
+
+Maintenant, projetons l'ensemble de ces carrés sur le plan parallèle à
+$(Oyz)$ contenant $t$ en utilisant la projection perspective de centre
+$s$. Ainsi, $t$ sera visible de $s$ si et seulement si le carré
+associé à $t$ n'est pas entièrement recouvert par ceux associés aux
+voxels obstacles (voir figure \ref{cone3D}-$(b)$). 
+
+
+D'un  point  de  vue  algorithmique,  même   le cas  de   la visibilité
+restreinte n'est  pas  évident.  En effet,  l'écriture d'un algorithme
+efficace qui teste  la couverture  d'un  carré par  d'autres n'est pas
+trivial.  De plus aucune structure    géométrique évidente des  voxels
+obstacles ne peut être mis en place en 3D pour cette visibilité.
+
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/cone3D}
+   \caption[Illustration de la visibilité restreinte en
+   3D]{Illustration de la visibilité restreinte en 3D~: $(a)$ domaines
+   de visibilité restreinte dans l'espace primal et $(b)$ illustration
+   du test de visibilité par projection dans le plan $(Oyz)$ contenant
+   $t$ des carrés associés aux voxels bloquants.}
+   \label{cone3D}
+\end{center}
+\end{figure}
+
+
+Nous pouvons cependant proposer  une première solution en généralisant
+en 3D l'approche  de \cite{soille91,soille94,soillebook}. Dans ce cas,
+le test  de  visibilité  est  basé  sur un  tracé  de  droite discrète
+26-connexe en utilisant un des algorithmes présenté dans le paragraphe
+\ref{sec:droites-discretes-3d}).    Ainsi,  en  utilisant  ce test  de
+visibilité et les  mêmes structures que pour le  cas 2D, nous obtenons
+un  algorithme d'étiquetage en distance  géodésique  dans des domaines
+3D.    Cette méthode n'est  cependant  pas  très  efficace puisque  la
+complexité est en  $O(nd)$ où $n$ est le  nombre de voxels de  $\D$ et
+$d$ son diamètre (longueur du plus long segment de droite contenu dans
+$\D$).
+
+Les figures \ref{vis3d} et  \ref{geodes3d} présentent  un étiquetage
+en distance géodésique de domaines 3D non convexes en utilisant une
+palette de niveaux de gris réduite.
+
+Si nous considérons maintenant une surface  discrète comme un ensemble
+de voxels connexes, l'algorithme  précédent nous permet de définir  la
+notion  de géodésiques surfaciques.  En effet,  les voxels d'une telle
+surface  discrète nous donnent  le domaine $\D$.  Les voxels obstacles
+correspondent    au   complémentaire de     $\D$. La    figure  
+\ref{surface_geodes3d}   illustre   ces   calculs  de      géodésiques
+surfaciques.
+
+\begin{figure}[htb]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/cone_obs}}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/cone}}
+    \caption[Exemple d'étiquetage en distance géodésique 3D]{Exemple
+      d'étiquetage  en distance   géodésique  3D~:  $(a)$ domaine   3D
+      défini par les obstacles gris  et $(b)$, étiquetage en distance
+      géodésique  de la première  classe  de visibilité uniquement. Le
+      voxel source est à l'origine du repère.}
+  \label{vis3d}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/obstacle}}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/obstacle_onde}}
+    \caption[Exemple d'étiquetage en distance géodésique 3D]{Exemple
+      d'étiquetage en distance géodésique 3D~: $(a)$ étiquetage en
+      distance géodésique complet et $(b)$ seuillage de la distance
+      pour mieux observer les structures internes du front d'onde.}
+    \label{geodes3d}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+  \begin{center}
+   \subfigure[]{ \includegraphics[width=5cm]{sphere_red}}
+   \subfigure[]{ \includegraphics[width=5cm]{cube}}
+   \subfigure[]{ \includegraphics[height=6cm]{table}}
+ %   \includegraphics[width=12cm]{Fig/surfaces}
+   \caption[Géodésiques surfaciques]{Géodésiques surfaciques~: $(a)$
+     étiquetage en distance géodésique de la surface d'une sphère,
+     $(b)$ de la surface d'un cube et $(c)$ d'une table (le point
+     source est situé au milieu du plateau).}
+  \label{surface_geodes3d}
+\end{center}
+\end{figure}
+
+\subsection{Conclusion et perspectives}
+
+Nous avons présenté un test  de visibilité discrète  basé sur un objet
+discret classique  (la droite  discrète). Lors de  notre  étude  de la
+visibilité discrète, nous avons aussi  analysé le comportement de  ces
+droites discrètes dans le cas de domaines non-convexes.
+
+Par la suite, nous  avons présenté plusieurs  algorithmes permettant~:
+de décider si  deux pixels sont  visibles  étant donné  un ensemble de
+pixels obstacles,   de décrire l'ensemble  des pixels d'un domaine
+visibles à partir d'un point. Sur le  plan algorithmique nous avons présenté un
+algorithme d'étiquetage en visibilité  efficace dont la complexité
+est en $O(nlog(m))$ (où $n$ est le  nombre de pixels  dans $\D$ et $m$
+le nombre de pixels    obstacles).  Nous avons ensuite   présenté  une
+définition  de   chemin géodésique discret    basé  sur  la notion  de
+visibilité ainsi qu'un algorithme de calcul.
+
+Nous nous sommes aussi intéressés au cas tridimensionnel en présentant
+un   premier algorithme ainsi que   quelques pistes vers un algorithme
+efficace.
+
+%Il reste cependant de nombreux travaux en perspective. Dans le cas 2D,
+%un    travail intéressant serait    un  comparaison avec des  méthodes
+%différentielles de  propagation  de  front d'onde.   Dans le   cas 3D,
+%l'algorithme que  nous avons  présenté   est certes une   solution  au
+%problème  mais   sa   complexité reste importante.    Il   serait donc
+%intéressant de poursuivre ce travail afin d'optimiser ce calcul.
+
+
+\section{Conclusion sur ce chapitre}
+
+
+Dans ce chapitre, nous  nous sommes intéressés aux métriques associées
+à la grille discrète et à l'utilisation de celles-ci pour l'analyse de
+formes.    L'intérêt    des descriptions obtenues   à     l'aide de la
+transformée en distance euclidienne et  du squelette de forme  a été
+montré depuis un certain temps. A la suite de la rédaction de ce
+chapitre, nous nous sommes aperçus qu'un article récent \citep{maurer}
+présentait un résultat analogue  pour le calcul de la transformée à
+partir du diagramme de Voronoï discret. L'algorithme présenté a été
+développé indépendamment des travaux de \citeauthor{maurer}. 
+Cependant,  nous donnons dans ce chapitre des démonstrations et
+illustrations plus exhaustives. Par contre, la construction d'un
+squelette basé sur le diagramme de Voronoï discret est originale à
+notre connaissance.
+
+
+En ce qui concerne la propagation  géodésique, elle peut être utilisée
+soit directement comme source d'information métrique mais permet aussi
+une  description globale  de la  forme en  considérant  les notions de
+transformée    en distance géodésique \citep{soille91,soillebook}.  De
+plus, la  possibilité   de construire un   {\it  voisinage géodésique}
+autour d'un      voxel  d'une surface   discrète    permet  l'écriture
+d'algorithmes d'estimation de normales et de courbure Gaussienne (voir
+paragraphes                    \ref{sec:norm-dune-surf}             et
+\ref{sec:courbure-gaussienne}).
+
+
+Les perspectives de ces travaux sont nombreuses.  Pour le squelette de
+formes basé sur  le diagramme  de  Voronoï discret, l'étude  présentée
+nous a permis de vérifier la pertinence d'une  telle approche. Il nous
+faut  cependant situer  un   peu  plus précisément  celle-ci  dans  la
+bibliographie  et  surtout   présenter des   calculs  d'extraction  en
+dimensions quelconques.
+
+Pour la   propagation   géodésique,  nous  souhaitons comparer   cette
+approche discrète aux  approches basées sur une analyse différentielle
+\citep{EVL-1996-149,sethian96fast}.    Enfin,  nous souhaitons   aussi
+poursuivre l'analyse  en dimension 3  afin de réduire la complexité de
+l'algorithme proposé.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 

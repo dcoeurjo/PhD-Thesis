@@ -1,0 +1,38 @@
+SUBMISSION ID : 	 	 	56
+ 
+ 
+ TITRE :  	 Visibility in Discrete Geometry: an application to discrete geodesic paths 
+ 
+ 
+AUTHORS : 
+ 
+David Coeurjolly
+Laboratoire ERIC
+Université Lumière Lyon 2
+5 av. Pierre Mendes-France
+69676 Bron CEDEX
+
+ 
+ ABSTRACT : 
+
+	 In this article, we present a discrete definition of the classical visibility in computational geometry. We present algorithms to compute the set of pixels in a non-convex domain that are visible from a source pixel. Based on these definitions, we define  discrete geodesic paths in discrete domain with obstacles. This allows us to introduce a new geodesic metric in discrete geometry. 
+ 
+ KEYWORDS : 	 Visibility, Discrete Straight Lines, Geodesic distance
+ 
+ TOPICS : 
+ 	 	 	 Models for Discrete Geometry
+ 	 	 	 Discrete Shape Representation
+ 	 	 	  
+ 
+ PRESENTATION : 
+ 	 	 	 Oral presentation
+ 
+
+ CORRESPONDENT : 
+
+David Coeurjolly
+Laboratoire ERIC
+Université Lumière Lyon 2
+5 av. Pierre Mendes-France
+69676 Bron CEDEX
+david.coeurjolly@univ-lyon2.fr

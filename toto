@@ -1,0 +1,933 @@
+This is TeX, Version 3.14159 (Web2C 7.3.1)
+(these.tex
+LaTeX2e <1999/12/01> patch level 1
+Babel <v3.6Z> and hyphenation patterns for american, french, german, ngerman, n
+ohyphenation, loaded.
+(/usr/local/teTeX/share/texmf/tex/latex/base/book.cls
+Document Class: book 1999/09/10 v1.4a Standard LaTeX document class
+(/usr/local/teTeX/share/texmf/tex/latex/base/bk11.clo)) (config.tex
+(/usr/local/teTeX/share/texmf/tex/latex/misc/geometry.sty
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/keyval.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/config/geometry.cfg))
+(/usr/local/teTeX/share/texmf/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/teTeX/share/texmf/tex/latex/amsmath/amstext.sty
+(/usr/local/teTeX/share/texmf/tex/latex/amsmath/amsgen.sty))
+(/usr/local/teTeX/share/texmf/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/amsmath/amsopn.sty))
+(/usr/local/teTeX/share/texmf/tex/latex/amsfonts/amsfonts.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/amsfonts/amssymb.sty)
+(/home/dcoeurjo/Styles/frbib.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/picins.sty
+Option `picins' Version 3.0 Sep. 1992, TH Darmstadt/HRZ)
+(/usr/local/teTeX/share/texmf/tex/latex/tools/bm.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/base/latexsym.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/stmaryrd.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/url.sty)
+(/usr/local/teTeX/share/texmf/tex/generic/babel/babel.sty
+(/usr/local/teTeX/share/texmf/tex/generic/babel/frenchb.ldf
+(/usr/local/teTeX/share/texmf/tex/generic/babel/babel.def)))
+(/usr/local/teTeX/share/texmf/tex/latex/minitoc/minitoc.sty
+*** minitoc package, version 29 ***
+*** part level macros available ***
+*** chapter level macros available ***
+*** Autoconfiguration of extensions ***
+(these.mtc1)
+*** Long extensions (Unix-like) will be used ***
+==> this version is configured for UNIX-like (long extensions) file names.
+(/usr/local/teTeX/share/texmf/tex/latex/minitoc/english.mld)
+(/usr/local/teTeX/share/texmf/tex/latex/minitoc/french.mld))
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/graphics.sty
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/trig.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/config/graphics.cfg)
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/dvips.def))
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/epsfig.sty
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/graphicx.sty))
+(/usr/local/teTeX/share/texmf/tex/latex/fancyhdr/fancyhdr.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/subfigure.sty
+Package: subfigure 1995/03/06 v2.0
+) (/usr/local/teTeX/share/texmf/tex/latex/natbib/natbib.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/floatflt.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/algorith/algorithm.sty
+Document Style `algorithm' - floating environment
+(/usr/local/teTeX/share/texmf/tex/latex/misc/float.sty)
+(/usr/local/teTeX/share/texmf/tex/latex/base/ifthen.sty))
+(/usr/local/teTeX/share/texmf/tex/latex/algorith/algorithmic.sty
+Document Style `algorithmic' - environment
+(/usr/local/teTeX/share/texmf/tex/latex/tools/calc.sty))
+(/home/dcoeurjo/Styles/quotchap.sty
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/color.sty
+(/usr/local/teTeX/share/texmf/tex/latex/config/color.cfg)
+(/usr/local/teTeX/share/texmf/tex/latex/graphics/dvipsnam.def)))
+(/usr/local/teTeX/share/texmf/tex/latex/misc/rotating.sty)
+(/home/dcoeurjo/Styles/french.sty
+
+ -23- Extension : style french V4,04 -- 7 aout 1998 -- (B.Gaulle, GUTenberg)
+ -24- french.sty utilise dans ce document le codage de fonte OT1.
+ -25- french.sty affiche ici ses messages en 7-bits << \`a la TeX >>.
+
+
+ french.sty : -2- fichier fenglish.sty non trouv\'e (\`a la ligne 729).
+
+ french.sty : -13- le caract\`ere ";" est d\'ej\`a actif (\`a la ligne 1423).
+
+ french.sty : -13- le caract\`ere ":" est d\'ej\`a actif (\`a la ligne 1432).
+
+ french.sty : -13- le caract\`ere "!" est d\'ej\`a actif (\`a la ligne 1445).
+
+ french.sty : -13- le caract\`ere "?" est d\'ej\`a actif (\`a la ligne 1455).
+
+ french.sty : la double ponctuation est alors d\'esactiv\'ee (\`a la ligne 1464
+).
+
+ -18- french.sty force l'option \nofrenchguillemets en maths avec AmSLaTeX.)
+(/usr/local/teTeX/share/texmf/tex/latex/base/fontenc.sty
+(/usr/local/teTeX/share/texmf/tex/latex/base/t1enc.def))
+(/usr/local/teTeX/share/texmf/tex/latex/misc/index.sty
+Style-Option: `index' v3.02 <15 September 1993> (dmj)
+) (/home/dcoeurjo/Styles/frenchalgo.tex) (/home/dcoeurjo/Styles/pstchap.sty
+(/usr/local/teTeX/share/texmf/tex/generic/pstricks/pst-fill.sty
+(/usr/local/teTeX/share/texmf/tex/generic/pstricks/pst-fill.tex
+ v97 patch 2, 1997/12/12
+(/usr/local/teTeX/share/texmf/tex/generic/pstricks/pstricks.tex
+`PSTricks' v97 patch 10  <1999/03/24> (tvz)
+(/usr/local/teTeX/share/texmf/tex/generic/pstricks/pstricks.con))))
+----------------------------------------------------------------
+ Loaded pstchap.sty Chapter Styles by PSTricks <2000/04/29> 
+----------------------------------------------------------------
+)
+index.sty> Writing index file these.idx 
+) (these.aux) (/usr/local/teTeX/share/texmf/tex/latex/cyrillic/ot2wncyr.fd)
+(/usr/local/teTeX/share/texmf/tex/latex/amsfonts/umsa.fd)
+(/usr/local/teTeX/share/texmf/tex/latex/amsfonts/umsb.fd)
+(/usr/local/teTeX/share/texmf/tex/latex/base/ulasy.fd)
+(/usr/local/teTeX/share/texmf/tex/latex/misc/ustmry.fd)
+
+LaTeX Warning: No \author given.
+
+[1]
+PREPARING MINITOCS FROM these.toc
+Writing these.mtc1
+Writing these.mtc2
+Writing these.mtc3
+Writing these.mtc4
+Writing these.mtc5
+Writing these.mtc6
+Writing these.mtc7
+Writing these.mtc8
+Writing these.mtc9
+PREPARING PARTTOCS FROM these.toc
+Writing these.ptc1
+Writing these.ptc2
+Writing these.ptc3
+(/usr/local/teTeX/share/texmf/tex/latex/psnfss/t1pag.fd) (these.toc
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[1])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[2] (these.lof
+Underfull \hbox (badness 2961) in paragraph at lines 39--39
+ [][] []\T1/cmr/m/n/10.95 Repésentation de la droite dis-crètes $\OMS/cmsy/m/n/
+10.95 D\OT1/cmr/m/n/10.95 (2\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 5\OML/cmm/
+m/it/10.95 ; \OMS/cmsy/m/n/10.95 ^^@\OT1/cmr/m/n/10.95 1\OML/cmm/m/it/10.95 ; \
+OT1/cmr/m/n/10.95 5)$ \T1/cmr/m/n/10.95 sous forme 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 78--78
+ [][] []\T1/cmr/m/n/10.95 Enveloppe convexe du ré-seau en-ge-dré par la suite 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[4]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[5]
+Underfull \hbox (badness 1189) in paragraph at lines 125--125
+ [][] []\T1/cmr/m/n/10.95 Erreur de la trans-for-mée de \T1/cmr/m/sc/10.95 Da-n
+iels-son \T1/cmr/m/n/10.95 sur un voi-si-nage en 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[6])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[7]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[8] (these.lot)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[9]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[10] (these.loa
+Overfull \hbox (15.20467pt too wide) in paragraph at lines 13--13
+ [][] []\T1/cmr/m/n/10.95 Enveloppe convexe arith-mé-tique d'un seg-ment de dro
+ite dis-crète (\T1/cmr/m/sc/10.95 Coeur- 
+) (intro.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[11]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[12])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[1]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[2] <./Fig/CUBE.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[3] [4] (notionsbase.tex
+Chapitre 1.
+(/usr/local/teTeX/share/texmf/tex/latex/psnfss/t1pbk.fd)
+(/usr/local/teTeX/share/texmf/tex/latex/psnfss/t1ptm.fd) (these.mtc2)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[5] <./Fig/pavage.eps>
+Overfull \hbox (28.45276pt too wide) in paragraph at lines 17--19
+ [] 
+<./Fig/maillage.eps>
+Overfull \hbox (28.45276pt too wide) in paragraph at lines 32--33
+ [] 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[6] <./Fig/connexite.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[7]
+
+Package amsfonts Warning: Obsolete command \Bbb; \mathbb should be used instead
+ on input line 197.
+
+(/usr/local/teTeX/share/texmf/tex/latex/base/omscmr.fd)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[8] <./Fig/topoerreur.eps>
+Overfull \hbox (27.02983pt too wide) in paragraph at lines 246--248
+[]\T1/cmr/m/it/10.95 le com-plé-men-taire de tout $\OT1/cmr/m/n/10.95 4\OMS/cms
+y/m/n/10.95 ^^@$\T1/cmr/m/it/10.95 arc (resp. un $\OT1/cmr/m/n/10.95 8\OMS/cmsy
+/m/n/10.95 ^^@$\T1/cmr/m/it/10.95 arc) est $\OT1/cmr/m/n/10.95 8\OMS/cmsy/m/n/1
+0.95 ^^@$\T1/cmr/m/it/10.95 connexe (resp. $\OT1/cmr/m/n/10.95 4\OMS/cmsy/m/n/1
+0.95 ^^@$\T1/cmr/m/it/10.95 connexe) ; 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[9] <./Fig/bord.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[10] <./Fig/elements.eps> <./Fig/freeman.eps> <./Fig/codage_freeman.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[11]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[12] <./Fig/codage_bribiesca.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[13] <./Fig/discretisations.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[14] <./Fig/discretisationsbis.eps>) (droites.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[15]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[16]
+Chapitre 2.
+(these.mtc3
+Overfull \hbox (15.82207pt too wide) in paragraph at lines 23--23
+ [][] []\T1/cmr/m/n/10 Vers une struc-ture com-plète du do-maine dans l'espace 
+
+)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[17]
+Overfull \hbox (8.4873pt too wide) in paragraph at lines 24--31
+[]\T1/cmr/m/n/10.95 Non seule-ment cette droite dis-crète est im-por-tante in-t
+rin-sè-que-ment en tant qu'objet
+<./Fig/octants.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[18] <./Fig/vialard_droites1.eps> <./Fig/vialard_droites2.eps>
+<./Fig/vialard_droite3.eps> <Fig/freeman_prop.eps> <Fig/corde_prop.eps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[19] <Fig/evenness_prop.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[20]
+Overfull \hbox (12.14096pt too wide) detected at line 222
+\OML/cmm/m/it/10.95 s \OT1/cmr/m/n/10.95 :  \OML/cmm/m/it/10.95 s \OMS/cmsy/m/n
+/10.95 2 f\OT1/cmr/m/n/10.95 0\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 1\OML/cm
+m/m/it/10.95 ; [] ; q \OMS/cmsy/m/n/10.95 ^^@ \OT1/cmr/m/n/10.95 1\OMS/cmsy/m/n
+/10.95 g j 8\OML/cmm/m/it/10.95 i \OMS/cmsy/m/n/10.95 2 f\OT1/cmr/m/n/10.95 1\O
+ML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 2\OML/cmm/m/it/10.95 ; [] ; q\OMS/cmsy/m
+/n/10.95 g \OT1/cmr/m/n/10.95 :  \OML/cmm/m/it/10.95 c[] \OT1/cmr/m/n/10.95 = [
+] \OMS/cmsy/m/n/10.95 ^^@ []
+<Fig/dorst_quadurplet.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[21] <Fig/reveilles_prop.eps>
+Overfull \hbox (7.35625pt too wide) in paragraph at lines 285--288
+[]\T1/cmr/m/n/10.95 Géométriquement, cette droite dis-crète peut se construire 
+en consi-dé-rant l'ensemble
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[22] <./Fig/3_7_0_5.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 333--333
+[]|\T1/cmr/m/n/9 (a)
+<./Fig/3_7_0_7.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 334--334
+[]|\T1/cmr/m/n/9 (b)
+<./Fig/3_7_0_8.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 335--335
+[]|\T1/cmr/m/n/9 (c)
+<./Fig/3_7_0_10.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 336--336
+[]|\T1/cmr/m/n/9 (d)
+<./Fig/3_7_0_16.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 337--337
+[]|\T1/cmr/m/n/9 (e)
+
+Overfull \hbox (0.93134pt too wide) in paragraph at lines 350--353
+[]\T1/cmr/m/it/10.95 Supposons une droite ra-tion-nelle D d'équation
+
+Overfull \hbox (72.21605pt too wide) in paragraph at lines 359--363
+[]\T1/cmr/m/it/10.95 la dis-cré-ti-sa-tion par ex-cès de D, c'est-à-dire l'ense
+mble des pixels tel que $[]$
+
+Overfull \hbox (13.55782pt too wide) in paragraph at lines 364--368
+[]\T1/cmr/m/it/10.95 la dis-cré-ti-sa-tion de meilleure ap-proxi-ma-tion (ou GI
+Q) de D, c'est-à-dire l'ensemble
+
+Overfull \hbox (16.87032pt too wide) in paragraph at lines 364--368
+\T1/cmr/m/it/10.95 des pixels tel que $[]$ coïn-cide avec la droite dis-crète $
+\OMS/cmsy/m/n/10.95 D\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 a; b; \OMS/cmsy/m/
+n/10.95 ^^@\OML/cmm/m/it/10.95 c \OT1/cmr/m/n/10.95 +
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[23] <Fig/reveilles_appui.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[24]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[25] <Fig/droites_bezout.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[26]
+Overfull \hbox (3.17351pt too wide) in paragraph at lines 633--644
+\T1/cmr/m/n/10.95 Nous nous in-té-res-sons plus par-ti-cu-liè-re-ment aux droit
+es arith-mé-tiques naïves. Comme
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[27]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[28] <Fig/dual_exemplebis.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[29] <Fig/fig1rbis.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[30] <Fig/intervalle_OBQ.eps>
+Underfull \hbox (badness 1603) in paragraph at lines 883--883
+[]\T1/cmr/m/sc/10.95 Fig. \T1/cmr/m/n/10.95 2.13 --: \T1/cmr/m/it/10.95 Re-pé-s
+en-ta-tion de la droite dis-crètes $\OMS/cmsy/m/n/10.95 D\OT1/cmr/m/n/10.95 (2\
+OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 5\OML/cmm/m/it/10.95 ; \OMS/cmsy/m/n/10
+.95 ^^@\OT1/cmr/m/n/10.95 1\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 5)$ \T1/cmr
+/m/it/10.95 sous forme
+<Fig/orourke.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[31]
+Overfull \hbox (2.77612pt too wide) in paragraph at lines 921--923
+[]\T1/cmr/m/it/10.95 Étant donné un
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[32] <Fig/structure_ilroy.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[33] <Fig/farey_fan_2.eps> <Fig/farey_fan_3.eps> <Fig/farey_fan_6.eps>
+Overfull \hbox (7.5989pt too wide) in paragraph at lines 1060--1069
+\T1/cmr/m/it/10.95 exemple $\OT1/cmr/m/n/10.95 [\OML/cmm/m/it/10.95 AB\OT1/cmr/
+m/n/10.95 ]$\T1/cmr/m/it/10.95 , du do-maine, l'abscisse de cette in-ter-sec-ti
+on est le suc-ces-seur de l'abscisse
+<Fig/coupure_ilroy.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[34] (/usr/local/teTeX/share/texmf/tex/latex/base/t1cmss.fd)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[35]
+Overfull \hbox (2.02248pt too wide) in paragraph at lines 1165--1173
+[]\T1/cmr/m/n/10.95 Cependant, nous pou-vons adap-ter cet al-go-rithme en uti-l
+i-sant, à la fois l'algorithme
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[36] <./Fig/UU_LL.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[37] <./Fig/algo_debled.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[38]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[39] <./Fig/dual_arith.eps> <./Fig/dual_droite2.eps> <./Fig/dual_arith2.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 1437--1437
+[]\T1/cmr/m/n/10.95 Complexité
+
+Underfull \hbox (badness 1028) in paragraph at lines 1439--1439
+[]\T1/cmr/m/n/10.95 oui, voir []\T1/cmr/m/sc/10.95 Bu-zer
+
+Underfull \hbox (badness 4995) in paragraph at lines 1441--1441
+[]\T1/cmr/m/sc/10.95 Preparata \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Sha-mos
+
+Overfull \hbox (1.08574pt too wide) in paragraph at lines 1443--1443
+[]$\OML/cmm/m/it/10.95 O\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 n[]log\OT1/cmr/
+m/n/10.95 (\OML/cmm/m/it/10.95 n\OT1/cmr/m/n/10.95 ))$| 
+
+Overfull \hbox (1.08574pt too wide) in paragraph at lines 1447--1447
+[]$\OML/cmm/m/it/10.95 O\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 nlog[]\OT1/cmr/
+m/n/10.95 (\OML/cmm/m/it/10.95 n\OT1/cmr/m/n/10.95 ))$| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1453--1453
+[]\T1/cmr/m/sc/10.95 Dorst \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Smeul-ders
+
+Underfull \hbox (badness 4686) in paragraph at lines 1453--1453
+\T1/cmr/m/n/10.95 (1991[]); \T1/cmr/m/sc/10.95 Lin-den-baum \T1/cmr/m/n/10.95 e
+t
+
+Underfull \hbox (badness 10000) in paragraph at lines 1457--1457
+[]\T1/cmr/m/sc/10.95 Debled-Rennesson
+Adding sideways figure on  left hand page
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[40]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[41]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[42] <./Fig/cercle_segmentation.ps> <./Fig/carre_segmentation.ps>
+<./Fig/sinc_segmentation.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[43]
+Overfull \hbox (2.45403pt too wide) in paragraph at lines 1589--1593
+[]\T1/cmr/m/it/10.95 La droite dis-crète 3D, no-
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[44]
+Overfull \hbox (2.73685pt too wide) in paragraph at lines 1617--1620
+[]\T1/cmr/m/it/10.95 une droite dis-crète
+
+Overfull \hbox (27.4125pt too wide) in paragraph at lines 1630--1632
+[]\T1/cmr/m/it/10.95 Considérons
+<./Fig/pd61.ps> <./Fig/pd262.ps> <./Fig/pd263.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[45]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[46] <./Fig/48.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[47]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[48]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[49]
+Overfull \hbox (18.42352pt too wide) in paragraph at lines 1958--1960
+[]\T1/cmr/m/n/10.95 Nous pou-vons vé-ri-fier : $\OML/cmm/m/it/10.95 g:\OT1/cmr/
+m/n/10.95 (\OMS/cmsy/m/n/10.95 ^^@\OT1/cmr/m/n/10.95 3\OML/cmm/m/it/10.95 ; \OT
+1/cmr/m/n/10.95 17\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 5) = (3\OML/cmm/m/it
+/10.95 ; \OT1/cmr/m/n/10.95 5\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 17)$\T1/c
+mr/m/n/10.95 . De plus[] $\OML/cmm/m/it/10.95 g[] \OT1/cmr/m/n/10.95 = \OML/cmm
+/m/it/10.95 g[]$ \T1/cmr/m/n/10.95 et $\OML/cmm/m/it/10.95 g[]\OT1/cmr/m/n/10.9
+5 (3\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 5\OML/cmm/m/it/10.95 ; \OT1/cmr/m/
+n/10.95 17) =
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[50] <./Fig/segbres1.ps> <./Fig/segspi2.ps> <./Fig/cercle3D.ps>
+<./Fig/ellipse3D.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[51]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[52] <./Fig/triangle_corde.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[53]
+Overfull \hbox (11.36497pt too wide) in paragraph at lines 2140--2143
+[]\T1/cmr/m/it/10.95 Un en-semble
+<./Fig/plan_exbis.ps> <./Fig/envbis.ps> <./Fig/globalbis.ps>
+<./Fig/kim_foire.ps> <./Fig/env_kim_foire.ps>
+Overfull \hbox (16.21165pt too wide) in paragraph at lines 2209--2211
+[]
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[54] <./Fig/partiellement_veelaert.eps>
+Overfull \hbox (2.10307pt too wide) in paragraph at lines 2244--2249
+[]\T1/cmr/m/it/10.95 Un en-semble de
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[55] <./Fig/naif.ps> <./Fig/standard.ps>
+Overfull \hbox (21.7337pt too wide) in paragraph at lines 2310--2315
+\T1/cmr/m/n/10.95 d'indice $\OML/cmm/m/it/10.95 k$ \T1/cmr/m/n/10.95 sera as-so
+-ciée au \T1/cmr/bx/n/10.95 reste $\OML/cmm/m/it/10.95 k$\T1/cmr/m/n/10.95 . Pl
+us for-mel-le-ment, pour un plan dis-cret $\OMS/cmsy/m/n/10.95 P\OT1/cmr/m/n/10
+.95 (\OML/cmm/m/it/10.95 a; b; c; ^^V; !\OT1/cmr/m/n/10.95 )$\T1/cmr/m/n/10.95 
+,
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[56] <./Fig/reste_plan.eps> <./Fig/plan_appui.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[57]
+Overfull \hbox (16.0303pt too wide) in paragraph at lines 2414--2416
+[]\T1/cmr/m/it/10.95 Soit $\OMS/cmsy/m/n/10.95 P\OT1/cmr/m/n/10.95 (\OML/cmm/m/
+it/10.95 a; b; c; ^^V\OT1/cmr/m/n/10.95 )$ \T1/cmr/m/it/10.95 un plan dis-cret 
+naïf, l'intersection
+
+Overfull \hbox (3.3302pt too wide) in paragraph at lines 2417--2419
+[]\T1/cmr/m/it/10.95 pour $\OML/cmm/m/it/10.95 z \OT1/cmr/m/n/10.95 = \OML/cmm/
+m/it/10.95 z[]$\T1/cmr/m/it/10.95 , la pro-jec-tion sur le plan $\OML/cmm/m/it/
+10.95 Oxy$ \T1/cmr/m/it/10.95 est la droite dis-crète épaisse $\OMS/cmsy/m/n/10
+.95 D\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 a; b; ^^V \OMS/cmsy/m/n/10.95 ^^@
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[58] <./Fig/plan_droites.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[59] <./Fig/polygone_appui.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[60]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[61]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[62] <./Fig/barycentre_dual.ps> <./Fig/double_cone.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[63] <./Fig/env_cvx_appui.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 2771--2771
+[]\T1/cmr/m/sc/10.95 Fig. \T1/cmr/m/n/10.95 2.37 --: \T1/cmr/m/it/10.95 En-ve-l
+oppe convexe du ré-seau en-ge-dré par la suite
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[64]
+Overfull \hbox (8.09816pt too wide) in paragraph at lines 2791--2796
+\T1/cmr/m/it/10.95 po-ly-gones d'appui, le po-ly-èdre dans l'escpace des par-mè
+tres est exac-te-ment l'intersection
+<./Fig/preuve_cvx_appui.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[65] <./Fig/proj_poly_appui.eps>
+Overfull \hbox (6.41037pt too wide) in paragraph at lines 2879--2882
+[]\T1/cmr/m/it/10.95 Soit $\OMS/cmsy/m/n/10.95 P\OT1/cmr/m/n/10.95 (\OML/cmm/m/
+it/10.95 a; b; c; ^^V\OT1/cmr/m/n/10.95 )$ \T1/cmr/m/it/10.95 un mor-ceau de pl
+an connexe, le po-lèdre dans l'espace
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[66] (/usr/local/teTeX/share/texmf/tex/latex/base/t1cmtt.fd)
+<./Fig/sphere_cvx.ps> <./Fig/sphere_MC.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[67]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[68]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[69] <./Fig/graphe_stat_aleatoire.eps> <./Fig/graphe_stat_sequentiel.eps>
+Overfull \hbox (12.15337pt too wide) in paragraph at lines 3170--3175
+[]\T1/cmr/m/n/10.95 Basé sur cette ana-lyse, tout test sta-tis-tique nous per-m
+et-tant de me-su-rer l'adéquation
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[70]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[71] <./Fig/graphe_stat_segmentation.eps> <./Fig/graphe_stat_tangente.eps>
+<./Fig/graphe_stat_tangente_petit.eps> <./Fig/graphe_stat_tangente_tordu.eps>
+<./Fig/stat_cas_tordu.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[72] <./Fig/stat_plan.eps> <./Fig/idee_stat_plan.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[73]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[74]) (cercles.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[75]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[76]
+Chapitre 3.
+(these.mtc4)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[77] <./Fig/discretisation_cercles.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[78] <./Fig/cercle_arith.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[79] <./Fig/dis8bisbis.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[80]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[81]
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
+[]\T1/cmr/m/n/10.95 Complexité
+
+Underfull \hbox (badness 10000) in paragraph at lines 278--278
+[]$\OML/cmm/m/it/10.95 O\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 N[]\OT1/cmr/m/n
+/10.95 )$
+
+Underfull \hbox (badness 10000) in paragraph at lines 278--278
+\T1/cmr/m/n/10.95 (image
+
+Underfull \hbox (badness 10000) in paragraph at lines 286--286
+[]\T1/cmr/m/n/10.95 oui avec
+
+Underfull \hbox (badness 10000) in paragraph at lines 286--286
+[]\T1/cmr/m/sc/10.95 Bu-zer
+
+Overfull \hbox (1.08574pt too wide) in paragraph at lines 291--291
+[]$\OML/cmm/m/it/10.95 O\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 n[]log\OT1/cmr/
+m/n/10.95 (\OML/cmm/m/it/10.95 n\OT1/cmr/m/n/10.95 ))$| 
+
+Overfull \hbox (6.63959pt too wide) in paragraph at lines 272--295
+[][]
+<./Fig/break.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[82]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[83]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[84] <./Fig/fig1rr.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[85] <./Fig/reduction_T.eps> <./Fig/reduction_globale.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[86] <./Fig/bez_avant.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[87]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[88] <Fig/one_segment_a.eps> <Fig/one_segment_b.eps> <Fig/bez.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[89]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[90] <./Fig/cercle_env_cvx.eps> <./Fig/S.eps> <./Fig/S_polyline.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[91]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[92]
+Underfull \hbox (badness 10000) in paragraph at lines 1040--1056
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1040--1056
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1040--1056
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[93]
+Underfull \hbox (badness 10000) in paragraph at lines 1087--1116
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1087--1116
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1087--1116
+
+
+LaTeX Warning: Reference `separating' on page 94 undefined on input line 1130.
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[94]
+Underfull \hbox (badness 10000) in paragraph at lines 1170--1181
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[95]
+Overfull \hbox (22.84888pt too wide) in paragraph at lines 1244--1249
+[]\T1/cmr/m/n/10.95 This cur-va-ture is the in-verse ra-dius as-so-cia-ted with
+ the clo-sest ver-tex of $\OML/cmm/m/it/10.95 acd\OT1/cmr/m/n/10.95 (\OMS/cmsy/
+m/n/10.95 f\OML/cmm/m/it/10.95 M; L; R\OMS/cmsy/m/n/10.95 g\OML/cmm/m/it/10.95 
+;$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1255--1277
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1255--1277
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1255--1277
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1255--1277
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[96]
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1300
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1300
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1300
+
+<Fig/courbure_40.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[97] <Fig/res_cercle.ps> <Fig/S_segm.eps> <Fig/Para_segm.eps>
+<Fig/Sdom1_Sbis.eps> <Fig/Sdom2_Sbis.eps> <Fig/Sdom3_Sbis.eps> <Fig/Sdom1.eps>
+<Fig/Sdom3.eps> <Fig/sigma1.eps> <Fig/sigma2.eps> <Fig/sigma3.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[98]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[99])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[100]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[101] [102] (metriques.tex
+Chapitre 5.
+(these.mtc5
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[103])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[104] <./Fig/boule_d4.ps> <./Fig/boule_d8.ps> <./Fig/boule_euc.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[105] <./Fig/erreur_dani.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[106]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[107] <Fig/edt_saito.eps>
+Overfull \hbox (3.35895pt too wide) in paragraph at lines 243--243
+[]\T1/cmr/bx/n/12 Diagramme de Vo-ro-noi et trans-for-mée en dis-tance Eu-cli-d
+ienne 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[108] <./Fig/voronoi_diagramme.ps> <./Fig/delaunay.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[109]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[110] <Fig/edt_breu.ps> <Fig/breu_seq.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[111] <Fig/preuve_cache.ps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[112]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[113]
+Overfull \hbox (32.29596pt too wide) in paragraph at lines 636--639
+[]
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[114] <Fig/edt_dcoeurjo.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[115]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[116] <Fig/edt_dcoeurjo_3D.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[117]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[118]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[119]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[120]
+Underfull \hbox (badness 4084) in paragraph at lines 1138--1140
+[] []\T1/cmr/m/n/10.95 Construction de la liste $\OMS/cmsy/m/n/10.95 L[]$ \T1/c
+mr/m/n/10.95 à par-tir de $\OML/cmm/m/it/10.95 Candidats$ \T1/cmr/m/n/10.95 en 
+uti-li-sant
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[121] <Fig/bruit.ps> <Fig/bruit_voro.ps> <Fig/bruit_edt_norm.ps>
+<Fig/bruit_circ.ps> <Fig/sphere.ps> <Fig/sphere_voro.ps> <Fig/sphere_circ.ps>
+<Fig/2spheres.ps> <Fig/2spheres_voro.ps> <Fig/2spheres_circ.ps>
+Overfull \hbox (6.84822pt too wide) in paragraph at lines 1242--1247
+\T1/cmr/m/n/10.95 dia-gramme de Vo-ro-noi, les phé-no-mènes de dé-gradé sont du
+s à l'algorithme d'affectation
+<Fig/carre.ps> <Fig/carre_voro.ps> <Fig/carre_circ.ps> <Fig/homme.ps>
+<Fig/homme_voro.ps> <Fig/homme_circ.ps> <Fig/serpent.ps> <Fig/serpent_voro.ps>
+<Fig/serpent_circ.ps> <Fig/grand.ps> <Fig/grand_voro.ps> <Fig/grand_circ.ps>
+<Fig/etoile.ps> <Fig/etoile_step1.ps> <Fig/etoile_step2.ps>
+<Fig/res_etoile_1.ps> <Fig/res_etoile_2.ps> <Fig/res_etoile_3.ps>
+<Fig/res_etoile_4.ps> <Fig/3voxels_sites.ps> <Fig/3voxels_vor.ps>
+<Fig/3voxels.ps> <Fig/synth.ps> <Fig/res_synth.ps> <Fig/hom.ps>
+<Fig/hom_res.ps> <Fig/hom_res3.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[122]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[123]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[124]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[125]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[126]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[127] <Fig/aniso3_init.ps> <Fig/aniso3_voro.ps> <Fig/aniso3_circ.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[128]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[129] <Fig/hexa_grille_tube2.ps> <Fig/hexa2.eps> <Fig/edt_hexa2.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[130]
+Overfull \hbox (2.10445pt too wide) in paragraph at lines 1597--1598
+[]\T1/cmr/m/it/10.95 L'axe mé-dian d'une forme est l'ensemble des centres
+<./Fig/2spheres_edt_surf.ps> <./Fig/carre_edt_surf.ps>
+<./Fig/homme_edt_surf.ps> <./Fig/serpent_edt_surf.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[131]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[132] <Fig/voro_squelette.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[133]
+Underfull \hbox (badness 10000) in paragraph at lines 1714--1718
+[]\T1/cmr/m/it/10.95 Étant
+
+Overfull \hbox (5.93085pt too wide) in paragraph at lines 1732--1735
+[]\T1/cmr/m/it/10.95 Soit $\OML/cmm/m/it/10.95 X$ \T1/cmr/m/it/10.95 une forme 
+conti-
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[134] <Fig/etanch.ps> <Fig/sphere_med_2.ps> <Fig/sphere_med_1.ps>
+<Fig/sphere_graphe.ps> <Fig/2spheres_med_1.ps> <Fig/2spheres_med_2.ps>
+<Fig/2spheres_graphe.ps> <Fig/carre_med_1.ps> <Fig/carre_graphe.ps>
+<Fig/homme_med_1.ps> <Fig/homme_med_2.ps> <Fig/homme_graphe.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[135]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[136]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[137]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[138]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[139] <Fig/hysteresis.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[140]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[141] <Fig/preuve_2.eps> <Fig/preuve_2bis.ps> <Fig/coupuresbis.ps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[142]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[143]
+Underfull \hbox (badness 10000) in paragraph at lines 2184--2185
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2186--2212
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2186--2212
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2212--2213
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[144]
+Underfull \hbox (badness 10000) in paragraph at lines 2264--2265
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2266--2290
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2266--2290
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2290--2291
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[145]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[146]
+Overfull \hbox (5.88615pt too wide) in paragraph at lines 2425--2430
+\T1/cmr/m/n/10.95 co-or-di-nates, the cur-rent source pixel $\OML/cmm/m/it/10.9
+5 p[]$ \T1/cmr/m/n/10.95 such that $\OML/cmm/m/it/10.95 v\OT1/cmr/m/n/10.95 (\O
+ML/cmm/m/it/10.95 p[]; p\OT1/cmr/m/n/10.95 )$ \T1/cmr/m/n/10.95 and the dis-tan
+ce $\OML/cmm/m/it/10.95 d[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 s; p[]\OT1/c
+mr/m/n/10.95 )$\T1/cmr/m/n/10.95 . 
+
+Underfull \hbox (badness 10000) in paragraph at lines 2439--2440
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2441--2472
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2441--2472
+
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[147]
+Underfull \hbox (badness 10000) in paragraph at lines 2472--2473
+
+<Fig/result.eps> <Fig/result2.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[148] <Fig/angio.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[149] <Fig/cone3D.eps> <Fig/cone_obs.ps> <Fig/cone.ps> <Fig/obstacle.ps>
+<Fig/obstacle_onde.ps> <Fig/surfaces.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[150]) (mesures.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[151]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[152]
+Chapitre 6.
+(these.mtc6)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[153]) (applications.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[154]
+Chapitre 7.
+(these.mtc7)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[155])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[156]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[157] [158] (annexe_arithmetique.tex
+Annexe A.
+(these.mtc8)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[159]) (annexe_preparata.tex
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[160]
+Annexe B.
+(these.mtc9)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[161] <Fig/fig1rbis.eps>
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[162] <Fig/fig2r.eps>
+Underfull \hbox (badness 10000) in paragraph at lines 164--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 164--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 164--180
+
+
+Overfull \vbox (13.89063pt too high) has occurred while \output is active
+[163]) (these.ind
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[164]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[165]
+Overfull \hbox (3.80695pt too wide) in paragraph at lines 87--88
+[]\T1/cmr/m/sc/10.95 Boissonnat \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Yvi-nec
+ \T1/cmr/m/n/10.95 (1995), 30, 109 
+
+Overfull \hbox (3.94356pt too wide) in paragraph at lines 90--91
+[]\T1/cmr/m/sc/10.95 Braquelaire \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Mo-rea
+u \T1/cmr/m/n/10.95 (1994), 146,
+
+Overfull \hbox (0.66696pt too wide) in paragraph at lines 91--92
+[]\T1/cmr/m/sc/10.95 Breu et al. \T1/cmr/m/n/10.95 (1995), 110--116, 118, 121 
+
+Overfull \hbox (24.62569pt too wide) in paragraph at lines 102--103
+[]\T1/cmr/m/sc/10.95 Debled-Rennesson \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 R
+e-veillès \T1/cmr/m/n/10.95 (1994),
+
+Overfull \hbox (24.62569pt too wide) in paragraph at lines 103--105
+[]\T1/cmr/m/sc/10.95 Debled-Rennesson \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 R
+e-veillès \T1/cmr/m/n/10.95 (1995),
+
+Overfull \hbox (7.35606pt too wide) in paragraph at lines 110--111
+[]\T1/cmr/m/sc/10.95 Figueiredo \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Re-veil
+lès \T1/cmr/m/n/10.95 (1995a), 149 
+
+Overfull \hbox (2.51657pt too wide) in paragraph at lines 111--112
+[]\T1/cmr/m/sc/10.95 Figueiredo \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Re-veil
+lès \T1/cmr/m/n/10.95 (1995b), 44 
+
+Overfull \hbox (8.85956pt too wide) in paragraph at lines 135--136
+[]\T1/cmr/m/sc/10.95 Morgenthaler \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Ro-se
+n-feld \T1/cmr/m/n/10.95 (1981),
+
+Overfull \hbox (3.37682pt too wide) in paragraph at lines 144--145
+[]\T1/cmr/m/sc/10.95 Rosenfeld \T1/cmr/m/n/10.95 et \T1/cmr/m/sc/10.95 Pfaltz \
+T1/cmr/m/n/10.95 (1966), 105, 131 
+
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[166]) (these.bbl (/home/dcoeurjo/Styles/babelbst.tex)
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[167]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[168]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[169]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[170]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[171]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[172]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[173]
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[174])
+Overfull \vbox (1.59999pt too high) has occurred while \output is active
+[175] (these.aux)
+
+LaTeX Warning: There were undefined references.
+
+ )
+(see the transcript file for additional information)
+Output written on these.dvi (188 pages, 665452 bytes).
+Transcript written on these.log.

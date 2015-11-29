@@ -1,0 +1,657 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Preuves de convergence asymptotique}
+\label{chap:annexe_multi}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Les différentes preuves  présentées dans cette  annexe correspondent à
+une  collaboration  avec \aut{Olivier Teytaud}\footnote{\aut{Artelys},
+215 rue Jean-Jacques Rousseau, 92136 Issy-les-Moulineaux Cedex France,
+\url{olivier.teytaud@artelys.com}}.      Ces  preuves    se     basent
+essentiellement  sur des propriétés   de géométrie différentielle. Une
+réécriture  de  celles-ci dans  un  formalisme  moins complexe est  en
+cours.
+
+
+\section{Courbes en dimension $d$~: approche par {\it tube}}
+
+\label{sec:courbes-en-dimension}
+
+Dans ce paragraphe,   nous  prouvons la convergence   asymptotique des
+estimateurs   de  longueur  de   courbes   discrètes  2D  et  3D,  par
+segmentation en droites discrètes.  Nous prouvons aussi la convergence
+de l'estimateur    de   normales  2D  basé   sur  les    tangentes  de
+\cite{vialardthese} ainsi que la  convergence du calcul de courbure de
+l'algorithme \ref{algcourbure_demi}.
+
+Toutes ces  preuves s'insèrent dans  un  même formalisme  basé sur une
+décomposition en {\it  tubes} d'une courbe  continue.  Dans un premier
+temps nous présentons la  preuve complète des estimateurs de longueur,
+puis nous  dérivons des variantes  de ce  formalisme pour  prouver  la
+convergence de l'estimateur de normales et de courbure.
+
+\subsection{Estimation de longueur}
+
+Par la suite, nous considérons~:
+\begin{enumerate}
+\item $\gamma:[0,1]\to \R^d$ une courbe continue sans
+auto-intersection dont la courbure est bornée par  $C=\frac1R$~;
+
+\item    $\gamma$ est   contenue    dans   une   séquence  de    tubes
+$T_1,\ldots,T_N$       de  diamètre   $\theta$      et   de   longueur
+$L(T_1),\ldots,L(T_N)$. Chaque extrémité d'un tube est décomposé comme
+présenté dans la figure \ref{fig:gamma_tube}-$(a)$. On appelle ce tube
+auquel on a ajouté un bord, à chaque extrémité, de longueur $\theta/2$
+un {\it $\theta-$agrandissement}~;
+
+\item  $T_1$ contient $\gamma(0)$~;
+
+\item $T_N$ contient $\gamma(1)$~; \item les  tubes $T_i$ et $T_{i+1}$
+sont adjacents  par  leur $\theta-$agrandissement.  Plus  précisément,
+cette  intersection se fait  par l'axe principal  du tube et les faces
+extrémitées (voir figure \ref{fig:gamma_tube}-$(b)$)~;
+
+\item $L(T_i)\geq K\sqrt{\frac{\theta}{C}}$ pour tout $i$ dans
+$\{1\ldots N\}$ avec $K\in\R$.
+\end{enumerate}
+
+
+L'hypothèse 6 sera  discutée plus en détail  plus loin.  Ce formalisme
+de tubes   correspond à une   segmentation en  droite   discrète de la
+discrétisation de $\gamma$.  Dans  ce  cas, le paramètre $\theta$  est
+lié    à la résolution    de   la  grille.   Nous  supposons  $\theta$
+suffisamment petit   devant $R$ pour  éviter un  certain nombre de cas
+pathologiques comme des demi-tours dans les tubes  (on suppose dans ce
+cas $\theta/2<R$) ou   encore des cas   où un tube  $T$  contient deux
+morceaux de $\gamma$ (voir figure \ref{fig:gamma_tube}-$(c)$).
+
+Par  la suite,  nous supposerons,  sans   perte de généralité, que  la
+courbe $\gamma$ commence en $0$ et en termine  en $1$ dans les parties
+de longueur $\theta/2$ aux  extremités des tubes  $T_1$ et $T_N$ (voir
+figure \ref{fig:gamma_tube}-$(b)$).
+
+
+
+\begin{figure}[htb]
+\centering
+\subfigure[]{\includegraphics[width=5.5cm]{enl}}
+\subfigure[]{\includegraphics[width=7.5cm]{gamma_tube}}
+\subfigure[]{\includegraphics[width=8cm]{gamma_patho}}
+\caption{Illustration du $\theta-$agrandissement d'un tube  T $(a)$
+et segmentation  de $\gamma$   en une  séquence   de tubes   $(b)$. Le
+paramètre $\theta$  doit être suffisamment   petit pour éviter  le cas
+$(c)$.}
+\label{fig:gamma_tube}
+\end{figure}
+
+
+Si nous notons $\mathcal{L}(\gamma)$ la longueur de $\gamma$,
+l'objectif est de montrer le théorème~:
+\begin{theo}
+Soit  $\gamma$ une courbe  vérifiant les hypothèses précédentes et une
+séquence de tubes  $\{T_1,\ldots,T_N\}$    ($N$ dépend de    $\theta$)
+vérifiant aussi les propriétés ci-dessus. Nous avons alors~:
+\begin{displaymath}
+\lim_{\theta\rightarrow 0} \sum_{i=1}^{N} L(T_i) = \mathcal{L}(\gamma)
+\end{displaymath}
+\end{theo}
+
+
+Dans ce qui suit,  nous définissons un $\theta-$rétrécissement  de $T$
+comme étant une suppression  des  bords de  longueurs $\theta/2$ à  un
+tube $T$.  Nous avons le lemme suivant~:
+
+
+\begin{lem} \label{lm1}
+ L'angle  maximal entre  l'axe du tube  $T_i$ et  la tangente  en tout
+ point   de  $\gamma$  dans le   $\theta$-rétrécissement de  $T_i$ est
+ inférieur à~:
+\begin{displaymath}
+\Phi=\arcsin(\frac{\theta}{L-\theta})+L(T_i)/R
+\end{displaymath}
+De      plus, si  $\theta$       est  suffisamment  petit   pour   que
+$R\sin(\alpha)\leq                   L(T_i)$,                     avec
+$\alpha=\mathrm{arctan}\sqrt{\frac{\theta}{2R-\theta}}$,   alors   cet
+angle maximal $\Phi$ est borné par $\alpha$.
+\end{lem}
+
+\begin{figure}[htb]
+\centering        \subfigure[]{\includegraphics[width=5cm]{prlm1.eps}}
+\subfigure[]{\includegraphics[width=5cm]{lm1b.eps}}
+\caption{ $\theta-$rétrécissement  d'un tube $T$ et différentes
+notations pour la   preuve   du  lemme  \ref{lm1}. La    figure  $(b)$
+correspond à la projection 2D du pire cas pour le lemme.}
+\label{enl}
+\end{figure}
+
+
+\begin{mapreuve} 
+Dans le  pire cas, nous devons considérer  $\gamma$ comme étant un arc
+de cercle dans le tube $T_i$ de rayon $R$. Ainsi, nous avons (voir les
+notations dans la figure \ref{enl}):
+ \begin{eqnarray} \Omega&\leq L(T_i)/R\nonumber\\
+\sin \beta &\leq \frac{\theta}{L-\theta}\nonumber
+\end{eqnarray}
+
+L'objectif étant de borner $\Phi=\Omega+\beta$, nous obtenons (voir figure
+\ref{enl}-$(a)$)~:
+\begin{displaymath}
+\Phi=\arcsin(\frac{\theta}{L-\theta})+L(T_i)/R
+\end{displaymath}
+ce qui prouve le premier résultat.
+
+Le cas particulier selon lequel  $R\sin(\alpha)\leq L(T_i)$ pour $\tan
+\alpha\leq     \sqrt{\frac{\theta}{2R-\theta}}$   est présenté  figure
+\ref{enl}-$(b)$.  Dans ce cas,  $\theta$ doit être suffisamment  petit
+devant   la dérivée  de  $\gamma$  pour  que   $\gamma$ reste  dans le
+$\theta$-rétrécissement.  Finalement,  nous obtenons le résultat selon
+lequel     $\Phi$        est      borné      par      $\mathrm{arctan}
+(\sqrt{\frac{\theta}{2R-\theta}})$.
+\end{mapreuve}
+
+
+En corollaire à ce lemme, nous avons une borne en $O(\sqrt{\theta C})$
+sur l'angle maximal entre l'axe du tube et la tangente en tout point
+de  $\gamma$ dans
+le tube.
+%$
+
+De plus, si nous considérons une paramétrisation colinéaire à l'axe du
+tube de $\gamma$,  la dérivée de $\gamma$ dans  le tube est bornée par
+$\sqrt{1+(d-1)p^2}$ avec $p=\sin(\Phi)$ et $d:~[0,1]$.  Nous obtenons
+ainsi le corollaire~:
+
+\begin{coro}
+\label{coro:tubeok}
+La différence entre la longueur de $\gamma$ dans le tube $T_i$ et la
+longueur de ce tube est bornée par~:
+\begin{displaymath}
+L(T_i)(\sqrt{1+(d-1)p^2} - 1)
+\end{displaymath}
+\end{coro}
+
+%$  
+
+Cette  erreur est linéaire  en $L(T_i)$  et en  $\theta  C$ (avec  $C$
+constant par  hypothèse).  Ce corollaire  prouve donc qu'à l'intérieur
+d'un tube, l'erreur  de l'estimation  de  longueur converge vers   $0$
+quand  $\theta$ tend vers  $0$.  Il nous   faut maintenant montrer  que
+l'erreur est linéaire  en $\theta C$  à la  {\it jonction}  entre deux
+tubes.
+
+Nous introduisons le lemme suivant~:
+\begin{lem}
+\label{lemphi}
+\sloppy Si l'angle entre une tangente à $\gamma$ et l'axe du tube dans le
+$\theta-$rétrécissement de $T_i$ est borné par $\Phi$, alors cet angle
+est borné par $\Phi'=\arcsin(\sin(\Phi)+\theta C)$ dans le
+$(\theta)-$agrandissement de $T_i$. 
+\end{lem}
+
+\begin{mapreuve}
+ La  figure  \ref{lemmbis}  présente les  différentes   notations et la
+ projection 2D du pire cas  pour le lemme  (arc de cercle de rayon $R$
+ sortant du tube par une extrémité du $\theta-$rétrécissement).
+
+En utilisant les différentes relations trigonométriques des angles de
+cette figure, nous avons~:
+\begin{displaymath}
+R\cos(\Phi')+A=R\cos(\Phi)
+\end{displaymath}
+et
+\begin{displaymath}
+R\sin(\Phi')=R\sin(\Phi)+\theta
+\end{displaymath}
+
+
+
+De cette dernière équation, nous trouvons~:
+\begin{displaymath}
+\Phi'=\arcsin(\sin(\Phi)+\frac{\theta}{R})
+\end{displaymath}
+et comme $C=\frac{1}{R}$, nous prouvons le lemme.
+\end{mapreuve}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=10cm]{lm2dav.ps}
+\caption{Projection en 2D du pire cas et illustration des différentes
+notations pour la preuve du lemme \ref{lemphi}.}
+\label{lemmbis}
+\end{figure}
+
+Ce lemme indique que $\gamma$ a une variation d'angle de ses tangentes
+de   $\Phi'$ dans  le  tube $T_i$,   ainsi, l'angle   entre deux tubes
+consécutifs, noté   $\Psi$,  est borné par    $2\Phi'$. La longueur du
+morceau de $\gamma$ entre les deux tubes est donc bornée par~:
+\begin{displaymath}
+\sqrt{1+(d-1)p^2}\frac{\Psi\theta}{2}
+\end{displaymath}
+ avec $p=\sin(\Phi')$ et
+$d:~[0,1]$.
+
+Ceci implique le corollaire suivant~:
+\begin{coro}
+L'erreur de l'estimation de longueur lors de la jonction de deux tubes
+est bornée par $O(\theta\Psi)=O(\theta^{2/3}\sqrt{C})$.  Étant donné
+que le nombre de jonctions est borné par $O(\sqrt{\frac{C}{\theta})}$,
+l'erreur sur l'estimation totale de longueur est bornée par $O(\theta C)$
+\end{coro}
+
+
+Ce   corollaire   est obtenu en ajoutant    le  résultat du corollaire
+\ref{coro:tubeok} et  du  lemme précédent.   Pour  les  extrémités  de
+$\gamma$, l'erreur sur l'estimation de longueur en ces deux points est
+aussi bornée par $O(\theta C)$.
+
+
+Nous avons donc une estimation de la longueur de $\gamma$ par la somme
+des longueurs des tubes qui  converge vers $\mathcal{L}(\gamma)$ quand
+$\theta$ tend vers $0$.  Or, cette structure  en tube correspond à une
+segmentation en droites discrètes de  la discrétisation de $\gamma$ et
+$\theta$ correspond à l'inverse de   la résolution de la grille.  Nous
+exprimons ce résultat sous forme du théorème suivant~:
+
+\begin{theo} 
+\label{preuve_theo_longueur}
+    Si  $\gamma$ vérifie  les  hypothèses ci-dessus,  l'estimation  de
+    longueur basée sur  une segmentation de  la courbe en segments  de
+    droites  discrètes  en dimension 2  ou   en  dimension 3  converge
+    asymptotiquement vers la longueur de $\gamma$.
+\end{theo}
+
+Nous   notons que les  lemmes   et corollaires  précédents sont  vrais
+quelle que soit  la dimension et en  particulier pour les dimensions 2 et
+3.
+
+Nous  discutons  maintenant l'hypothèse  selon  laquelle $L(T_i)\geq K
+\sqrt {\theta / C}$, pour tout $i<N$ et $K\in\R$. Dans le cas général,
+la segmentation en droites discrètes ne vérifie pas cette hypothèse. En
+effet, des    cas pathologiques existent.   Par  exemple,   une courbe
+$\gamma$  dont la courbure serait bornée  et qui oscillerait autour de
+l'axe des $x$ avec un intervalle entre les  passages par $y=0$ tendant
+vers $0$. Dans ce cas, l'algorithme de segmentation en droites discrètes
+ne  vérifiera  pas cette  hypothèse quelle que soit   la résolution de la
+grille.  Cependant, la  famille  de courbes vérifiant cette  propriété
+est très  large.  Dans  le cas 2D  par  exemple, les  courbes convexes
+vérifient cette propriété ainsi que celles comportant un nombre fini de
+points d'inflexion.
+
+\subsection{Estimation de normales}
+
+Nous reprenons un formalisme très similaire à ce qui est présenté
+ci-dessus. Nous considérons~:
+\begin{enumerate}
+\item $\gamma:[0,1]\to \R^d$ une courbe continue dont la courbure est
+bornée par  $C=\frac1R$~;
+
+\item en un point $p$ de $\gamma$, on considère le tube $T$ de
+longueur $L(T)$ et d'épaisseur $\theta$, centré en $p$~;
+
+\item $L(T)\geq K\sqrt{\frac{\theta}{C}}$ pour tout $i$ dans
+$\{1\ldots N\}$ avec $K\in\R$.
+\end{enumerate}
+
+Nous conservons les mêmes définitions de $\theta$-agrandissement  de
+$T$ que précédemment. Ce tube correspond à une tangente discrète
+calculée par l'algorithme de \cite{vialardthese} sur la discrétisation de
+$\gamma$ en $p$, dans le cas 2D.
+
+D'après  de lemme \ref{lm1}, nous savons  que l'angle maximal entre la
+tangente à $\gamma$ et l'axe du tube $T$ est borné par $O(\sqrt{\theta
+C})$. Or,  cette borne converge   vers $0$ quand  la  résolution de la
+grille augmente, c'est-à-dire quand  $\theta$ tend vers $0$. Ceci nous
+donne directement le théorème suivant~:
+
+\begin{theo}
+\label{preuve_vialard}
+Soit une   courbe   $\gamma$ dans  $\R^2$  vérifiant   les  hypothèses
+ci-dessus,  l'estimateur   de    normales  discrètes   2D  basé   sur
+l'algorithme de \cite{vialardthese} converge asymptotiquement.
+\end{theo}
+
+La discussion sur les hypothèses de ce théorème est identique au cas
+précédent.
+
+
+\subsection{Estimation  de la courbure}
+
+Nous reprenons le formalisme par tubes avec les définitions suivantes~:
+
+\begin{itemize}
+\item $\gamma:[0,1]\to \R^d$ une courbe continue dont la courbure est
+bornée~;
+\item soit un point $M$ d'une courbe $\gamma$, de courbure $k(M)=\frac1R$ non 
+nulle. Soit $D$  la droite dont le vecteur directeur est la tangente en $M$.
+ \item Soient $T_1$ et $T_2$ les deux tubes partant de $M$ le long de $\gamma$, de part
+ et d'autre de $M$.
+ \item Soient $\beta_1$ et $\beta_2$ les angles entre $T_1$ et $D$, $T_2$ et 
+$D$.
+\item Nous supposons que  $L(T_i)\geq K\sqrt{\frac{\theta}{C}}$ pour tout $i$ dans
+$\{1,2\}$ avec $K\in\R$. Nous supposons aussi que  $L(T_i)\leq
+K'\sqrt{\frac{\theta}{C}}$ avec $K'\in\R$. Cette dernière hypothèse
+est vraie dans le cas des processus de discrétisations standards.
+\end{itemize}
+
+Nous avons alors le théorème suivant~:
+
+\begin{theo}
+\label{preuve_K}
+Soit une   courbe   $\gamma$ dans  $\R^2$ ou dans $\R^3$  vérifiant   les  hypothèses
+ci-dessus,  l'estimateur   de    courbure basé sur les demi-tangentes
+discrètes  (algorithme \ref{algcourbure_demi})  converge asymptotiquement.
+\end{theo}
+
+\begin{mapreuve}
+Dans cette  preuve, nous considérons  le pire cas  qui correspond à un
+arc de cercle  de  rayon $R$. Ainsi,   d'après le lemme \ref{lm1},  la
+longueur du tube $T_1$  est égale à $R\beta_1$ avec une erreur bornée
+par   $O(\beta_1^2+\theta)$. De même, la longueur    $T_2$  est
+égale   à  $R\beta_2$ avec une erreur en $O(\beta_2^2+\theta)$.
+
+En se basant sur ces longueurs, nous avons~:
+\begin{displaymath}
+L(T_1)+L(T_2)= R\alpha + O(\alpha^2+\theta)
+\end{displaymath}
+avec $\alpha=\beta_1+\beta_2$ (voir figure \ref{fig:gamma_k}).
+
+De plus,  avec l'hypothèse selon laquelle $L(T_i) \leq
+K'\sqrt{\theta/C}$, $\alpha$ est borné par $O(\sqrt{\theta/R})$.
+
+En d'autres termes, nous estimons la longueur de l'arc de cercle
+$R\alpha$ par la somme des longueurs des tubes avec une erreur qui tend
+vers $0$ quand $\theta$ tend vers $0$. Nous utilisons donc ce
+processus qui converge asymptotiquement pour estimer $R$ en
+$L(T_1)+L(T_2)$ par $\beta_1+\beta_2$. Cette estimation est similaire à
+celle de l'algorithme \ref{algcourbure_demi} ce qui prouve sa
+convergence asymptotique. 
+\end{mapreuve}
+
+\begin{figure}
+\centering
+\includegraphics[width=10cm]{gamma_K}
+\caption{Illustration pour la preuve du théorème \ref{preuve_K}
+(projection 2D du pire cas).}
+\label{fig:gamma_k}
+\end{figure}
+
+Cette preuve  est valide   quelle que soit la  dimension  de  $\gamma$ et
+notamment dans les cas 2D et 3D.
+
+\section{Surfaces~: aire et normales}
+
+Dans  ce  paragraphe, nous prouvons    la convergence asymptotique  de
+l'estimateur de normales discrètes  surfaciques basé sur un algorithme
+similaire   à celui  de \cite{DebledDGCI}. Nous    prouvons ensuite la
+convergence de l'estimateur d'aire de surface discrète par intégration
+du   champ de  normales  surfaciques  selon  le  principe  proposé par
+\cite{lenoirthese}.
+
+Nous  considérons dans ce paragraphe une  surface  compacte de Jordan,
+notée $\mathcal{S}$,  dans $\R^3$.  Nous considérons la discrétisation
+de cette surface sur une grille de résolution $r=1/\theta$.
+
+
+
+\subsection{Estimation de normales surfaciques}
+
+
+Nous reprenons l'approche de \cite{lenoirthese} et \cite{DebledDGCI}
+qui consiste à estimer la normale en un point de la surface par
+produit vectoriel de deux tangentes calculées sur des coupes de l'objet
+(voir paragraphe \ref{sec:estim-optim-en}).
+
+Ainsi,   si nous   notons  $\vec{t}^*_1$  et  $\vec{t}^*_2$ les   deux
+tangentes  dans les deux   coupes, calculées  en  un surfel  $s$ d'une
+surface discrète, nous avons~:
+\begin{equation}
+  \vec{n}^*(s)= \vec{t}^*_1(s) \times \vec{t}^*_2(s)
+\end{equation}
+où $\times$ est le produit vectoriel usuel.
+
+D'après les résultats du paragraphe précédent, nous avons le
+théorème~:
+
+ 
+\begin{theo}
+\label{preuve_normales3d}
+L'estimation des normales surfaciques basée sur une décomposition en
+coupes et basée sur l'algorithme de \cite{vialardthese} pour résoudre
+le calcul dans les coupes converge asymptotiquement.
+\end{theo}
+
+
+\begin{mapreuve}
+Nous supposons  que chacune des coupes de  $\mathcal{S}$ dans  un plan
+d'axe de la grille donne une  courbe $\gamma$ vérifiant les hypothèses
+du paragraphe \ref{sec:courbes-en-dimension}.
+
+Ainsi,     nous   avons une   estimation      de $\vec{t}^*_1(s)$   et
+$\vec{t}^*_2(s)$  qui converge    asymptotiquement par le théorème
+\ref{preuve_vialard}.  En  d'autres termes,  $\vec{t}^*_1(s)$ converge
+vers  la  tangente  exacte  $\vec{t}_1(s)$   en  $s$,   de  même  pour
+$\vec{t}^*_2(s)$.
+
+Finalement, le produit vectoriel  $\vec{t}^*_1(s) \times
+\vec{t}^*_2(s)$ converge nécessairement vers $\vec{t}_1(s) \times
+\vec{t}_2(s)$, ce qui prouve le théorème.
+\end{mapreuve}
+
+Encore une fois, l'ensemble des surfaces de Jordan $\mathcal{S}$
+vérifiant les hypothèses de ce théorème est vaste. Une étude est en
+cours pour isoler les surfaces qui ne vérifient pas cet énoncé.
+
+\subsection{Estimation d'aire de surfaces discrètes}
+
+Dans ce paragraphe, nous montrons que l'estimation de l'aire d'une
+surface discrète basée sur l'intégration du champ des normales converge
+asymptotiquement si l'estimation des normales surfaciques a cette
+propriété.
+
+Nous     considérons    donc  une    surface    ${\mathcal{S}}$   dans
+${\mathbb{R}}^3$ avec  des  dérivées  continues.  Nous  considérons un
+processus de  discrétisation, noté  $f_r$  qui est une  application de
+$\mathcal{S}$ dans ${\R}^3$   et telle que $df_r$ converge  faiblement
+vers l'identité. En d'autres termes, pour toute fonction continue $g$,
+nous avons~:
+\begin{displaymath}
+\int_{\mathcal{S}} g.df_r(ds)\to \int_{\mathcal{S}} g  ds
+\end{displaymath}
+
+Nous   supposons  aussi que  $df_r$  et  $f_r$   sont bornées pour une
+résolution suffisamment grande et que $f_r$ converge (sens usuel) vers
+l'identité.    Plus précisément,   $f_r$  est  une  fonction   de
+discrétisation telle      que    $f_r(\mathcal{S})$   converge    vers
+$\mathcal{S}$ quand $r$ croît.
+
+Ce formalisme n'est pas standard pour représenter un processus de
+discrétisation. Cependant, tous les processus de discrétisation
+classiques permettent de construire une telle fonction (non
+unique). Ce point sera discuté par la suite.
+
+Rappelons que l'aire de la surface $\mathcal{S}$ est donnée par~:
+\begin{displaymath}
+\int_{\mathcal{S}}   \overrightarrow  n(s)\overrightarrow{ds}
+\end{displaymath}
+
+Une approximation discrète de cette formule est donnée par~:
+\begin{displaymath}
+\int_{f_r(\mathcal{S})} \vec{n}^*(s')\v{ds'}
+\end{displaymath}
+avec   $\vec{n}^*$ une  estimation   de  la normale  surfacique.  Pour
+simplifier les notations, le  terme intégrale représente ici une somme
+finie.
+
+Nous supposons que l'estimation $\vec{n}^*(s')$
+converge uniformément vers $\vec n(s)$ quand $d(s,s') \to 0$. Plus
+précisément, nous avons~:
+
+\begin{equation}
+  \lim_{\epsilon\to   0}\sup_{d(s,s')\leq \epsilon} |  \vec  n^*(s')-\vec n(s)| = 0
+\end{equation}
+
+Nous remarquons que cette hypothèse peut être réécrite comme une
+simple condition de convergence  puisque nous travaillons uniquement
+sur des fonctions continues sur des ensembles compacts.  Cette
+condition peut donc être vue comme une propriété de convergence
+asymptotique de l'estimateur de normale surfacique.
+
+L'intégrale discrète est donc égale à~:
+\begin{equation}
+  \int_\mathcal{S} \vec n^*(f_r(s))df_r (\vec {ds})
+\end{equation}
+
+Si nous notons~:
+\begin{equation}
+\Delta=|\int_\mathcal{S} \vec n^*(f_r(s))df_r (\vec {ds})-\int_\mathcal{S} \vec n(s)\v{ds}|
+\end{equation}
+et si  $1/r$  est suffisament petit pour que nous ayons $|\vec n^*(f_r(s))-\v
+ n(s)|<\epsilon$, alors le fait que $df_r$ soit borné nous donne~:
+\begin{equation}
+\Delta=O(\epsilon) + |\int_\mathcal{S} \vec n(s)df_r(\vec {ds})-\int_S \vec n(s) \vec {ds}| 
+\end{equation}
+
+ Par la propriété de convergence faible de $df_r$, le terme entre les
+valeurs absolues $|.|$ converge vers $0$ quand $r$ croît.
+Nous obtenons donc le théorème suivant~:
+\begin{theo}
+\label{preuve_surface}
+ Si $df_r$ converge  faiblement vers  l'identité quand la   résolution
+ augmente,  et si $\vec  n^*(f_r(s))$ converge uniformément vers $\vec
+ n(s)$, l'estimation  de surface  par intégration des normales converge
+ vers l'aire  de $\mathcal{S}$   avec une  vitesse de   convergence en
+ $O(\epsilon)$.
+\end{theo}
+
+
+Détaillons maintenant la construction de la fonction de discrétisation
+$f_r$.
+
+Pour $1/r$  suffisamment petit, nous   définissons $f_r(s)=s'$ une
+fonction de $\mathcal{S}$ dans $\R^3$ telle que $s'= s+k\vec{n}(s)$
+($k\in\R$) et  $d(s,s')$ est minimal (voir figure
+\ref{fig:preuve}).   L'existence,  l'unicité,   la continuité  et   le
+dérivabilité  de   $f_r$  sont claires    partout   sauf  aux endroits  où
+$\mathcal{S}$  est  perpendiculaire  à  $f(\mathcal{S})$ (voir  figure
+\ref{fig:preuve}-$(droite)$).
+
+Deux approches sont possibles~: soit nous ajoutons une hypothèse sur
+$\mathcal{S}$ pour éviter ce cas (comme dans \cite{jonas97}), soit nous montrons que ce dernier
+n'arrive jamais avec les hypothèses que nous possédons.
+
+Ce cas pathologique apparaît pour $\vec n(s)\in E$ avec $E$ l'ensemble
+des normales aux normales à la discrétisation (normales élémentaires).
+$E$ est de mesure nulle puisque $E$ est une union finie d'ensembles de
+mesures   nulles   (il n'y  qu'un  nombre   fini  de  normales    à la
+discrétisation et  donc un nombre fini d'hyperplans  de normales à ces
+normales).
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=14cm]{f_r}
+   \caption[Illustration de la construction de $f_r$ dans le cas
+2D]{Illustration de la construction de $f_r$ dans le cas 2D~: à gauche
+une courbe continue $\mathcal{S}$  et sa  discrétisation $\mathcal{S'}$
+avec la fonction $f_r$. A droite, présentation d'un cas pathologique~:
+$\mathcal{S}$ est orthogonale à $\mathcal{S'}$.}
+    \label{fig:preuve}
+  \end{center}
+\end{figure}
+
+Nous avons  donc montré que  pour un  point $s$  donné, la probabilité
+d'avoir $\vec n(s) \in E$ est nulle. Il  nous reste à montrer que ceci
+est vrai pour tout voisinage de $s\in \mathcal{S}$.
+
+Considérons $d(s)$ pour $s\in \mathcal {S}$ la dimension de l'ensemble
+des normales $\vec n(s'')$ pour $s''$  dans le voisinage de $s$. Cette
+fonction $d$ est  une  fonction à  valeurs entières constante  partout
+sauf  pour un  ensemble de  mesure nulle.  Nous  définissons $S_i$  pour
+$i\in  I$ les différents sous-ensembles  connexes maximaux  de $S$ sur
+lesquels  $d$ est     différente  de    la  dimension    sous-jacente.
+Nécessairement, $I$ est dénombrable, puisque chaque $S_i$ a une mesure
+positive, et une somme finie est nécessairement dénombrable.
+
+Ainsi, la somme, pour $i\in I$,  des probabilités telles que $\vec{n}(s)
+\in E$ pour  $s\in  S_i$ (la  variable aléatoire  étant le  choix  des
+angles  définissant la grille  par rapport   à $\mathcal{S}$) est  une
+somme   dénombrable    de  probabilités nulles.     Finalement,  cette
+probabilité est nulle.
+
+
+
+%s different of  the embedding dimension. Necessarily
+%$I$ is countable, as each  $S_i$ has a positive  measure, and a finite
+%sum is  necessarily countable (easily derived  from  the fact that the
+%number  of $S_i$ of measure larger  than  a given $t>0$ is necessarily
+%finite). Hence,  the sum (over $i\in  I$) of the  probabilities of $\v
+%n(s) \in E$ for  $s \in S_i$ (the random  variable being the choice of
+%the angles defining  the  grid) is  a countable  sum  of probabilities
+%equal to $0$; hence this probability is $0$.
+
+
+La convergence de $f_r$ vers l'identité étant claire,  il nous reste à
+vérifier la convergence faible de  $df_r$ vers l'identité. Ceci est en
+fait une simple conséquence du fait que $f_r$ converge presque partout
+vers l'identité~:   en effet, cette  convergence  implique  une faible
+convergence de  ses dérivées.    Précisément, si  $f_r$ converge
+vers l'identité et si la dimension est $d$,  considérons $x_i$ une des
+variables  et   $g_r$ (resp.  $g$)  la  restriction   de  $f_r$ (resp.
+l'identité)  à une de ses dimensions  (on a donc $d^2$ choix possibles
+de $(x_i,g_r)$, correspondant aux 9 cases  de la matrice $df_r$ et $g$
+est  une  projection  de   l'identité sur  un   axe)   , et    $H$  un
+hyper-rectangle  sur   lequel intégrer   $\partial  g_r/\partial x_i$.
+L'intégrale de $\partial g_r/\partial x_i$ sur un segment donné par~:
+\begin{displaymath}
+\left [
+(x_1,\dots,x_{i-1},a_i,x_{i+1},\dots,x_d),(x_1,\dots,x_{i-1},b_i,x_{i+1},\dots,x_d)\right
+]
+\end{displaymath}
+est égale à~:
+\begin{displaymath}
+    g_r(x_1,\dots,b_i,\dots,x_{d})-g_r(x_1,\dots,a_i,\dots,x_d)
+\end{displaymath}
+
+Ce              dernière        mesure        tend                vers
+$g(x_1,\dots,b_i,\dots,x_d)-g(x_1,\dots,a_i,\dots,x_d)$.    Il  suffit
+alors d'intégrer par rapport aux $x_i$ (le signe  intégral et le signe
+somme  commutant  pour une   famille  équicontinue, la   famille étant
+équicontinue car de dérivées bornées) pour voir que l'on a convergence
+pour les intégrales  sur  les rectangles,  et  donc sur  les  familles
+continues  qui  sont   limites  de   fonctions constantes    sur   des
+rectangles.  Enfin, ceci montre la  convergence faible des dérivées de
+$f_r$.
+
+
+Finalement, d'après le théorème \ref{preuve_normales3d}, nous obtenons
+le corollaire suivant~:
+\begin{coro}
+\label{preuve_surface_final}
+Soit  $\mathcal{S}$  une surface $C^2$ dans   $\R^3$ à courbure bornée
+(plus quelques hypothèses  techniques), l'estimateur d'aire de surface
+discrète basé sur l'intégration discrète des vecteurs normaux, et dont
+les normales  sont données par  l'algorithme décrit dans le paragraphe
+\ref{sec:estim-optim-en}, converge asymptotiquement.
+\end{coro}
+
+
+Le théorème précédent est vrai dans le cas de l'estimation de longueur
+basée sur le même processus d'intégration de normales discrètes. Nous
+énonçons donc le corollaire~:
+\begin{coro}
+\label{preuve_integration}
+Soit $\Gamma$  la  famille des courbes $C^2$   dans $\R^2$ à  courbure
+bornée, l'estimateur de longueur basée  sur l'intégration des normales
+discrètes construites par l'algorithme de \cite{vialardthese} converge
+asymptotiquement.
+\end{coro}
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: plain-tex
+%%% TeX-master: "these"
+%%% TeX-master: "these"
+%%% End: 

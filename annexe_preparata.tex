@@ -1,0 +1,214 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Programmation linéaire~: algorithme de \citeauthor{P16}}
+\label{chap:annexe_prog}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Nous présentons l'algorithme de \cite{P16}  pour le calcul de l'espace
+des  solutions   associé  à un   système    d'inéquations linéaires en
+dimension deux.  Cet algorithme, optimal en temps,  a été utilisé à de
+nombreuses reprises  pour sa  simplicité  et son efficacité   dans les
+paragraphes   \ref{sec:approche-dual},  \ref{sec:approche-dual-3D}  et
+\ref{sec:arith_rec_cerc}.
+
+
+Nous considérons,  par  la suite, un    ensemble $\mathcal{E}$ de  $n$
+contraintes linéaires ({\it  i.e.  inéquations linéaires} en dimension
+2). Nous supposerons que le  domaine des solutions $S(\mathcal{E})$ de
+$\mathcal{E}$ est un polygone fini et  non-vide. Ces hypothèses seront
+traitées au cours de l'analyse.
+ 
+
+Pour simplifier l'utilisation de la dualité point/droite, connue aussi
+sous  le nom de  {\it transformée  de \aut{Hough}} (version linéaire),
+nous  supposons que    $\mathcal{E}$ ne contient  aucune  contrainte
+verticale. Si  $\mathcal{E}$ présente une telle contrainte, celle-ci
+pourra être considérée en post-traitement.  Sous cette hypothèse, nous
+définissons le sommet $R$ de $S(\mathcal{E})$  le plus à droite et $L$
+le sommet de $S(\mathcal{E})$ le plus à gauche.
+
+Nous  notons  $L^{-}$  la courbe polygonale  joignant   $R$ à  $L$  et
+correspondant à  la partie inférieure  de $S(\mathcal{E})$.   De même,
+nous  notons  $L^{+}$ la  courbe  polygonale  joignant  $L$ à $R$  qui
+correspond à la partie supérieure de $S(\mathcal{E})$ (voir figure
+\ref{fig:poly_shamos}).
+
+
+Nous   représentons  par $\{v^{-}_i\}_{i=0,\dots,m}$   les sommets  de
+$L^{-}$, avec $v^{-}_0=R$ et  $v^{-}_m=L$.  De  la même manière,  nous
+notons  $\{v^+_i\}_{i=0,\dots,m'}$,    les  sommets  de   $L^{+}$ avec
+$v^{+}_0=L$  et  $v^{+}_{m'}=R$.  Finalement,  nous  notons aussi  les
+arêtes de $L^{-}$ par  $\{e^{-}_i\}_{i=1,\dots,m}$ et celles de  $L^{+}$
+par $\{e^{+}_i\}_{i=1,\dots,m'}$.
+
+Sous notre hypothèse précédente, toutes les contraintes de
+$\mathcal{E}$ sont données sous la forme~:
+\begin{displaymath}
+\mathcal{E}= \{ a_i x+ b_i y + c_i \leq 0 \}_{i=0,\dots,n}
+\end{displaymath}
+avec $\{b_i\neq 0\}_{i=0,\dots,n}$.
+
+Dans ce qui suit, nous nous intéressons à la construction de la partie
+$L ^{+}$ du polygone  des solutions, la  partie inférieure $L ^{-}$ se
+calculant  de manière  symétrique.   Nous  remarquons que  les  arêtes
+$\{e^{+}_i\}$  sont construites par le sous-ensemble $\mathcal{E}^{+}$
+d'inéquations de   $\mathcal{E}$ définies par  $a_ix+b_iy+c_i\le 0$ où
+$b_i>0$. Plus précisément, si nous  considérons l'ensemble des droites
+issues de $\mathcal{E}^{+}$, les  sommets de  la courbe polygonale  $L
+^{+}$ correspondent  aux  sommets de   l'enveloppe inférieure de   ces
+droites (voir figure \ref{fig2r}).
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=7cm]{poly_shamos}
+    \caption{Différentes notations pour l'illustration de l'algorithme
+de \cite{P16}.}
+    \label{fig:poly_shamos}
+  \end{center}
+\end{figure}
+
+
+Pour calculer cette enveloppe  inférieure  d'un ensemble de   droites,
+nous allons utiliser  le  passage dans  l'espace dual.  Si nous notons
+$y=\alpha   x+\beta,$  une droite  d'une contrainte de  $\mathcal{E}^{+}$  ($\alpha$ et
+$\beta$ sont donnés par $a, ~b$ et $c$), la transformée duale de cette
+droite correspond au point $(a,-b)$  dans l'espace des paramètres.  De
+la même manière,  la transformée de la  droite $y=ux-v$  dans l'espace
+dual est le point  $(u,v)$ dans l'espace primal. Nous  notons
+par la suite $D^*$   le point qui  correspond  à la transformée  d'une
+droite $D$ et $P^*$ la droite correspondant à la transformée d'un point
+$P$.  La figure \ref{fig1r} illustre ces différentes définitions.
+
+Nous avons la propriété suivante~:
+
+\begin{prop}
+\label{propdual}
+  Soit  $M =(u,v)$ un  point     dans l'espace  primal. $M$    vérifie
+  l'inéquation $ax+by+c<=0$,  avec $b>0,$ si et  seulement si le point
+  $(-a/b, c/b)$  est sous  la  droite $M^*$  d'équation  $y=ux-v$ dans
+  l'espace dual.
+\end{prop}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \psfig{file=Fig/fig1rbis,width=12cm}
+    \caption{Transformation dans l'espace dual et illustration de la
+proposition \ref{propdual}.}
+    \label{fig1r}
+  \end{center}
+\end{figure}
+
+
+La preuve de cette proposition se base sur le fait que les deux termes
+de la double implication  sont équivalents à  l'inégalité $au+bv+c\leq
+0$.
+
+Nous pouvons immédiatement déduire de cette proposition que si $D, D'$
+et $D"$ représentent trois droites telles  que le point d'intersection
+$M=D'\cap D"$ a      pour coordonnées $M=(a,b)$,    alors  l'enveloppe
+inférieure des droites $D, D'$ et $D"$ prend la valeur  $b$ pour $x=a$ si
+et  seulement si $D^*$  est  situé sous  la  droite $M^*$ (voir figure
+\ref{fig1r}).
+
+
+En se basant sur cette observation, nous avons~:
+\begin{prop}  
+  Soit $\cal{F}$ un ensemble de  droites (dont aucune n'est verticale)
+  et $\cal{F}^*$ l'ensemble  des points qui  sont les transformées  des
+  droites de $\cal{F}$    dans l'espace dual.    La  transformée duale
+  transforme bijectivement les  droites  de l'enveloppe inférieure  de
+  $\cal{F}$ en les sommets de la partie supérieure de l'enveloppe convexe
+  de $\cal{F}^*$.
+\end{prop}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=14cm]{algo_shamos}
+    \caption{L'enveloppe inférieure des droites issues de
+$\mathcal{E}^{+}=\{e_i\}$ permettent  de construire les  sommets de  la partie
+supérieure des points $\{e^*_i\}$. De même pour l'ensemble $\mathcal{E}^{-}$.}
+    \label{fig2r}
+  \end{center}
+\end{figure}
+
+De plus,  les  arêtes     de  l'enveloppe convexe   de     $\cal{F^*}$
+correspondent dans le primal aux sommets de l'enveloppe inférieure des
+droites.
+
+Ainsi, pour calculer $L^+$ à partir de $\mathcal{E}^+$, nous calculons
+les  transformées  dans  le   dual  des droites   $\mathcal{E}^+$, nous
+appliquons un algorithme  classique   d'enveloppe convexe des   points
+obtenus et finalement, nous ramenons dans l'espace primal  les sommets de la
+partie supérieure de cette enveloppe convexe.
+
+Si   nous  avons $|\mathcal{E}^+|=O(n)$,   ce  calcul  s'effectue   en
+$O(nlog(n))$ puisque le  calcul de  l'enveloppe convexe s'effectue  en
+$O(nlog(n))$.
+
+De   la même  manière, nous   pouvons  construire la  courbe $L^-$  en
+considérant  les  équations  $\mathcal{E}^-\subset\mathcal{E}$ données
+par $a_ix+b_iy+c_i\le 0$   avec $b_i<0$. Cette courbe polygonale   est
+l'enveloppe  supérieure de ces  droites  et nous  considérons donc  la
+partie inférieure  de  l'enveloppe convexe des  points  transformés de
+$\mathcal{E}^-$  dans l'espace  dual.    Pour les  mêmes  raisons  que
+ci-dessus,   ce   calcul   s'effectue    en   $O(nlog(n))$.     Enfin,
+$S(\mathcal{E})$ est calculé en considérant l'intersection des courbes
+polygonales  $L^+$    et  $L^-$  dans   l'espace  dual.   L'algorithme
+\ref{alg:shamos} présente l'algorithme complet.
+
+
+
+
+\begin{coro}
+Le domaine  $S(\mathcal{E})$  des solutions  d'un  système d'inéquations
+linéaires en dimension  2  s'obtient en $O(nlog(n))$  en  utilisant la
+transformée duale et le calcul d'enveloppe convexe 2D.
+\end{coro}
+
+Nous pouvons maintenant discuter des différents cas où le domaine
+$S(\mathcal{E})$ est vide ou non borné. Si l'un des deux
+sous-ensembles $\mathcal{E}^+$ ou $\mathcal{E}^-$ est vide, l'espace
+des solutions devient non-borné. Si les deux sous-ensembles sont
+non vides, $S(\mathcal{E})$ sera non borné si ces deux ensembles
+contiennent des contraintes du type $b_iy+c_i\leq 0$. Enfin, $S(\mathcal{E})$
+sera vide si l'intersection des lignes polygonales  $L^+$ et  $L^-$
+est vide, ce qui correspond intuitivement au fait que $L^-$ soit {\it
+au dessus} de $L^+$. Tous ces différents cas peuvent être détectés en
+pré-traitement de l'algorithme \ref{alg:shamos} ou au cours de
+celui-ci sans changer la complexité de l'algorithme.
+
+\begin{algorithm}[!ht]
+\caption{Calcul de l'intersection de contraintes linéaires par
+l'algorithme de  \cite{P16}}
+\label{alg:shamos}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Intersection\_\aut{Shamos}$(\mathcal{E})$}
+\STATE $\mathcal{E}^+=\{a_ix+b_iy+c_i\leq 0 \in \mathcal{E} \quad/\quad b>0\}$
+\STATE $\mathcal{E}^-=\{a_ix+b_iy+c_i\leq 0 \in \mathcal{E} \quad/\quad b<0\}$
+\STATE $C^+=\mbox{convexhull}(dual(\mathcal{E}^+))$
+\STATE $C^-=\mbox{convexhull}(dual(\mathcal{E}^-))$
+\STATE Soit $L^+$ la partie inférieure de $C^+$
+\STATE Soit $L^-$ la partie supérieure de $C^-$
+\STATE \RETURN{ intersection de $L^+$ et de $L^-$}
+\end{algorithmic}
+\end{algorithm}
+
+
+Étant  donné que le  coeur  de cet  algorithme   repose sur un  calcul
+d'enveloppe convexe, nous  pouvons utiliser des algorithmes classiques
+pour calculer   celle-ci de manière   incrémentale  et donc  rendre la
+construction de $S(\mathcal{E})$  incrémentale. Nous obtenons  donc un
+coût  de mis-à-jour en  $O(log(n))$ à  chaque insertion d'une nouvelle
+contrainte dans la construction de $S(\mathcal{E})$.
+
+Dans le cas  d'un système linéaire en   dimension 3, le même  principe
+peut être utilisé avec  la même complexité,  c'est-à-dire $O(nlog(n))$
+(pour $n$  inéquations).    Nous sommes  cependant  limités  dans  les
+dimensions supérieures par l'algorithme d'enveloppe convexe.
+
+
+%%% Local Variables: 
+%%% mode: plain-tex
+%%% TeX-master: "these"
+%%% TeX-master: "these"
+%%% End: 

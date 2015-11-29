@@ -1,0 +1,12 @@
+\contentsline {title}{Visibility in Discrete Geometry: an application to discrete geodesic}{1}
+{\raggedright \leftskip 15\p@ \rightskip 2.55em\itshape David Coeurjolly\endgraf }
+\contentsline {section}{\numberline {1}intro}{2}
+\contentsline {section}{\numberline {2}Visibility}{2}
+\contentsline {subsection}{\numberline {2.1}Notions and definitions}{2}
+\contentsline {subsection}{\numberline {2.2}lien avec geoalgo}{3}
+\contentsline {subsection}{\numberline {2.3}droites discetes dans un domaine non-convexe}{3}
+\contentsline {subsection}{\numberline {2.4}Complexity analysis}{3}
+\contentsline {section}{\numberline {3}Discrete geodesics}{3}
+\contentsline {subsection}{\numberline {3.1}avant}{3}
+\contentsline {subsection}{\numberline {3.2}metrique globale}{3}
+\contentsline {section}{\numberline {4}Conclusion and future work}{3}

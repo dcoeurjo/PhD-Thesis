@@ -1,0 +1,3460 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Droites et Plans discrets}\label{chap-droites}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Introduction}
+
+Dans ce  chapitre nous nous intéressons  aux objets fondamentaux de la
+géométrie  discrète que sont les droites  et les  plans discrets.  Ces
+objets de base permettent l'élaboration,  sur le plan théorique, d'une
+géométrie discrète.
+
+Dans  les deux premiers  paragraphes,  nous analysons les  différentes
+définitions et algorithmes associés  aux droites discrètes dans $\Z^2$
+et dans $\Z^3$.  Nous reprenons les différentes études présentées dans
+la   littérature   pour   lesquelles nous   proposons  une  évaluation
+comparative.
+
+Dans  le  paragraphe   \ref{sec:plans-discrets},  nous   effectuons un
+travail  similaire   sur les plans  discrets   en proposant un premier
+théorème de structure de la {\it pré-image} d'un plan discret.
+
+Enfin,   dans   le   paragraphe   \ref{sec:statistique-pour-la},  nous
+présentons  une   alternative   à l'approche    géométrique pour    la
+reconnaissance de droites et plans  discrets. Cette nouvelle  approche
+se base sur une analyse statistique de ces objets.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Droites discr{\`e}tes 2D}
+\label{sec:droites-discretes-2d}
+
+Nous commençons notre analyse des objets discrets par la notion de
+droite discrète.  Les définitions, propriétés et algorithmes associés
+à ces objets sont primordiaux dans de nombreux domaines, par exemple
+en analyse d'image  ou en reconnaissance de formes. 
+
+La notion de droite discrète est importante, non seulement sur le plan
+théorique comme objet de base du modèle  discret, mais aussi cet objet
+et les algorithmes qui lui sont associés sont  des outils de base pour
+des estimations   de    mesures   euclidiennes    sur   des     objets
+discrets. Ainsi, une  bonne maîtrise de  cette {\it brique de base} de
+la géométrie discrète est  nécessaire avant de voir  ses applications
+dans la  caractérisation de formes  des chapitres \ref{chap-metriques}
+et \ref{chap-mesuresa}.
+
+\subsection{Définitions et propriétés}
+\label{sec:defin-et-propr}
+
+Sur la grille discrète, de nombreuses approches existent pour décider
+si un ensemble de pixels  a une allure {\it rectiligne}. Bien
+évidemment, nous devons tout d'abord définir un peu plus formellement
+la notion de linéarité pour un ensemble de points discrets.
+Dans ce qui suit, nous utilisons les notions de {\it quadrant} ou {\it
+  d'octant} pour un segment de droite en fonction d'une partition de
+l'espace 2D en 4 ou 8 régions (voir figure \ref{fig:octants}).
+
+\begin{figure}[htbp]
+   \begin{center}
+    \includegraphics[width=6cm]{octants}
+    \caption{Décomposition de l'espace 2D en quadrants $(gauche)$ et
+      en octants $(droite)$.}
+    \label{fig:octants}
+  \end{center}
+\end{figure}
+
+
+
+D'une manière générale, un ensemble  de points de la grille appartient
+à une  {\it  droite discrète} s'il existe  une  droite  réelle dont la
+discrétisation contient les pixels  considérés.  Par exemple, si  nous
+considérons le processus  de discrétisation OBQ ({\it Object  Boundary
+Quantization}),  un ensemble de  pixels  $\mathcal{E}$ appartient à une
+droite discrète s'il existe   au moins un couple $(\alpha,\beta)$   de
+$\R^2$ tel que tous les points $(x,y)$ de $\mathcal{E}$ vérifient~:
+
+\begin{displaymath}
+  0\leq \alpha x+\beta-y <1
+\end{displaymath}
+
+
+
+Sur  le  plan  méthodologique,  certaines  approches   partent   de ce
+processus de discrétisation  pour énoncer  les propriétés des  droites
+discrètes qu'elles proposent~; d'autres ne travaillent qu'au niveau de
+la  grille, elles énoncent  les propriétés et  ensuite montrent qu'une
+droite réelle discrétisée vérifie celles-ci.
+
+Avant d'énoncer les constructions classiques de  ces objets, la figure
+\ref{fig:vialard_droites}  illustre les  subtilités,  au  moins sur le
+plan visuel, pour qu'un  arc discret soit,  ou non, un segment discret
+(figure tirée  de \citealt{vialardthese}).   Dans   ce cas, la  figure
+$(a)$ est  un morceau  de droite  discrète, $(b)$  n'en est pas  un et
+$(c)$ non plus.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=4cm]{vialard_droites1}}
+    \subfigure[]{\includegraphics[width=4cm]{vialard_droites2}}
+    \subfigure[]{\includegraphics[width=4cm]{vialard_droite3}}
+    \caption{Seul l'arc $(a)$ est un segment discret selon
+      les définitions usuelles des droites discrètes (cf ci-dessous).}
+  \label{fig:vialard_droites}
+\end{center}
+\end{figure}
+
+\subsubsection{Caractérisation}
+
+
+Considérons tout  d'abord le cas d'un arc   discret 8-connexe. Une des
+premières  caractérisations des  droites discrètes a   été proposée par
+\citet{Freeman:1974:CPL} et est basée  sur le codage de l'arc.  Ainsi,
+un arc est un segment discret si~:
+
+\begin{itemize}
+\item son codage ne contient que deux codes différents et ceux-ci ne
+  diffèrent que de 1 (modulo 8)~;
+\item un de ces deux codes est toujours isolé dans le codage~;
+\item ce code isolé apparaît dans le codage le plus uniformément possible.
+\end{itemize}
+Dans cette caractérisation, la dernière propriété est assez floue et
+cette définition globale d'un segment discret n'est pas encore
+satisfaisante.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/freeman_prop}
+    \caption[Propriétés de \aut{freeman}]{Propriété de \aut{freeman}~:
+      {\it  (gauche)} le codage est $0-1-0-0-1-0-1-0-0-1-0-1-0$, les
+      codes ``1'' apparaissent isolés et {\it uniformément} répartis~; {\it
+        (droite)}, le codage est $0-1-0-0-0-1-1-0-0-1-0-1-0$, dans ce
+      cas, ni le code ``0'' ni le code ``1'' sont isolés, cet arc
+      n'est pas un segment discret.}
+    \label{fig:freeman_prop}
+  \end{center}
+\end{figure}
+
+
+
+Par la suite, \cite{rosenfeld} introduit une propriété importante
+permettant de caractériser un segment discret~: {\it la propriété de la
+  corde}. Tout ensemble de points discrets qui vérifie cette propriété
+est un morceau de droite discrète et réciproquement, tous les points
+d'un segment discret vérifient celle-ci.
+
+Cette propriété s'énonce de la façon suivante (voir figure \ref{fig:corde})~:
+
+\begin{defi}[Propriété de corde]
+\label{defi:corde}    Un ensemble de pixels $\mathcal{E}$ vérifie la propriété de corde
+    si pour tout couple $p$ et $q$ de $\mathcal{E}$, et pour tout
+    point $m(x,y)$ du segment $[pq]$, il existe un point $M(i,j)$ de
+    $\mathcal{E}$ tel que
+    \begin{displaymath}
+      max(|i-x|,|j-y|)<1
+    \end{displaymath}
+\end{defi}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/corde_prop}
+    \caption[Propriété de corde de \aut{Rosenfeld}]{Propriété de corde
+      de \aut{Rosenfeld}~: {\it  (gauche)} tous les segments $[pq]$ de
+      longueur supérieure à 2  vérifient cette propriété, cet arc est
+      donc un segment discret~; {\it (droite)}, existence d'un
+contre-exemple, ce segment ne correspond donc pas à un morceau de
+      droite discrète.} 
+    \label{fig:corde}
+  \end{center}
+\end{figure}
+
+
+Cette  propriété permet une  caractérisation  formelle des segments de
+droites discrètes mais n'est pas constructive  dans le sens où elle ne
+permet  pas directement  de tracer  ou de  reconnaître  un tel segment
+autrement que par un test exhaustif.
+
+En se basant  sur   une    réécriture  des critères    de   \aut{Freeman} par
+\citet{HUE_1981}, \citet{wu}   prouve  l'équivalence entre  ces critères  et   la
+propriété de corde de \citeauthor{rosenfeld}.
+
+
+Dans une approche similaire à la propriété de corde, \cite{Hung85} propose une
+caractérisation des droites discrètes basée sur la notion  {\it
+  d'uniformité} ou de {\it régularité} (traduction de {\it evenness},
+voir figure \ref{fig:evenness}).
+
+\begin{defi}[Propriété de régularité]
+  Un ensemble de pixels $\mathcal{E}$ dans le premier octant est dit régulier
+  si tout quadruplet  de points $(a,b,c,d)$ de $\mathcal{E}$, tel
+  que $\vec{ba}_x=\vec{dc}_x$, vérifie~:
+  \begin{displaymath}
+    |\vec{ba}_y-\vec{dc}_y|=1
+  \end{displaymath}
+\end{defi}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/evenness_prop}
+    \caption[Propriété de régularité de \citeauthor{Hung85}]{Propriété de
+      régularité de \citeauthor{Hung85}~: {\it  (gauche)} tout quadruplet
+      $(a,b,c,d)$ vérifie la propriété de régularité, cet arc est
+      donc un segment discret~; {\it (droite)}, existence d'un
+contre-exemple, les vecteurs $\vec{ab}$ et $\vec{cd}$ ne vérifient pas
+      cette propriété, ce segment ne correspond donc pas à un morceau de
+      droite discrète.}
+    \label{fig:evenness}
+  \end{center}
+\end{figure}
+
+ \citet{Smeulders84} proposent non seulement
+une caractérisation des droites discrètes, mais aussi un codage unique
+des segments discrets. A partir d'un codage de \aut{Freeman} d'un
+segment discret, ils introduisent un quadruplet d'entiers
+$(n,q,p,s)$ décrivant entièrement ce segment discret. Considérons, sans
+perte de généralités, un segment dans le premier octant. Le codage
+de \aut{freeman} est donné par les codes $\{c_i\}_{i=1...n}$, nous
+avons alors (voir figure \ref{fig:dorst_quadurplet})~:
+
+
+\begin{itemize}
+\item $n$ représente la longueur du segment de droite discrète~;
+\item $q$ la {\it période} dans le code de \aut{freeman}. Ce paramètre
+  s'écrit formellement~:
+  \begin{displaymath}
+    q=\min_{k}\{k \in \{1,2,\ldots,n\} \quad | \quad k=n \vee \forall i\in
+    \{1,2,\ldots,n-k\} \quad c_{i+k}=c_i\} 
+  \end{displaymath}
+
+\item $p$ est la {\it hauteur} sur la période, c'est-à-dire~:
+  \begin{displaymath}
+    p=\sum_1^q c_i
+  \end{displaymath}
+\item $s$ est le déphasage du segment par rapport à la période
+  $q$. Nous avons formellement~:
+  \begin{displaymath}
+    s:~s\in\{0,1,\ldots,q-1\}\quad|\quad\forall i \in
+    \{1,2,\ldots,q\}:\quad c_i=\left \lfloor \frac{p}{q}(i-s)\right \rfloor -
+    \left \lfloor \frac{p}{q}(i-s-1)\right\rfloor
+  \end{displaymath}
+\end{itemize}
+
+D'une manière informelle, le paramètre $q$ correspond à la règle {\it
+  d'uniformité} de \aut{freeman} (troisième critère).
+
+A partir de ce codage $(n,q,p,s)$, une droite euclidienne telle que sa
+discrétisation avec OBQ correspond au segment discret est donnée par~:
+\begin{displaymath}
+  y=\frac{p}{q}(x-s)+\left\lceil\frac{sp}{q}\right\rceil
+\end{displaymath}
+Cependant, l'ensemble des droites solutions se caractérise entièrement
+avec ce quadruplet. Ainsi, \citet{Smeulders84} détaillent la
+construction de ce domaine des droites ou {\it pré-image} dans
+l'espace des paramètres $(\alpha,\beta)$ des pentes et des ordonnées à
+l'origine des droites.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/dorst_quadurplet}
+    \caption{Représentation graphique des quadruplets $(n,q,p,s)$ de
+      \citeauthor{Smeulders84} pour la caractérisation des droites
+      discrètes~; notre segment se code donc $(14,5,2,2)$.}
+    \label{fig:dorst_quadurplet}
+  \end{center}
+\end{figure}
+
+Dans une même approche de construction du domaine des droites ou de la
+{\it pré-image} de l'arc discret, \citet{LindenbaumKoplowitz91}
+proposent un autre codage basé sur les séries de \aut{Farey} (voir
+paragraphe \ref{sec:approche-dual}) et décrivent un processus de conversion entre ce
+codage et celui de \citeauthor{Smeulders84}. Nous reviendrons dans le
+paragraphe suivant sur les différentes techniques de reconnaissance de
+droites discrètes basées sur ce type de codage.
+
+
+\subsubsection{Droites discrètes arithmétiques}
+
+Nous présentons une dernière caractérisation que nous allons beaucoup
+utiliser par la suite, celle proposée par
+\citet{reveilles}~:
+
+\begin{defi}[Droite discrète arithmétique]
+  Un  ensemble de pixels $\mathcal{E}$ appartient  à la droite discrète
+  arithmétique de pente  $\frac{a}{b}$, de  borne inférieure $\mu$  et
+  d'épaisseur $\omega$  (avec $a$, $b$, $\mu$   et $\omega$ dans $\Z$,
+  $b\neq0$ et  $pgcd(a,b)=1$),  si  et  seulement si tous   les pixels
+  $(x,y)$ de $\mathcal{E}$ vérifient~:
+  \begin{equation}
+    \label{eq:droite_disc}
+    \mu \leq ax-by<\mu+\omega
+  \end{equation}
+Cette droite se note $\mathcal{D}(a,b,\mu,\omega)$.
+\end{defi}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/reveilles_prop}
+    \caption{Droite discrète arithmétique naïve de paramètres $\mathcal{D}(2,5,-1,5)$.}
+    \label{fig:reveilles_prop}
+  \end{center}
+\end{figure}
+
+D'un   point de vue    géométrique,  cette droite   discrète peut   se
+construire en considérant l'ensemble des  points de la grille contenus
+dans   une    bande   définie  par       les  droites   (voir   figure
+\ref{fig:reveilles_prop})~:
+\begin{displaymath}
+  \left \{ \begin{array}{l}
+      ax-by=\mu \\
+      ax-by=\mu+\omega \quad\text{(exclue)} 
+    \end{array}
+  \right.
+\end{displaymath}
+
+Cette caractérisation  basée  sur la  notion de  {\it bande} a  aussi été
+utilisée par \cite{kovalevsky_arc} pour définir les droites discrètes.
+
+
+Dans cette approche, le paramétrage de  la droite par des entiers avec
+la  propriété que $a$  et $b$  soient  premiers entre eux, nous permet
+d'intégrer,  à cette notion  géométrique,   des propriétés provenant  de
+l'arithmétique ou de la théorie des nombres.
+
+Commençons par lier cette notion aux droites discrètes classiques.
+Pour cela, nous avons le théorème de connexité des droites
+discrètes suivant \citep{reveilles}~:
+
+\begin{theo}[connexité des droites discrètes]
+\label{theo:struct2D}
+Étant donnée une droite discrète $\mathcal{D}(a,b,\mu,\omega)$
+  alors~:
+  \begin{itemize}
+  \item si $\omega < max(|a|,|b|)$  la droite discrète est
+    déconnectée~;
+  \item si $\omega = max(|a|,|b|)$ la droite discrète est 8-connexe
+    (ou est un 8-arc), on  parle alors de droite {\bf naïve}~;
+  \item si $ max(|a|,|b|) < \omega < |a|+|b|$, la droite est
+    {\bf *-connexe}, c'est-à-dire qu'elle présente des 4- et des
+    8-connexités~;
+  \item si $\omega = |a|+|b|$ la droite est strictement 4-connexe (ou
+    est un 4-arc), on    parle de droite {\bf standard}~;
+    \item si $\omega> |a|+|b|$ on parle de {\bf droite épaisse}.
+\end{itemize}
+\end{theo}
+
+Ces connexités sont illustrées figure \ref{fig:epaisseur}.
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[ $\mathcal{D}(3,7,0,5)$]{\includegraphics[width=2.5cm]{3_7_0_5}}
+    \subfigure[ $\mathcal{D}(3,7,0,7)$]{\includegraphics[width=2.5cm]{3_7_0_7}}
+    \subfigure[ $\mathcal{D}(3,7,0,8)$]{\includegraphics[width=2.5cm]{3_7_0_8}}
+    \subfigure[ $\mathcal{D}(3,7,0,10)$]{\includegraphics[width=2.5cm]{3_7_0_10}}
+    \subfigure[ $\mathcal{D}(3,7,0,16)$]{\includegraphics[width=2.5cm]{3_7_0_16}} 
+  \end{center}
+  \caption[Connexité des droites discrètes en fonction de $\omega$]
+  {Connexité des droites discrètes en fonction de $\omega$~:
+    $(a)$ segment déconnecté, $(b)$ segment naïf, $(c)$ segment
+    *-connexe, $(d)$ segment standard et $(e)$ segment épais.}
+  \label{fig:epaisseur}
+\end{figure}
+
+Nous pouvons faire le lien entre ces droites et les processus de
+discrétisation usuels~:
+
+\begin{prop}[\citealt{reveilles}]
+Supposons une droite rationnelle D d'équation $ax+by+c=0$ avec
+$a,b,c$ dans $\Z$, on suppose sans perte de généralité que
+$b=|b|=max(|a|,|b|)$. Nous avons alors~:
+\begin{itemize}
+\item la discrétisation {\it par défaut} de D, c'est-à-dire l'ensemble
+des pixels tel que $ \left \{  (x,y)~|~ y=\left \lfloor \frac{-ax-c}{b}
+\right   \rfloor \right    \}$    coïncide avec  la   droite  discrète
+$\mathcal{D}(a,b,-b-c+1,b)$~;
+  
+\item \sloppy la discrétisation {\it par  excès} de D, c'est-à-dire l'ensemble
+des  pixels tel que $\left  \{ (x,y)~|~  y=\left \lceil \frac{-ax-c}{b}
+\right     \rceil   \right  \}$ coïncide  avec      la droite discrète
+$\mathcal{D}(a,b,-c+1,b)$ ~;
+
+\item la  discrétisation {\it de  meilleure approximation} (ou GIQ) de
+D,   c'est-à-dire l'ensemble des   pixels tel que  $\left \{ (x,y)~|~y=
+\left [ \frac{-ax-c}{b}  \right ] \right \}$  coïncide  avec la droite
+discrète $\mathcal{D}(a,b,-c+1-[\frac{b}{2}],b)$.
+\end{itemize}
+\end{prop}
+
+
+Revenons sur la construction des droites arithmétiques. Avant de
+détailler les éléments qui vont nous servir dans les processus de
+reconnaissance, il nous faut définir les structures qui nous seront
+utiles.
+
+Ainsi, étant  donnés $a,~b,~\mu$ et $\omega$ dans $\Z$ avec
+$pgcd(a,b)=1$, on appellera {\bf pointillé} de niveau $k$ l'ensemble
+des pixels $(x,y)$ vérifiant
+l'équation diophantienne~:
+\begin{displaymath}
+  ax-by=k
+\end{displaymath}
+
+
+La structure d'un  pointillé est assez simple, si le point $(x_0,y_0)$
+appartient au pointillé de niveau $k$, tous les autres points sont de la forme~:
+\begin{displaymath}
+  (x,u)=(x_0,y_0) +k'(b,a)
+\end{displaymath}
+avec $k'$ dans $\mathbb{N}$.
+Au niveau des pixels composant ce pointillé, on définit le {\bf reste}
+$r$ d'un pixel $(x,y)$  selon le couple $(a,b)$ comme étant un point
+du pointillé de niveau $r$. Le terme {\bf reste} vient de la notion
+usuelle de reste d'une division entière. En effet, nous avons~:
+\begin{displaymath}
+  r=\left\{ \frac{ax}{b} \right\}
+\end{displaymath}
+
+Nous avons maintenant la propriété suivante nous permettant de
+construire des droites discrètes à partir de pointillés. Les deux
+items de cette propriété sont identiques par définition mais ces deux
+écritures différentes nous serons utiles par la suite~:
+
+\begin{prop}
+  La droite $\mathcal{D}(a,b,\mu,\omega)$ est~:
+  \begin{itemize}
+    \item la réunion des   pointillés de niveau $k$ pour $k$ dans
+      $[\mu,\mu+\omega[$
+    \item l'ensemble des pixels de reste compris entre
+      $[\mu,\mu+\omega[$
+    \end{itemize}
+\end{prop}
+
+Sur cette droite discrète, nous pouvons encore remarquer des objets
+importants. Ainsi, on appellera {\bf droite d'appui inférieure} de
+$\mathcal{D}$, la droite d'équation~:
+\begin{displaymath}
+  ax-by=\mu+\omega-1
+\end{displaymath}
+Les pixels de cette droite ({\it i.e} les pixels de reste
+$\mu+\omega-1$) sont appelés {\bf points d'appui inférieurs}.
+
+
+De manière identique, on appellera {\bf droite d'appui supérieure} de
+$\mathcal{D}$, la droite d'équation~:
+\begin{displaymath}
+  ax-by=\mu
+\end{displaymath}
+Les pixels de cette droite ({\it i.e} les pixels de reste
+$\mu$) sont appelés {\bf points d'appui supérieurs} (voir figure
+\ref{fig:reveilles_appui}).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/reveilles_appui}
+    \caption{Droite discrète arithmétique naïve de paramètres $\mathcal{D}(2,5,-1,5)$~: {\it (haut)}
+      représentation  par  restes avec les  points  et droites d'appui
+      {\it (bas)} construction par union de pointillés.}
+    \label{fig:reveilles_appui}
+  \end{center}
+\end{figure}
+
+
+Certaines notions d'arithmétique liées à ces droites apparaissent très
+nettement dans la définition des restes associés à une droite
+discrète. On se place en effet dans un espace modulaire
+$modulo~b$, ce qui illustre la notion de  {\it période} $b$ associée à
+une droite discrète (qui correspond exactement au paramètre $q$ de
+\citealt{Smeulders84}).  
+
+
+Ces notions  de modularité  dans    les droites discrètes  sont   très
+anciennes~; en effet \cite{bernoulli},  qui était {\it astronome royal},
+présente un chapitre dont le titre est {\it  ``Sur une nouvelle espèce
+de  Calcul''}.    Le  problème de    l'époque   était la  construction
+d'éphémérides  pour l'astronomie. \aut{Bernoulli} présente une méthode
+très  efficace pour    l'interpolation  linéaire de   la  position  de
+planètes. En se ramenant à  des positions entières, l'objectif est  de
+calculer les valeurs  de  $P$  en  fonction de  $n$ dans  l'expression
+$P=\frac{mn}{c}$.
+
+\begin{quote}
+  [à propos du calcul d'interpolation classique \citep{bernoulli}] {\it or la Méthode que je
+  me propose de rendre compte, satisfait exactement cette condition, \&
+  quel que soit le nombre de $n$, on n'a besoin de faire, pour une
+  valeur donnée de $m$, qu'une seule règle de trois, tous les autres
+  termes se déterminant par de simples additions, au moyen de certaines
+  formules générales que j'ai trouvées ; \& cette méthode est d'une telle
+  facilité dans l'application, qu'on est souvent en état d'écrire,
+  sans autre calcul, les produits de plus de 1000 règles de trois, en
+  deux heures de temps.}
+\end{quote}
+
+Il émet ensuite l'observation suivante~:
+
+\begin{quote}
+  {\it On peut remarquer que la différence pour ces augmentations des
+    $P$ ne roulera jamais que sur une unité de plus ou de moins ;
+    c'est à dire que si $m=x+\frac{a}{c}$, ce sera toujours ou $x$ ou
+    $x+I$ unités qu'il faudra ajouter au dernier chiffre à mesure que
+    $n$ croît de I.}
+
+  \end{quote}
+  
+En d'autres termes, si $n$ et $P$ sont respectivement des abscisses et
+des ordonnées, les pixels successifs pour $x$ croissant, appartenant à
+ la droite décrite par la pente $\frac{m}{c}$, sont constitués en {\it
+   palier} avec des décrochements diagonaux entre ceux-ci. 
+
+Il montre ensuite l'aspect périodique de ces décrochements~:
+
+
+
+\begin{quote}
+  {\it De plus, si on entend par $\frac{h}{k}$ la fraction
+    $\frac{a}{c}$ réduite à ses moindres termes, ou que $\frac{m}{c}=
+    x+\frac{a}{c}=x=\frac{h}{k}$ ; il ne m'a pas été difficil 
+    de prouver, qu'au bout d'une période de $k$ termes les
+    augmentations de $P$ doivent revenir dans le même ordre ; c'est à
+    dire que si on nomme $\Pi$ le terme correspondant à $n+k$, il faudra
+    ajouter à $\Pi$, pour $n+k+I$, le même nombre d'unités qu'on avait
+    ajouté à $P$ pour $n+I$}[...].
+\end{quote}
+
+Il    propose   ensuite un  calcul   basé sur   la fraction  continue  de
+$\frac{h}{k}$ pour construire   explicitement  tous les  pixels de  la
+droite discrète (voir \citealt{hardy} pour un  complément sur ces notions
+d'arithmétique    et de théorie  des   nombres).  Ce premier travail a
+ensuite était repris par  \citet{christoffel} qui construit un mot qui,
+par  une  transformation  simple,  se  ramène   à une  droite  discrète
+arithmétique \citep{reveilles}.
+
+\label{sec:bezout}
+ 
+Après cette parenthèse historique, revenons sur la construction de ces
+objets. Nous illustrons la puissance de ce formalisme  en donnant une
+interprétation graphique du théorème de \aut{Bezout}, très classique
+en arithmétique~:
+\begin{displaymath}
+  \forall a,b\in\mathbb{N},\quad \exists u,v\in\mathbb{N}~:~au+bv=pgcd(a,b) 
+\end{displaymath}
+Dans notre analyse, $a$ et $b$ sont des premiers entre eux, on considère
+$u$ et $v$ les coefficients de \aut{Bezout} donnés par:
+\begin{displaymath}
+  au-bv=1
+\end{displaymath}
+
+Ainsi, si $(x_0,y_0)$ appartient au pointillé de niveau $k$, les
+autres points de même reste sont générés par application du vecteur
+$(b,a)^T$. Un {\it vecteur de Bezout} $(u,v)^T$ nous permet de passer
+d'un pointillé à un autre. En effet, tous les vecteurs de la forme
+$(u,v)^T+k'(b,a)^T$ avec $k'$ dans $\Z$  nous permettent de
+passer d'un point du pointillé $k$ à un point du pointillé $k+1$. Pour
+cela, supposons $ax_0-by_0=k$ puis~:
+
+\begin{align*}
+  a(x_0+u+k'b) - b(y_0+v+k'a) &= ax_0-by_0 +au-bv + abk'-abk'\\
+  &= ax_0-by_0 +1\\
+  &= k+1
+\end{align*}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/droites_bezout}
+    \caption{Pointillés et vecteur de Bezout pour la droite  $\mathcal{D}(2,5,-1,5)$.}
+    \label{fig:droites_bezout}
+  \end{center}
+\end{figure}
+
+Par exemple, la figure \ref{fig:droites_bezout} illustre les vecteurs
+générant la droite $\mathcal{D}(2,5,-1,5)$ tels que $(b,a)^T=(5,2)^T$
+et $(u,v)^T=(3,1)^T$. Ainsi, la construction d'une droite discrète se
+fait, en partant d'un point de reste $\mu$, par application de
+$\omega-1$ fois le vecteur de Bezout pour passer  d'un pointillé à
+l'autre et autant de fois le vecteur $(b,a)$ qu'il faut dans chaque
+pointillé. Nous  utiliserons  cette notion de vecteur de Bezout dans
+la partie reconnaissance de cercles (chapitre \ref{chap-cercles}).
+
+
+\subsubsection{Quelles {\it droites} choisir ?}
+
+De  nombreuses autres définitions   de droites discrètes existent,  le
+lecteur pourra se référer à  l'article  de \cite{rosen_klette} ou  aux
+thèses soutenues sur ce sujet comme celles de \cite{debledthese} ou de
+\cite{vialardthese}. Cependant,   la    majorité de  ces   définitions
+désigne le même objet géométrique.  Dans ce que nous avons présenté,
+nous avons l'équivalence entre les définitions suivantes~:
+\begin{itemize}
+\item les propriétés de \aut{Freeman} formalisées par \citeauthor{wu}
+  et \citeauthor{HUE_1981}~;
+\item la propriété de corde de \aut{Rosenfeld}~:
+\item la propriété de régularité de \citeauthor{Hung85}~;
+\item le quadruplet $(n,q,p,s)$ de  \citeauthor{Smeulders84}~;
+\item la notion de droite arithmétique avec comme épaisseur $\omega=max(|a|,|b|)$.
+\end{itemize}
+ 
+
+Le choix de telle ou telle approche est dirigé par l'algorithmique que
+l'on applique à ces définitions. Par exemple, si notre objectif est le
+tracé de droite, la propriété de corde ne nous permet pas d'écrire des
+algorithmes efficaces alors que les droites arithmétiques le
+permettent.  De même, dans un objectif de reconnaissance de droite, on
+adoptera la méthode la plus simple à implémenter. 
+
+\subsubsection{Tracé de droites discrètes}
+
+Nous présentons les algorithmes classiques de tracé de droites
+discrètes que nous utiliserons par la suite.  
+
+Nous  commençons par    un     algorithme très  connu     proposé  par
+\cite{bres65}.   Le  cadre de    ce  travail  est le   suivant~:  nous
+considérons deux points de la grille  notés $(x_0,y_0)$ et $(x_1,y_1)$
+et l'on souhaite tracer le segment de droite joignant ces deux pixels.
+Nous   pouvons, sans perte de  généralité,  nous placer  dans le premier
+octant, c'est-à-dire   $x_1-x_0>y_1-y_0>0$. Nous illustrerons   par la
+suite les transformations permettant de généraliser  le tracé dans les
+autres octants.
+
+L'idée  de   cet algorithme est le   suivant~:  nous allons tracer les
+pixels de $x_i$ vers $x_f$ dans cet ordre. A chaque étape, nous devons
+choisir entre rester sur le même {\it palier}  ({\it i.e.} rester à la
+même ordonnée)  ou aller en diagonale.  Pour  cela, nous propageons une
+mesure d'erreur  nous permettant de  toujours choisir le pixel le plus
+proche. Nous obtenons donc l'algorithme \ref{alg:bresenham}.
+
+
+
+\begin{algorithm}
+\caption{Tracé de droite de \cite{bres65}}
+\label{alg:bresenham}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{tracé\_Bresenham($x_0,y_0,x_1,y_1$)}
+
+\STATE $dx=x_1-x_0$, $dy=y_1-y_0$
+\STATE $x=x_0$, $y=y_0$
+\STATE $incrHor=2dy$, $incrDiag=2(dx-dy)$
+\STATE $e=2dy-dx$
+
+\FOR{$x$ allant de $x_0$ à $x_1$}
+\STATE \INTERNNAME{Afficher\_pixel}(x,y)
+\IF{$e\geq 0$}
+\STATE $y\texttt{+=}1$
+\STATE $e\texttt{+=}incrDiag$
+\ELSE
+\STATE $e\texttt{+=}incrHor$
+\ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+Nous détaillons aussi l'algorithme de tracé des droites discrètes
+arithmétiques. Nous nous intéressons plus particulièrement aux droites
+arithmétiques naïves. Comme nous l'avons remarqué précédemment, la
+structure modulaire du reste dans la droite discrète permet de
+comprendre entièrement la structure géométrique de la droite. Il est
+donc naturel de baser l'algorithme de tracé sur cette
+information. Nous obtenons donc l'algorithme
+\ref{alg:trace_reveilles}. Cet algorithme est très similaire à celui
+de \citeauthor{bres65}, en fait,  l'algorithme \ref{alg:bresenham} est
+une instance de cet algorithme pour $\mu=\left [ \frac{x_f-x_i}{2}
+\right ]+1$ (voir \citealt{debledthese}).
+
+\begin{algorithm}
+\caption{Tracé de droites arithmétiques naïves de \cite{reveilles} et \cite{debledthese}}
+\label{alg:trace_reveilles}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{tracé\_arithmètique($x_0,y_0,x_1,y_1,\mu$)}
+\STATE $v_x=x_1-x_0$, $v_y=y_1-y_0$
+\STATE $r=v_yx_0-v_xy_0-\mu$
+\STATE $x=x_0$, $y=y_0$
+\WHILE{$x<x_b$}
+\STATE $x\texttt{+=}1$
+\STATE $r\texttt{+=}v_y$
+\IF{$r<0$ ou $r\geq v_x$}
+\STATE $y\texttt{+=}1$
+\STATE $r\texttt{-=}v_x$
+\ENDIF
+\STATE \INTERNNAME{Afficher\_pixel}(x,y)
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+D'autres  algorithmes de tracé  pour   les droites arithmétiques  {\it
+épaisses}  ont  été proposés par \cite{reveilles}      mais nous ne  les
+utiliserons pas par la suite.
+
+
+Pour généraliser ce tracé dans tous les octants, nous utilisons, au
+niveau de la fonction  \INTERNNAME{Affiche\_pixel}, les
+transformations du tableau \ref{tab:oct}. Le nombre de tests à
+effectuer dans l'implémentation est encore suffisamment raisonnable
+pour envisager une implémentation directe du tableau
+\ref{tab:oct}. Nous verrons par la suite comment nous résolvons le problème
+en 3D où 48 cas sont à gérer.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    Octants & Transformations de $(x,y)$\\
+    \hline
+    1 & $(x,y)$\\
+    2 & $(y,x)$\\
+    3 & $(y,-x)$\\
+    4 & $(x,-y)$\\
+    5 & $(-x,-y)$\\
+    6 & $(-y,-x)$\\
+    7& $(-y,x)$\\
+    8 & $(-x,y)$\\
+    \hline
+  \end{tabular}
+  \caption{Transformations pour la généralisation du tracé de droite dans tous les octants.}
+  \label{tab:oct}
+\end{table}
+
+
+
+\subsection{Reconnaissance et segmentation}
+
+Dans cette partie, nous nous intéressons aux algorithmes permettant de
+décider  si un  ensemble de points  discrets  appartient ou non à  une
+droite discrète. De manière plus  précise, nous pouvons décomposer  le
+problème en deux grands axes~:
+\begin{description}
+\item[Test de linéarité] : prédicat permettant de décider si un
+  ensemble de pixels forme un segment discret.
+
+\item[Reconnaissance de la droite] : cette fois, non seulement nous
+  décidons si un ensemble de pixels appartient à une droite
+  discrète, mais nous obtenons les paramètres de cette droite discrète.
+\end{description}
+
+Quel que soit le problème choisi, nous évaluons les différents
+algorithmes selon les critères suivants~:
+\begin{description}
+\item[Conditions sur l'ensemble  de pixels] : est-ce que  l'algorithme
+émet    des hypothèses sur    la structure   de l'ensemble  de  pixels
+(connexité, tri sur un axe de coordonnées\ldots) ?
+\item[Complexité]   : mesurée en   fonction du   nombre  de pixels  de
+l'ensemble   à reconnaître.   Nous  nous  intéressons   aussi à   la
+complexité en mémoire de chaque algorithme.
+\item[Difficulté d'implémentation] : d'un point de vue pratique,
+  est-ce que la méthode se programme facilement ?
+\end{description}
+
+
+Dans   la   littérature,   \cite{rosen_klette}  attribuent   le  premier
+algorithme de reconnaissance de droite   discrète en temps linéaire  à
+\cite{HUE_1981}. Cependant, le problème peut être abordé par tellement
+d'approches différentes que  cela rend toute classification historique
+difficile.
+
+Dans ce  qui suit, nous détaillerons deux  grandes  approches pour la
+reconnaissance qui seront utilisées par la suite. Le lecteur pourra se
+référer à \cite{rosen_klette} pour une bibliographie plus large sur le
+sujet.
+
+
+
+\subsubsection{Approche basée sur la structure du dual}
+\label{sec:approche-dual}
+
+
+A partir du codage $(n,q,p,s)$  des droites discrètes,
+\cite{Smeulders84} construisent la {\it pré-image} associée à une droite
+discrète. Cette pré-image est un domaine, dans l'espace des
+paramètres, qui représente l'ensemble des droites réelles dont la
+discrétisation contient l'ensemble des pixels du segment discret
+considéré.
+
+De manière plus formelle, nous considérons tout d'abord un segment de
+droite discrète naïve dans le premier octant, noté
+$\mathcal{S}$. D'après les définitions vues au paragraphe
+\ref{sec:defin-et-propr}, il existe alors un couple
+$(\alpha,\beta)\in[0,1]\times[0,1[$ tel que $\mathcal{S}$ est contenu
+dans la discrétisation de  la droite $y=\alpha x+\beta$.
+
+Nous notons $\bar{\mathcal{S}}$ l'ensemble de ces droites donné par~:
+\begin{equation}
+\label{eq:dual}
+  \bar{\mathcal{S}}=\{(\alpha,\beta\})\in[0,1]\times[0,1[~|~
+  \forall (x,y)\in\mathcal{S},~0\leq \alpha x+\beta -y <1 \}
+\end{equation}
+
+
+Si nous décomposons la construction de $\bar{\mathcal{S}}$, chaque
+pixel de $\mathcal{S}$ engendre, dans l'espace dual $(\alpha,\beta)$
+un bande semi-ouverte définie par~:
+
+\begin{displaymath}
+  \mathcal{B}(x,y)=\left \{ \begin{array}{l}
+\alpha x + \beta -y \geq 0\\
+\alpha x + \beta -y < 1
+\end{array}
+\right .
+\end{displaymath}
+
+
+Étant donné que  $\bar{\mathcal{S}}$ est une intersection de
+contraintes linéaires, ce domaine est convexe dans l'espace des
+paramètres (voir figure \ref{fig:dual_exemple}).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{Fig/dual_exemplebis.ps}
+    \caption{Ensemble de pixels $\mathcal{S}$ et domaine des droites
+      euclidiennes      $y=\alpha      x  +\beta$     associées, noté
+      $\bar{\mathcal{S}}$.}
+    \label{fig:dual_exemple}
+  \end{center}
+\end{figure}
+
+
+Présenté en ces termes, le problème se ramène donc à un problème
+classique de programmation linéaire~: étant donné un système de
+contraintes linéaires, nous voulons  soit décider si le système est
+valide (c'est-à-dire s'il existe au moins une solution), soit calculer
+le polytope solution dans l'espace des paramètres.
+
+De nombreux algorithmes existent pour résoudre ce problème quelque
+soit la dimension des contraintes (c'est-à-dire la dimension de l'espace
+des paramètres). De manière générale, nous avons le théorème suivant
+nous permettant d'avoir une borne sur la complexité asymptotique du
+test de linéarité~:
+
+\begin{theo}[\cite{megiddo}]
+\label{theo:megiddo}
+  Étant  donné un système de  $n$  inéquations  linéaires de dimension  $d$,
+  tester si un système admet une solution  se calcule en temps optimal
+  pour une dimension fixe, c'est-à-dire en $O(n)$.
+\end{theo}
+ 
+Le problème majeur de cette approche est la  constante importante
+devant cette complexité asymptotique. En effet, celle-ci est
+exponentielle en la dimension. Cependant, dans le cas de faible
+dimension, l'algorithme de \cite{megiddo} offre une solution très
+efficace. 
+Dans notre cas, le test de linéarité d'un ensemble de pixels engendre
+un système de $2n$ inéquations de dimension 2 (où $n$ est le nombre de
+pixels). Nous obtenons donc une solution optimale en temps,
+c'est-à-dire $O(n)$, à notre premier problème. Récemment, \cite{buzer}
+a présenté une version incrémentale de cet algorithme toujours en
+temps optimal quelle que soit la dimension. 
+
+Si nous souhaitons décrire tous  les sommets du domaine solution,  des
+algorithmes très efficaces existent pour  les  dimensions 2 et 3.  Ces
+algorithmes viennent  généralement d'une résolution du problème dual~:
+en dimension 2, la  transformée   dans l'espace des  paramètres  d'une
+droite est un  point, la transformée d'un  point est une droite et une
+inéquation linéaire  se  transforme aussi en  une  contrainte linéaire
+dans  le dual mais   calculer le polytope  des  solutions d'un système
+d'inéquation se  ramène à un  calcul d'enveloppe convexe  dans le dual
+(voir \citealt{boissonnat,deberg} et figure \ref{fig:passage_dual}).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/fig1rbis}
+    \caption[Passage dans l'espace des paramètres associés aux
+    droites]{Passage  dans  l'espace   des  paramètres   associés  aux
+    droites~:  les  droites  $D$,    $D'$ et   $D''$  {\it(à  gauche)}
+    deviennent respectivement les points $D^*$, $D'^*$ et $D''^*$ {\it
+    (à droite)}, le point $M$ devient la droite $M^*$. $M$ satisfait
+    la contrainte linéaire $D$ implique que $D^*$  est en  dessous de
+    $M^*$ dans l'espace dual.}
+    \label{fig:passage_dual}
+  \end{center}
+\end{figure}
+
+Ainsi, les   bornes  des algorithmes  de  calcul d'enveloppes convexes
+impliquent des   bornes sur le calcul du    domaine des solutions d'un
+système.   Pour la dimension  2, \cite{P16} ont présenté un algorithme
+optimal dont la  borne est en $O(nlog(n))$. Pour  ne pas surcharger ce
+chapitre, l'algorithme optimal  de  \cite{P16} est présenté en  annexe
+(voir annexe \ref{chap:annexe_prog}).
+
+Finalement, sans aucune prise en compte de l'aspect géométrique ou des
+propriétés  des  droites discrètes,  nous  avons  des algorithmes très
+efficaces pour le  test de linéarité ou  la reconnaissance  de droites
+discrètes.  Ces bornes  sont certes  intéressantes mais l'introduction
+de la particularité  des    droites discrètes permet    de  simplifier
+considérablement les bornes et les algorithmes.
+
+Avant de présenter un premier algorithme de reconnaissance optimal, il
+nous  faut   revenir sur une   illustration géométrique  de l'équation
+\ref{eq:dual}.  Ainsi,   l'ensemble  des solutions $\bar{\mathcal{S}}$
+correspond à  l'ensemble des  droites passant  par tous  les  segments
+semi-ouverts $[MM'[$ où   $M=(x,y)$ et  $M'=(x,y+1)$ pour tous    les
+points  $(x,y)$  de  $\mathcal{S}$ (voir figure  \ref{fig:intervals}).
+Cette réécriture   du problème  est   évidente mais elle  nous  permet
+d'appliquer un  algorithme  très  efficace  proposé  par \cite{rourke}
+permettant de décrire l'ensemble  des droites  réelles passant par  un
+ensemble d'intervalles définis sous la forme $[(x,\alpha),(x,\omega)]$
+(voir figure \ref{fig:algo_rourke})
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/intervalle_OBQ}
+    \caption{Représentation de la droite discrète
+      $\mathcal{D}(2,5,-1,5)$ sous forme d'intervalles et droites
+      euclidiennes solutions.}
+    \label{fig:intervals}
+  \end{center}
+\end{figure}
+
+Ainsi,  \citeauthor{rourke}   présente   un  algorithme incrémental et
+optimal en temps pour  décrire  le domaine  de l'ensemble des  droites
+passant par   ces intervalles  (voir  figure \ref{fig:algo_rourke})  :
+étant donné un ensemble   de $n$  intervalles  triés selon  l'axe  des
+abscisses,    le  calcul du domaine    des  droites  dans l'espace des
+paramètres  se   calcule  en   $O(n)$.    De plus, pour     tout ajout
+d'intervalle croissant en $x$,  la mise à jour  du domaine se  fait au
+pire cas  en $O(n)$ mais   l'analyse amortie de  ce  calcul montre une
+complexité optimale pour le problème.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=6cm]{Fig/orourke}
+    \caption{Algorithme de \citeauthor{rourke} pour construire
+      l'ensemble des droites réelles passant par une série d'intervalles.}
+    \label{fig:algo_rourke}
+  \end{center}
+\end{figure}
+
+
+En considérant donc une description de $\mathcal{S}$ sous forme d'une
+liste chaînée de pixels (description en $k-$arcs), nous avons ramené
+la complexité de $O(nlog(n))$ à $O(n)$. 
+
+%Nous reviendrons sur cet algorithme plus tard.
+
+
+En ajoutant la contrainte de connexité, nous obtenons une borne
+optimale en temps et en mémoire à nos deux problèmes. Ainsi, lors de
+la caractérisation en $(n,q,p,s)$, \cite{Smeulders84} ont montré le
+théorème suivant~:
+
+\begin{theo}[Structure du domaine des droites discrètes]
+\label{theo:structure1}
+ Étant donné un ensemble de pixels $\mathcal{S}$ connexes, le domaine
+$\bar{\mathcal{S}}$ dans l'espace des paramètres a, au plus, 4 sommets.
+\end{theo}
+
+La preuve de ce théorème a été présentée par \citeauthor{Smeulders84}, 
+et indépendamment, \cite{ilroy} a proposé, la même année, une preuve
+très simple concernant la propriété de structure du dual.
+
+En plus de  ce résultat sur le nombre   de sommets dans le  dual, ces
+sommets ont  une structure arithmétique  très intéressante. Tout
+d'abord, rappelons  les  notions de  séries de  Farey  en théorie  des
+nombres (voir par exemple \citealt{hardy})~:
+
+\begin{defi}[Serie de Farey]
+  Une série de Farey d'ordre $n\in\mathbb{N^*}$ est l'ensemble des fractions
+irréductibles ordonnées de l'intervalle [0,1] dont les dénominateurs sont
+inférieurs à $n$.
+\end{defi}
+
+Par exemple, la série de Farey d'ordre 5 est l'ensemble~:
+\begin{displaymath}
+\mathcal{F}_5=\left
+  \{\frac{0}{1},\frac{1}{5},\frac{1}{4},\frac{1}{3},\frac{2}{5},\frac{1}{2},\frac{3}{5},\frac{2}{3},\frac{3}{4},\frac{4}{5},\frac{1}{1}\right \}
+\end{displaymath}
+
+Sur ces séries, nous avons les propriétés suivantes~:
+\begin{prop}
+  Étant donnée $\mathcal{F}_n$ la série de Farey d'ordre $n$, nous
+  avons~:
+  \begin{itemize}
+  \item si $\frac{h}{k}$ et $\frac{h'}{k'}$  sont deux membres
+    consécutifs de $\mathcal{F}_n$, alors $kh'-hk'=1$
+\item si $\frac{h}{k}$, $\frac{h''}{k''}$ et  $\frac{h'}{k'}$  sont
+  trois termes consécutifs de  $\mathcal{F}_n$, alors
+  $\frac{h''}{k''}=\frac{h+h'}{k+k'}$. Ce point est appelé le {\bf
+    médian} de  $\frac{h}{k}$ et $\frac{h'}{k'}$.
+  \end{itemize}
+\end{prop}
+
+Les  séries de Farey peuvent se  calculer de manière récursive.  La
+série  $\mathcal{F}_{n+1}$   se construit,  à    partir de   la  série
+$\mathcal{F}_{n}$, en  ajoutant tous les  points médians des fractions
+consécutives de $\mathcal{F}_n$ dont les dénominateurs sont inférieurs
+à $n+1$.
+
+Ainsi, pour construire la série d'ordre 6, nous ajoutons
+à $~\mathcal{F}_5$ les fractions $\frac{1}{6}$ et   $\frac{5}{6}$ (tous
+les autres médians sont déjà dans la liste). Nous obtenons donc~:
+
+\begin{displaymath}
+\mathcal{F}_6=\left
+  \{\frac{0}{1},\frac{1}{6},\frac{1}{5},\frac{1}{4},\frac{1}{3},\frac{2}{5},\frac{1}{2},\frac{3}{5},\frac{2}{3},\frac{3}{4},\frac{4}{5},\frac{5}{6},\frac{1}{1}\right \}
+\end{displaymath}
+
+En se  basant sur ces définitions et  propriétés  des séries de Farey,
+nous pouvons compléter le théorème \ref{theo:structure1} en spécifiant
+encore la structure de l'espace dual associé aux droites discrètes~:
+
+\begin{theo}[\cite{ilroy,Smeulders84}]
+ \label{theo:structure2}
+ Étant  donné un ensemble $\mathcal{S}$  de $N+1$ pixels connexes dont
+ l'abscisse     minimale   des   points   est      $x_0$, le   domaine
+ $\bar{\mathcal{S}}$ dans l'espace des paramètres est tel que~:
+\begin{itemize}
+\item il a au plus 4 sommets~;
+\item les abscisses de ces sommets appartiennent à la Farey d'ordre $\max(x_0,N-x_0)$~;
+\item si le domaine a 4 sommets, deux d'entre eux ont la même abscisse~;
+\item les abscisses  de deux sommets adjacents sont des fractions
+  consécutives dans une série de Farey~;
+\item si l'abscisse d'un sommet est $\frac{p}{q}$, l'ordonnée de
+  celui-ci est un multiple de $\frac{1}{q}$.
+\end{itemize}
+\end{theo}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=10cm]{Fig/structure_ilroy}
+   \caption{Différentes formes du domaine des droites dans le dual.}
+    \label{fig:structure}
+  \end{center}
+\end{figure}
+
+
+En considérant toutes  ces propriétés, le  domaine des solutions  dans
+l'espace   dual  ne   peut   prendre  que    cinq formes  différentes,
+représentées  figure \ref{fig:structure}. Pour  illustrer la quatrième
+propriété de  ce domaine,  dans le cas  du quadrilatère  de  la figure
+\ref{fig:structure}, les fractions $\frac{p}{q}$ et $\frac{h}{k}$ sont
+adjacentes dans la série de Farey associée au domaine.
+
+D'une manière encore  plus  précise, \cite{ilroy} introduit  la notion
+{\it d'éventail de Farey} (de l'anglais {\it Farey fan}) permettant de
+décrire toutes les formes possibles de $\bar{\mathcal{S}}$ en fonction
+de  l'ordre de Farey  associé à  la  droite.  En d'autres termes,  un
+polygone de  ce  diagramme  d'ordre $q$   contenu dans   le  rectangle
+$[0,1]\times[0,1]$, appelé {\it  cellule  de Farey},  correspond  à la
+pré-image    d'un    segment     discret      de    longueur     $q+1$
+\citep{ilroy,vittonethese}.   La figure \ref{fig:farey_fans}  illustre
+ce calcul pour l'ordre 2, 3 et 6~: toutes les  {\it cellules de Farey}
+contenues dans le   rectangle $[0,1]\times[0,1]$  sont l'ensemble  des
+domaines possibles  pour tout ensemble  de pixels générant un ordre de
+Farey de 2, 3 ou 6.  Ainsi, dans la figure \ref{fig:farey_fans}$-(c)$,
+on remarque  que tous ces  polygones sont de la   forme décrite dans le
+théorème \ref{theo:structure2}.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/farey_fan_2}}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/farey_fan_3}}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/farey_fan_6}}
+    \caption[Illustration des éventails de Farey introduits par
+\cite{ilroy}]{Illustration  des  éventails  de  Farey   introduits par
+\cite{ilroy}~:  $(a)$ éventail d'ordre  2, $(b)$ éventail d'ordre 3 et
+$(c)$  éventail  d'ordre 6.  Les polygones   définis dans le rectangle
+$[0,1]\times[0,1]$ correspondent aux  domaines possibles associés  aux
+segments discrets.}
+    \label{fig:farey_fans}
+  \end{center}
+\end{figure}
+
+
+Si nous  oublions les propriétés  arithmétiques du  domaine dual, nous
+pouvons déjà proposer des algorithmes  optimaux en temps et en mémoire
+pour la reconnaissance de segments discrets.  En  effet, étant donné que
+ce polygone  des  solutions ne  peut   avoir plus de   4 sommets, nous
+pouvons calculer la  nouvelle  forme de  ce domaine, après   insertion
+d'une nouvelle contrainte, en temps constant.
+
+Cependant,   la structure arithmétique   nous  permet de maintenir  ce
+polygone sous  forme  irréductible, c'est-à-dire   tel  que tous   les
+sommets s'écrivent  sous forme de   fractions irréductibles.  Pour cela,
+\cite{ilroy}   a   décrit  l'ensemble   des  coupures  possibles après
+l'insertion d'un nouveau pixel~:
+
+\begin{theo}
+   Étant  donné  un ensemble de pixels  $\mathcal{S}$   connexes et la
+   cellule de Farey qui lui est associé d'ordre  $q$, si nous ajoutons
+   un pixel qui engendre  une contrainte dans l'espace  des paramètres
+   intersectant $\bar{\mathcal{S}}$, celle-ci ne  peut pas couper deux
+   arêtes adjacentes ni deux arêtes opposées. De  plus si la contrainte
+   coupe une arête,  par   exemple $[AB]$, du  domaine,  l'abscisse de
+   cette intersection est le  successeur  de l'abscisse de $A$  (resp.
+   prédécesseur de  l'abscisse de $B$) dans la  série de Farey d'ordre
+   $q+1$.
+\end{theo}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=6cm]{Fig/coupure_ilroy}
+    \caption{L'ajout d'un nouveau point introduit une contrainte sur
+      $\bar{\mathcal{S}}$ d'ordre $q$, le point $B'$ a une abscisse qui est le médian
+      des abscisses de $A$ et $B$ dans la serie de Farey d'ordre $q+1$.}
+    \label{fig:coupure_ilroy}
+  \end{center}
+\end{figure}
+
+
+Dans l'exemple illustré figure \ref{fig:coupure_ilroy}, la fraction
+$\frac{h''}{k''}$ est le successeur de $\frac{h}{k}$ et le
+prédécesseur de $\frac{h'}{k'}$ dans la série de Farey d'ordre
+$q+1$. Étant donné que ce calcul de successeur se fait  en temps
+constant, la mise à jour du domaine $\bar{\mathcal{S}}$ avec
+l'écriture sous forme irréductible des coordonnées des sommets se fait
+en temps constant.
+
+En se basant sur ce principe, \cite{bruck93} proposent un algorithme optimal en
+temps, optimal  en mémoire et incrémental avec un coût de mise à jour
+constant pour le problème de reconnaissance de droite discrète.
+
+L'idée de cet algorithme est simple, lors de l'insertion des deux
+contraintes associées à un pixel, si le domaine est modifié~:
+\begin{enumerate}
+\item Détection de l'arête coupée.
+\item Calcul du point d'intersection en considérant le successeur de
+  l'abscisse d'une des extrémités de l'arête dans la série de Farey
+  d'ordre $q+1$.  
+\item Déplacement des sommets pour maintenir un polygone $(ABCD)$.
+\end{enumerate}
+
+
+
+Si nous insérons  des pixels sans   contrainte sur leur ordre ou  leur
+connexité, la structure du domaine ne peut pas  être contrôlée.  Il
+peut  être cependant intéressant  d'avoir une écriture des coordonnées
+des  sommets  du polygone  dans  l'espace  dual sous forme  d'équations
+irréductibles.  En effet,  un point $\left(  \frac{a}{b},\frac{\mu}{b}
+\right)$ solution du système permet la paramétrisation arithmétique du
+morceau de droite reconnue  donnée par $\mathcal{D}(a,b,\mu)$ (dans le
+premier octant).  Ainsi,  lorsqu'une contrainte intersecte  une arête,
+nous  savons que si  cette contrainte est issue  d'un pixel connexe au
+morceau de droite déjà reconnu, l'ordre la série de Farey contenant la
+fraction n'augmente que  de 1. Dans  le cas général, l'augmentation de
+l'ordre  de la série  de Farey ne   peut pas être  bornée.  Pour cela,
+\cite{vittonethese,vittone}  ont proposé l'utilisation d'un algorithme
+de \cite{grabiner} permettant de réduire  la fraction en utilisant une
+dichotomie sur  les    fractions  des extrémités  de   l'arête   (voir
+algorithme \ref{alg:grabiner}).  Même si la  complextié au pire cas de
+cet algorithme est $O(log(n))$ par réduction,  il est en pratique bien
+plus efficace qu'une réduction de fraction par l'algorithme d'Euclide.
+En  effet, la clé  de cet algorithme est   de trouver l'ordre de Farey
+minimal  qui   contient la  fraction en   s'aidant d'un encadrement de
+celle-ci, ce qui est bien moins coûteux qu'Euclide  en pratique si les
+pixels insérés ne sont pas {\it trop éloignés}.
+
+
+
+\begin{algorithm}[!htbp]
+  \caption{Algorithme de \citeauthor{grabiner} modifié}
+\label{alg:grabiner}
+\begin{algorithmic}[1]
+\EXTERNNAME
+\INTERNNAME{Grabiner\_modifié($I$,$\frac{p}{q}$,$\frac{r}{s}$)}\\
+\COMMENT{Calcul de l'instersection de l'inéquation $I$ avec le segment
+  $[\frac{p}{q},\frac{r}{s}]$}
+\STATE $\frac{a}{b}=\frac{p}{q}$
+\STATE $\frac{c}{d}=\frac{r}{s}$
+\WHILE{ $I(\frac{a}{b})+I(\frac{c}{d}) \neq 0$ }
+\IF{$I(\frac{a}{b})+I(\frac{c}{d})$ et $I(\frac{p}{q})$ sont du même
+  signe}
+\STATE $\frac{a}{b}=\frac{a+c}{b+d}$
+\STATE $\frac{c}{d}=\frac{r}{s}$
+\ELSE 
+\STATE $\frac{a}{b}=\frac{p}{q}$
+\STATE $\frac{c}{d}=\frac{a+c}{b+d}$
+\ENDIF
+\ENDWHILE
+\STATE { \RETURN~~$\frac{a+c}{b+d}$}
+\end{algorithmic}
+\end{algorithm}
+
+
+
+En se basant sur ce calcul de réduction de fraction,
+\cite{vittonethese} présente un algorithme de reconnaissance dans le
+cas général mais avec une complexité au pire cas en $O(n^3log(n))$
+très loin de la complexité effective de l'algorithme. 
+
+Cependant, nous pouvons adapter cet algorithme en utilisant, à la fois
+l'algorithme de \cite{grabiner}   modifié par  \cite{vittonethese}  et
+l'algorithme optimal de  \cite{P16}.  Nous obtenons ainsi l'algorithme
+\ref{alg:vittonebis} dont  la complexité est  en $O(nlog^2(n))$.   Cet
+algorithme est  décrit en deux passes,  la première pour construire le
+polytope des solutions et ensuite l'application de \aut{Grabiner} pour
+réduire    les sommets mais    cette   réduction peut bien  évidemment
+s'insérer dans le calcul du polytope.
+
+\begin{algorithm}[!htbp]
+  \caption{Ajout d'une contrainte avec réduction arithmétique,
+    algorithme de \citeauthor{vittonethese} modifié}
+\label{alg:vittonebis}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Ajout\_contrainte\_Vittone\_Modifié($D$,$c$)}
+\\ \COMMENT{$D$ est le polygone déjà construit et $c$ est la nouvelle contrainte}
+\STATE Ajout de la contrainte avec l'algorithme de \cite{P16} (voir
+Annexe \ref{chap:annexe_prog})
+\FORALL{sommet $p$ engendré par $c$}
+\STATE Soit $v$ et $v'$ la séquence de sommets adjacents à $p$
+\COMMENT{$v$ et $v'$ sont sous forme irréductible car présents dans $D$}
+\STATE Réduction de la fraction de l'abscisse de $p$ avec l'algorithme
+de \aut{Grabiner} modifié sur les points $v$, $p$ et $v'$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Approche arithmétique} 
+
+Nous présentons maintenant l'algorithme  de reconnaissance proposé par
+\cite{debledthese,DEB95} qui se   base  sur  une  analyse des   restes
+associés      à    une     droite    discrète    arithmétique    naïve
+$\mathcal{D}(a,b,\mu)$.  Sans perte de  généralité,  nous nous plaçons
+dans le premier octant ($0\leq a<b$).
+
+Rappelons qu'un {\it point  d'appui inférieur} (resp. {\it supérieur})
+est un  point   vérifiant $ax-by=\mu+b-1$ (resp.   $ax-by=\mu$).   Par
+ailleurs,  un {\it   point   faiblement extérieur inférieur}    (resp.
+supérieur) est un pixel qui vérifie $ax-by=\mu+b$ (resp. $ax-by=\mu+1$).
+
+
+Dans notre explication de l'algorithme de reconnaissance de droite
+discrète de \cite{debledthese}, nous utiliserons les notations de
+\cite{vialardthese}. En effet, ces notations sont équivalentes à
+celles de 
+\citeauthor{debledthese} et permettent une écriture plus simple dans
+le cas du calcul de tangente discrète que nous présenterons dans le
+paragraphe \ref{sec:tangentes-normales}.
+
+Ainsi, considérons un segment de droite discrète déjà reconnu $\Sigma$ de
+paramètres $a$, $b$ et $\mu$. Nous noterons $U$ et $U'$ les points
+d'appui supérieurs du segment dont les abscisses sont respectivement
+minimale et maximale. De la même manière nous noterons $L$ et $L'$
+les points d'appui inférieurs d'abscisses minimale et maximale (voir
+figure \ref{fig:UULL}).
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=7cm]{UU_LL}
+    \caption{Description des notations : $U$ et $U'$ sont les points
+      d'appui supérieurs d'abscisses  minimale et maximale, $L$ et $L'$
+      sont les  points   d'appui  inférieurs d'abscisses  minimale   et
+      maximale.}
+    \label{fig:UULL}
+  \end{center}
+\end{figure}
+
+L'algorithme de reconnaissance de \citeauthor{debledthese}   considère
+l'ajout    d'un  point $M(x,y)$  de    reste $r=ax-by$ au segment déjà
+reconnu. Cet algorithme repose sur le théorème suivant~:
+
+\begin{theo}[\cite{debledthese}]
+Étant  donné l'ajout d'un  point $M$ de  reste $r=ax-by$ à droite d'un
+segment déjà reconnu $\Sigma$, et les points d'appui $U$, $U'$, $L$ et
+$L'$, nous avons~:
+\begin{itemize}
+\item si $\mu\leq r < \mu+b$ alors $M$ appartient à la droite
+$\mathcal{D}(a,b,\mu)$ et donc $\Sigma\cup M$ est un segment discret
+\item si $r>\mu+b$ ou $r<\mu-1$ alors $\Sigma\cup M$ n'est pas un
+segment de droite discrète
+\item si $r=\mu-1$ alors $M$ est faiblement extérieur à la droite
+discrète $\mathcal{D}$ et donc $\Sigma\cup M$ est un segment de droite discrète dont
+la pente est donnée par le vecteur $\overrightarrow{UM}$
+\item si $r=\mu+b$ alors $M$ est faiblement extérieur à $\mathcal{D}$
+et donc $\Sigma\cup M$ est un segment de droite discrète dont la pente
+est donnée par $\overrightarrow{LM}$
+\end{itemize}
+\end{theo}
+
+Si l'ajout se fait à gauche du segment $\Sigma$, il suffit de
+considérer les vecteurs $\overrightarrow{U'M}$ et $\overrightarrow{L'M}$ au lieu de
+$\overrightarrow{UM}$ et $\overrightarrow{LM}$.
+
+La clef de ce théorème est la suivante~: si nous ajoutons un point
+faiblement extérieur à un segment,  nous devons modifier les
+paramètres de la droite reconnue tout en garantissant que tous les points
+de $\Sigma$ déjà reconnus appartiennent aussi à cette nouvelle droite
+discrète.
+
+D'une manière plus précise, si $(b,a)$ désigne le vecteur directeur de
+la droite contenant $\Sigma$, l'ajout d'un point faiblement extérieur
+introduira le vecteur $(b',a')$. Or, $M$ etant faiblement extérieur,
+les vecteurs $(b,a)$ et $(b',a')$ sont uni-modulaires, c'est-à-dire
+que nous avons :
+\begin{displaymath}
+ab'-ba'=1
+\end{displaymath}
+Pour conclure cette preuve, \citeauthor{debledthese} utilise le
+théorème de \aut{Minkowski} qui stipule qu'il n'y a pas de points entiers
+dans le parallélogramme défini par des vecteurs uni-modulaires (voir \citep{hardy}). Nous
+reprenons une illustration de \citeauthor{vialardthese} pour
+représenter les différents cas de ce théorème (voir figure
+\ref{fig:algo_debled}).
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=13cm]{algo_debled}
+    \caption[Différents cas de figure lrsde l'ajout d'un point à une
+      droite  discrète]{Différents cas de figure  lors de l'ajout d'un
+      point  à  une droite   discrète~:  $(a)$  ajout d'un    point ne
+      changeant pas les paramètres,  $(b)$ ajout d'un point faiblement
+      extérieur supérieur, dans ce cas   le vecteur clair indique  les
+      nouveaux paramètres du  segment discret, $(c)$  ajout d'un point
+      faiblement   extérieur  inférieur,  le   vecteur  clair  indique
+      toujours le nouveau paramétrage de la courbe et $(d)$ ajout d'un
+      point    fortement   extérieur    et mise     en    échec  de la
+      reconnaissance.}
+    \label{fig:algo_debled}
+  \end{center}
+\end{figure}
+
+Nous  pouvons  maintenant décrire   l'algorithme de  reconnaissance de
+droite   discrète      de    \cite{debledthese}      (voir  algorithme
+\ref{alg:debled}).   Cet   algorithme  correspond à  une  modification
+apportée    par     \cite{vialardthese,vialard_GMIP} à    l'algorithme initial  de
+\citeauthor{debledthese}.
+
+
+\begin{algorithm}[!htbp]
+\caption{Algorithme de reconnaissance de droite discrète de \cite{debledthese}}
+\label{alg:debled}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Reconnaissance\_Debled($\mathcal{S}$)} 
+\COMMENT{Algorithme modifié par \cite{vialardthese}}
+\STATE $M(x,y)$ et $M'(x',y')$ sont les deux premiers points de $\mathcal{S}$
+\STATE $a=y'$, $b=1$ et $\mu=0$
+\STATE $U=L=(0,0)$
+\STATE $U'=L'=(1,y')$
+\STATE SEGMENT=Vrai
+\WHILE{$\mathcal{S}$ n'a pas été complètement parcouru et SEGMENT}
+\STATE $M(x,y)$ = point suivant dans $\mathcal{S}$
+\STATE $r=ax-by$
+\IF{$r<\mu-1$ ou $r>\mu+b$}
+\STATE SEGMENT=Faux
+\ELSE
+\IF{$r=\mu-1$ ou $r=\mu+b$}
+\IF{$r=\mu-1$}
+\STATE $L=L'$
+\STATE $U'=M$
+\STATE $a=y-y_U$
+\STATE $b=x-x_U$
+\STATE $\mu=ax-by$
+\ENDIF
+\IF{$r=\mu+b$}
+\STATE $U=U'$
+\STATE $L'=M$
+\STATE $a=y-y_L$
+\STATE $b=x-x_L$
+\STATE $\mu=ax-by-b+1$
+\ENDIF
+\ELSE
+\IF{$r=\mu$}
+\STATE $U'=M$
+\ELSIF{$r=\mu+b-1$}
+\STATE $L'=M$
+\ENDIF
+
+\ENDIF
+\ENDIF
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+Cet algorithme est non  seulement linéaire en  le nombre de  pixels de
+$\mathcal{S}$ et  optimal  en   mémoire,  mais  il offre   aussi   une
+possibilité d'implémentation très rapide.
+
+En se basant sur une analyse  identique, \cite{debledthese} propose aussi  des
+algorithmes de reconnaissance de droites discrètes {\it épaisses} dans
+lesquelles les  droites  discrètes standards (4-connexes) sont  un cas
+particulier.   Dans    ce   cas   précis    des   droites   standards,
+\cite{vialardthese}    a   illustré   un    passage direct    entre la
+reconnaissance d'une  droite  4-connexe   et la  reconnaissance  d'une
+droite naïve (8-connexe)~:
+
+\begin{prop}[\cite{vialardthese}]
+Soient  $a$, $b$  et  $\mu$ dans  $\Z$  avec  $0\leq a<b$, le  code de
+\aut{Freeman}       4-connexe     de    la    droite   discrète     standard
+$\mathcal{D}(a,b-a,\mu)$ est identique au code de \aut{Freeman} 8-connexe de
+la droite discrète naïve $\mathcal{D}(a,b,\mu)$.
+\end{prop}
+
+Grâce à cette propriété,  les algorithmes de reconnaissance de droites
+discrètes    standards  s'obtiennent   à   partir  des  algorithmes de
+reconnaissance des droites  discrètes naïves par une simple réécriture
+dans le code de \aut{Freeman}.
+
+\subsubsection{Comparaisons entre approche arithmétique et approche duale}
+\label{sec:comp-dual-arith}
+
+Pour terminer cette analyse,    nous   montrons les liens entre     la
+représentation d'une droite par son domaine des solutions dans le dual
+et la représentation sous forme arithmétique.   Dans un premier temps,
+nous caractérisons   dans l'espace primal,  les différents  sommets et
+arêtes  du domaine associé  à  un segment discret   dans le dual (voir
+\citealt{Smeulders84,bruck93,vittone}).
+
+Nous considérons une   cellule de Farey dont   les sommets sont  notés
+$(ABCD)$ comme indiqué dans la  figure \ref{fig:coupure_ilroy}.  Étant
+donné    un   segment    de     droite     discrète   de     paramètre
+$\mathcal{D}(a,b,\mu)$, nous  avons  alors les  propriétés (illustrées
+figure \ref{fig:dual_arith})~:
+\begin{prop}
+\ 
+
+\begin{itemize}
+\item La transformée de $D$ dans l'espace primal est la droite d'appui
+ supérieure associée au segment discret. $D$ a pour coordonnées
+$(\frac{a}{b},\frac{\mu}{b})$.
+\item La transformée de $B$ dans l'espace primal est la droite d'appui
+  inférieure, translat\'ee de 1 en $y$, associée au segment discret. $B$
+a pour coordonnées $(\frac{a}{b},\frac{\mu+1}{b})$.
+\item  La droite $(AD)$ (resp. $(DC)$) correspond au point d'appui
+supérieur d'abscisse maximale $U'$ (resp. minimale $U$).
+\item La droite $(AB)$ (resp. $(BC)$) correspond au point d'appui
+inférieur, translat\'e de 1 en $y$, d'abscisse minimale  $L$ (resp. maximale $L'$).
+\item Le sommet $A$ correspond dans le primal à la droite passant par
+$U'$ et le translat\'e de $L$ de 1 en $y$.
+\item Le sommet $C$ correspond dans le primal à la droite  passant par
+$U$ et le translat\'e de $L'$ de 1 en $y$.
+\end{itemize}
+\end{prop}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=3.5cm]{dual_arith}}
+    \subfigure[]{\includegraphics[width=7.5cm]{dual_droite2}}
+    \subfigure[]{\includegraphics[width=8cm]{dual_arith2}}
+    \caption[Comparaisons entre approche arithmétique et approche
+basée   sur l'espace  des   droites  dans le dual]{Comparaisons  entre
+approche arithmétique et approche basée sur  l'espace des droites dans
+le  dual~: $(a)$ segment  de droite arithmétique $\mathcal{D}(1,3,1)$,
+$(b)$ cellule de  Farey associée au segment  discret dans l'espace des
+paramètres et $(c)$  représentation dans l'espace primal des  éléments
+caractéristiques    dans  le  dual,  la partie    claire  correspond à
+l'ensemble  des orientations des  droites réelles se discrétisant dans le
+segment discret.}
+    \label{fig:dual_arith}
+  \end{center}
+\end{figure}
+
+
+Grâce à ces propriétés, nous pouvons construire entièrement la cellule
+de Farey associée à un segment discret à  partir de sa caractérisation
+arithmétique.   Réciproquement, à partir de   la cellule de Farey nous
+pouvons  obtenir   les   paramètres  minimaux $a$   et $b$   tels  que
+$pgcd(a,b)=1$ et le paramètre de  translation $\mu$ caractérisant  les
+droites discrètes.
+
+
+\subsubsection{Bilan des algorithmes de reconnaissance présentés}
+
+Dans des  utilisations pratiques de  ces algorithmes de reconnaissance
+de  droite   discrète, le choix    d'un algorithme  peut  ne pas  être
+évident. Dans  le tableau \ref{table:approche_prog} nous  résumons les
+différentes techniques présentées avec leur analyse en complexité et
+hypothèses.
+
+
+\begin{sidewaystable}[htbp]
+%\begin{table}[htbp]
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{3cm}|c|c|p{4cm}|}
+\hline
+ Algorithme & Complexité en temps & Incrémental  & Mémoire & Hypothèses & Remarques\\
+\hline
+ \cite{megiddo} & $O(n)$ & oui, voir \cite{buzer}&- & Aucune & linéarité uniquement\\
+\hline
+ \cite{P16} & $O(nlog(n))$& oui & $O(n^2)$& Aucune& \\
+\hline
+\cite{vittonethese} & $O(n^3log(n))$& oui & $O(n^2) $& Aucune&
+coordonnées sous forme irréductible \\
+\hline
+\citeauthor{vittonethese} modifié (alg. \ref{alg:vittonebis})&
+$O(nlog^2(n))$& oui & $O(n^2) $& Aucune&
+coordonnées sous forme irréductible  \\
+\hline
+\cite{rourke} & $O(n)$& oui & $O(n)$ & pixels triés selon un
+axe& \\
+\hline
+\cite{dor91,bruck93} & $O(n)$ & oui en $O(1)$ par
+ajout & $O(1)$ & connexité&coordonnées
+sous forme irréductible\\
+\hline
+\cite{debledthese} & $O(n)$ & oui en $O(1)$ par ajout &
+$O(1)$ & connexité&caractérisation arithmétique\\
+\hline
+\end{tabular}
+\caption{Algorithmes et complexités pour la reconnaissance de droites discrètes.}
+\label{table:approche_prog}
+\end{sidewaystable}
+%\end{table}
+
+\subsubsection{De la reconnaissance à la segmentation de courbe}
+\label{sec:de-la-reconnaissance}
+
+Comme nous l'avons illustré dans le  tableau \ref{tab:oct}, le passage
+d'une droite discrète dans  le premier octant  vers les autres octants
+s'opère par symétries  d'axes.  Cependant, dans un  contexte  général,
+nous avons un ensemble de pixels $\mathcal{E}$ sur lequel nous n'avons
+aucune information quant à l'octant auquel il appartient, le processus
+de reconnaissance ne peut donc s'appliquer directement.
+
+
+Nous considérons un ensemble  de pixels $\mathcal{E}$ et  nous voulons
+savoir quel est le   plus long segment   de droite discrète qu'il  est
+possible de reconnaître à partir d'un  pixel $M$ de $\mathcal{E}$, dans
+une direction donnée. L'idée pour résoudre  ce problème se décompose en  deux
+étapes~:
+\begin{enumerate}
+\item à partir de $M$, détecter dans quel octant se trouve le morceau
+de courbe de $\mathcal{E}$~;
+\item    une fois   l'octant   connu,  on    utilise   le processus de
+reconnaissance de droite discrète dans le premier octant et le tableau
+des symétries \ref{tab:oct}.
+\end{enumerate}
+
+A partir d'un point, calculer dans quel octant se trouve un morceau de
+courbe de    $\mathcal{E}$ localement en $M$   se   fait simplement en
+regardant le code de \aut{Freeman}. Dès que nous  avons repéré dans ce
+codage deux codes distincts consécutifs, nous  savons dans quel octant
+se trouve la courbe en partant de $M$.   Même si ce calcul est trivial
+sur  le   plan théorique, l'implémentation   en   temps optimal de  ce
+processus n'est  pas évident.  Pour  cela, \cite{DEB95} ont proposé un
+algorithme pour le problème plus général de  la segmentation de courbe
+en droites discrètes arithmétiques en temps optimal en implémentant ce
+processus   de découverte  d'octant  en même  temps  que  celui  de la
+reconnaissance.
+
+Le    processus de    segmentation    considère une  courbe   discrète
+$\mathcal{E}$, un  point   de départ et un   sens  de parcours.   Elle
+construit la   segmentation de  cette courbe   en  morceaux de droites
+discrètes de longueurs maximales. Ainsi, en partant d'un point $M$, on
+va  reconnaître   le  plus  grand   morceau  de   droite  discrète  de
+$\mathcal{E}$. Une fois  la reconnaissance terminée, on initialise  un
+nouveau  processus de reconnaissance à   partir  du premier point  non
+reconnu  (voir  figure  \ref{fig:segmentation}).  Cette   segmentation
+permet  une  description  polygonale  de la   courbe discrète  tout en
+conservant des propriétés    de réversibilité~: on  peut  trivialement
+reconstruire l'ensemble $\mathcal{E}$ à  partir de sa segmentation  en
+segments discrets.
+
+\begin{figure}
+  \begin{center}
+    \subfigure[]{\includegraphics[width=4.2cm]{cercle_segm}}
+    \subfigure[]{\includegraphics[width=4.2cm]{carre_segm}}
+    \subfigure[]{\includegraphics[width=4.2cm]{sinc_segm}}
+    \caption[Exemples de segmentation d'une courbe discrète en droite
+    discrète avec     l'algorithme    de   \cite{DEB95}]{Exemples   de
+    segmentation  d'une   courbe discrète  en   droites discrètes avec
+    l'algorithme  de  \cite{DEB95}~:    la courbe   polygonale   noire
+    correspond au résultat de la segmentation  et la flèche indique le
+    point  départ,  $(a)$ un cercle discret,  $(b)$  un carré avec une
+    rotation de  10 degrés et $(c)$  sur une courbe  construite par
+    une fonction     sinus cardinale.}
+    \label{fig:segmentation}
+  \end{center}
+\end{figure}
+
+
+
+Nous verrons au    chapitre \ref{chap-mesuresa} l'utilisation de   cet
+outil pour l'estimation de la longueur d'une courbe discrète.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Droites discr{\`e}tes 3D}
+\label{sec:droites-discretes-3d}
+
+Nous regardons maintenant  la construction    et les propriétés    des
+droites discrètes tridimensionnelles. La synthèse et la reconnaissance
+de ces objets   sont utilisées dans  de  très nombreuses applications.
+Par exemple,  dans  le contexte de  la  synthèse d'image par  lancé de
+rayons, la  construction de rayons discrets  3D a permis l'accélération
+de nombreuses techniques.
+ 
+Nous commençons  par  présenter  les différentes  approches existantes
+pour  le  tracé  de droites discrètes   3D.  Puis  nous présentons les
+propriétés  de ces droites ainsi que  les  algorithmes permettant leur
+reconnaissance.
+
+\subsection{Caractérisation et propriétés des droites discrètes 3D}
+
+Comme nous l'avons présenté précédemment, le tracé de droites dans des
+grilles 3D  a été  très  développé dans  le    cadre de la  synthèse
+d'images  par   lancé de  rayons  \citep{AMA87,KAU87b,VID92,Salam}.  Le
+problème s'écrit en ces termes~: étant donné  deux points d'une grille
+dans $\Z^3$, comment tracer la droite joignant ces deux points.
+
+Pour résoudre ce problème, deux approches sont possibles.
+\begin{description}
+\item[Le tracé  par projection]   consiste  en une   décomposition  du
+problème  en dimension 2.  Ainsi,  le principe consiste  à tracer deux
+droites discrètes  2D  dans deux  plans canoniques  de la  grille pour
+ensuite construire la droite 3D par projection inverse \citep{AMA87}.
+\item[Le tracé   direct]  consiste en un  tracé   de la  droite  en 3D
+directement. Ces   approches se basent sur   une généralisation 3D des
+algorithmes 2D    classiques    comme  celui     de    \aut{Bresenham}
+\citep{KAU86,CO91}.
+\end{description}
+
+Sur le plan de la caractérisation  de tels objets, de nombreux auteurs
+ont  proposé    des définitions   de droites    discrètes  26-connexes
+\citep{KIM83,STO91}.  Dans     cette   partie,   nous   présentons  la
+caractérisation   arithmétique  de   ces    droites   proposées    par
+\cite{debledthese}   et reprise par    \cite{3Dnss}  dans le cadre  de
+l'estimation de longueur d'une   courbe 3D par segmentation  en droite
+discrète.
+
+Nous   considérons  la droite  discrète    3D   de vecteur   directeur
+$(a,b,c)^T\in\Z^3$  appartenant  dans le  premier  $48\eme$ d'espace,
+c'est-à-dire tel que  $a\geq  b\geq  c>0$.  Nous discuterons dans   la
+section suivante la généralisation à tout l'espace.
+
+\begin{defi}[Droite discrète 3D \citep{debledthese}]
+\label{def:droite3D}
+  La      droite         discrète                   3D,          notée
+  $\mathcal{D}_{3D}(a,b,c,\mu,\mu',e,e')$,  dont le vecteur  directeur
+  $V(a,b,c)$ est dans le premier $48\eme$ d'espace, est définie comme
+  étant l'ensemble  des   voxels $(x,y,z)$  de   $\Z^3$  vérifiant  les
+  inéquations diophantiennes suivantes~:
+  \begin{displaymath}
+    \mathcal{D} \left \{ 
+      \begin{array}{c}
+        \mu \leq cx -az<\mu+e\\
+        \mu'\leq bx -ay<\mu'+e'\\
+      \end{array}
+    \right .
+ \end{displaymath}
+avec $\mu$, $\mu'$, $e$ et $e'$ dans $\Z$. $\mu$ et $\mu'$ sont les
+{\bf bornes inférieures} de $\mathcal{D}_{3D}$, $e$ et $e'$ représentent
+{\bf l'épaisseur arithmétique} de $\mathcal{D}_{3D}$. 
+\end{defi}
+Une    définition  arithmétique    plus   générale  a    été  proposée
+par
+\cite{figueiredo}.
+
+
+
+Comme  nous  pouvons   le    remarquer,   la projection    la   droite
+$\mathcal{D}_{3D}$ sur le plan  $Oxz$ correspond à la  droite discrète
+2D $\mathcal{D}(c,a,\mu,e)$. De   la  même manière, la  projection  de
+cette  droite 3D  sur   le  plan $Oxy$   correspond  à  la   droite 2D
+$\mathcal{D}(b,a,\mu',e')$.
+
+
+Nous définissons les droites      discrètes naïves 3D de  la     façon
+suivante~:
+
+\begin{defi}[Droite discrète naïve 3D \citep{debledthese}]
+  une        droite   discrète             3D          de   paramètres
+  $\mathcal{D}_{3D}(a,b,c,\mu,\mu',e,e')$  dans  le  premier $48\eme$
+  d'espace est dite {\bf naïve} si et seulement si l'épaisseur vérifie
+  $e=e'=a$.
+\end{defi}
+
+
+D'après la remarque précédente, la droite 3D se projette bijectivement
+sur les plans $Oxy$  et $Oxz$ en deux   droites naïves 2D.  Par
+conséquence,  de la même  manière qu'en 2D, nous  avons un théorème de
+structure  des  droites  discrètes   3D  en  fonction  de  l'épaisseur
+arithmétique~:
+
+\begin{theo}[connexité des droites discrètes 3D \citep{debledthese}]
+\label{theo_struct3D}
+  Considérons une droite discrète
+  $\mathcal{D}_{3D}(a,b,c,\mu,\mu',e,e')$ avec $a>b>c>0$, alors
+  \begin{itemize}
+  \item si $e \geq a + c$ et $ e' \geq a + b $, $\mathcal{D}_{3D}$ est
+    6-connexe  (voir figure \ref{fig:droite3D6con}).
+  \item si $e \geq a + c$ et $ a \leq  e' < a + b $, ou $ e' \geq a + b$ et
+    $a \leq  e  < a + c $,  $\mathcal{D}_{3D}$ est 18-connexe
+  \item si $a \leq  e  < a + c $ et  $ a \leq  e' < a + b $,
+    $\mathcal{D}_{3D}$ est 26-connexe (voir figure \ref{fig:droite3D26con}.)
+  \item si $ e < a$ ou $e'< a$,  $\mathcal{D}_{3D}$ est déconnectée.
+  \end{itemize}
+\end{theo}
+
+La preuve de ce théorème se base sur une analyse des projections de la
+droite 3D et sur le théorème \ref{theo:struct2D} de connexité des droites discrètes 2D
+ \citep{debledthese}.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{pd61}
+  \caption{Droites discrètes 3D de paramètres
+    $\mathcal{D}_{3D}(10,7,3,0,-9,13,17)$,  conformément au   théorème
+    \ref{theo_struct3D},   cette  droite est  6-connexe.  De plus, les
+    droites  2D  dans   les  plans  $Oxy$  et  $Oxz$  sont  4-connexes
+    \citep{debledthese}.}
+  \label{fig:droite3D6con}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{pd262}}
+  \subfigure[]{\includegraphics[width=6cm]{pd263}}
+  \caption[Droites discrètes 3D 26-connexes]{Droites discrètes 3D 26-connexes~: $(a)$ droite naïve
+    $\mathcal{D}_{3D}(10,7,3,0,0)$ et  $(b)$ droite naïve  
+    $\mathcal{D}_{3D}(10,7,3,-5,0)$ \citep{debledthese}.}
+  \label{fig:droite3D26con}
+\end{figure}
+
+
+
+
+%Nous pouvons faire un lien entre les discrétisations standards et la droite discrète
+%3D avec le théorème suivant~:
+
+%\begin{theo}[\cite{3Dnss}]
+%  La discrétisation GIQ (Grid Intersect Quantization) d'une droite
+%  réelle 3D est une discrète naïve 3D.
+%\end{theo}
+
+%\begin{mapreuve}
+%  Sans perte de généralité, nous considérons  $\mathcal{D}_{euc}$ une
+%  droite réelle  3D de vecteur directeur  $(a,b,c)\in\mathbb{Z}^3$
+%  avec $a\geq b\geq c>0$, définie par~:
+%\begin{displaymath}%$$
+%\begin{array}{cc}
+%\mathcal{D}_{euc} = &
+%\left\{
+%  \begin{array}{l}
+%    z = \frac{cx - r}{a}\\
+%\ \\
+%    y = \frac{bx - r'}{a}\\
+%   \end{array}
+%\right.
+%\end{array}
+%\end{displaymath}
+%                            %$$
+
+%Nous considérons aussi les plans euclidiens $\mathcal{P}_1: z=\frac{cx - r}{a}$
+%et  $\mathcal{P}_2: y=\frac{bx - r'}{a}$. La discrétisation GIQ de ces
+%plans nous donne les plans discrets naïfs suivants (voir paragraphe \ref{sec:plans-discrets})~:
+%\begin{displaymath}
+%\begin{array}{l}
+%GIQ(\mathcal{P}_1) = \mathcal{P}(c,0,-a,r+\left[ \frac{a}{2} \right])\\
+%GIQ(\mathcal{P}_2) = \mathcal{P}(b,-a,0,r'+\left[ \frac{a}{2} \right])\\
+%\end{array}
+%\end{displaymath}
+
+%où  $\mathcal{P}(u,v,w,\mu) : \mu \leq ux+vy+wz < \mu+
+%max(|u|,|v|,|w|)$ \citep{AND,DEBBOS94}.
+
+%Par la suite,  nous considérons une  discrétisation GIQ sans ambiguïté
+%(voir \citep{jonas97}).   Plus formellement,  une  ambiguïté (ou  {\it
+%bulles}  dans  l'approche d'\citeauthor{andres_standard}  du paragraphe
+%\ref{sec:discr-de-simpl})  correspond  à une  intersection   entre  la
+%courbe et  la grille à  équidistance entre deux pixels. Nous supposons
+%en fait une stratégie globale pour enlever les cas pathologiques.
+
+%D'aprés la définition \ref{def:droite3D} et le théorème de structure
+%\ref{theo_struct3D}, l'intersection entre ces deux plans naifs définie
+%la droite discrète naïve 26-connexe~:
+%\begin{displaymath}
+%\begin{array}{cc}
+%\mathcal{D}_{3D} = &
+%\left\{
+%  \begin{array}{l}
+%    r+\left[ \frac{a}{2}\right] \leq cx-az < r+\left[ \frac{a}{2}\right] + a\\
+%    r'+\left[ \frac{a}{2}\right] \leq bx-ay < r'+\left[ \frac{a}{2}\right] +a
+%   \end{array}
+%\right.
+%\end{array}
+%\end{displaymath}%$$
+
+
+%L'objectif maintenant est de montrer que $\mathcal{D}_{3D} $ coïncide
+%avec $GIQ(\mathcal{D}_{euc})$. Pour cela, supposons un voxel $v$ de
+%$\mathcal{D}_{3D}$, nous avons alors ($dist$ représente la distance
+%euclidienne)~:
+
+%\begin{displaymath}
+%dist(v,\mathcal{P}_1) \leq \sqrt{2}\text{ et }dist(v,\mathcal{P}_2) \leq \sqrt{2}
+%~\Rightarrow ~dist(v,\mathcal{D}_{euc}) \leq \sqrt{2}
+%\end{displaymath}%$$
+
+%\noindent Ce qui est équivalent à~:
+%\begin{displaymath}
+%v\in\mathcal{D} \Rightarrow v\in GIQ(\mathcal{D}_{euc})
+%\end{displaymath}
+%Nous avons donc~:
+%\begin{displaymath}
+%\mathcal{D} \subset GIQ(\mathcal{D}_{euc})
+%\end{displaymath}
+
+%Pour prouver l'inclusion inverse, nous considérons    $v'\in GIQ(\mathcal{D}_{euc})$,  si
+%$v'\not\in\mathcal{D}$, nous avons deux possibilités~:
+%\begin{itemize}
+%\item $dist(v',\mathcal{P}_1)>\sqrt{2}$ ou $dist(v',\mathcal{P}_2)>\sqrt{2}$
+%  ce qui est équivalent à
+%  $dist(v',\mathcal{D}_{euc})>\sqrt{2}$ ce qui implique une contradiction
+%  avec la discrétisation GIQ de   $\mathcal{D}_{euc}$ ;
+%\item $dist(v',\mathcal{D}_{euc})\leq\sqrt{2}$ mais étant donné que le
+%  processus est sans ambiguité,  $v'$ déconnecte $\mathcal{D}$ ce qui
+%  est en contradiction avec le théorème de structure \ref{theo_struct3D}.
+%\end{itemize}
+%Nous obtenons finalement~:
+%\begin{displaymath}
+%\mathcal{D}=GIQ(\mathcal{D}_{euc})
+%\end{displaymath}
+%\end{mapreuve}
+
+
+
+\subsection{Tracé de droites discrètes 3D}
+
+Nous détaillons  ici  les différents algorithmes  de  tracé  de droite
+discrète  naïve  3D.   Nous présentons  tout  d'abord  l'algorithme de
+\cite{CO91} qui correspond à  une généralisation  tridimensionnelle de
+l'algorithme  de      \cite{bres65}            (voir        algorithme
+\ref{alg:cohen3D}). Ceux-ci considèrent deux voxels   de la grille   et
+tracent le segment de droite 26-connexe les joignant.
+
+\begin{algorithm}[htbp]
+\caption{Tracé de droites discrètes 3D de \cite{CO91}}
+\label{alg:cohen3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Tracé\_3D\_Cohen\_Kaufman($A$,$B$)}
+\\ \COMMENT{avec $A,~B\in\Z^3$ tels que $x_B-x_A>0$, $y_B-y_A>0$ et $z_B-z_A>0$}
+\STATE ${v_{x}=x_{B}-x_{A}}$, ${v_{y}=y_{B}-y_{A}}$, ${v_{z}=z_{B}-z_{A}}$;
+\STATE $s_x=sgn(v_x)$, $s_y=sgn(v_y)$,  $s_z=sgn(v_z)$
+\STATE $a_x=abs(v_x)$, $a_y=abs(v_y)$, $a_z=abs(v_z)$
+\STATE $b_x=2a_x$, $b_y=2a_y$,  $b_z=2a_z$
+\STATE $e_{xy}=a_y-a_x$, $e_{xz}=a_z-a_x$ , $e_{zy}=a_y-a_z$ 
+\STATE ${x=x_{A}}$, ${y=y_{A}}$, ${z=z_{A}}$ 
+\STATE $n=a_x+a_y+a_z$
+\WHILE{$n\neq 0$}
+\STATE $n-=1$
+\STATE  Affiche\_point$(x,y,z)$
+\IF{$e_{xy}<0$}
+\IF{$e_{xz}<0$}
+\STATE $x+=s_x$
+\STATE $e_{xy}+=b_y$, $e_{xz}+=b_z$
+\ELSE
+\STATE $z+=s_z$
+\STATE  $e_{zy}+=b_y$, $e_{xz}-=b_x$
+\ELSIF{$e_{zy}<0$}
+\STATE $z+=s_z$
+\STATE $e_{zy}+=b_y$, $e_{xz}-=b_x$
+\ELSE
+\STATE $y+=s_y$
+\STATE $e_{xy}-=b_x$, $e_{zy}-=b_z$
+\ENDIF
+\ENDIF
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+En se basant sur la caractérisation arithmétique, nous présentons l'algorithme
+de    tracé   proposé  par     \cite{debledthese}  (voir    algorithme
+\ref{alg:debled3D}). Ce tracé considère deux paramètres supplémentaires
+que sont  les  bornes  inférieures  $\mu$  et  $\mu'$.  Ainsi,  si nous
+considérons    $\mu=\mu'=-\left   [      \frac{max(|vx|,|vy|,|vz|)}{2}
+\right]+1$, nous nous ramenons au tracé  de \cite{bres65} étendu en 3D
+par \cite{CO91}.
+
+
+\begin{algorithm}[htbp]
+\caption{Tracé de droites discrètes 3D de \cite{debledthese}}
+\label{alg:debled3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Tracé\_3D\_Debled($A$,$B$,$\mu$,$\mu'$)}
+\\ \COMMENT{avec $A,~B\in\Z^3$ tels que $x_B-x_A>y_B-y_A>0$ et $y_B-y_A>z_B-z_A>0$}
+\STATE ${v_{x}=x_{B}-x_{A}}$, ${v_{y}=y_{B}-y_{A}}$,
+${v_{z}=z_{B}-z_{A}}$
+\STATE ${r_{1}=v_{z}*x_{A} - v_{x}*z_{A} - \mu}$
+\STATE ${r_{2}=v_{y}*x_{A} - v_{x}*y_{A} - \mu'}$
+\STATE ${x=x_{A}}$, ${y=y_{A}}$, ${z=z_{A}}$ 
+\WHILE{${x <x_{B}} $}
+\STATE ${x = x+1}$
+\STATE ${r_{1}=r_{1}+v_{z}}$ 
+\STATE  ${r_{2}=r_{2}+v_{y}}$ 
+\IF{${r_{1}<0}$ ou ${r_{1}\geq v_{x}}$}
+\STATE ${z = z+ 1}$
+\STATE ${r_{1} = r_{1} - v_{x}}$
+\ENDIF
+\IF{${r_{2}<0}$ ou ${r_{2}\geq v_{x}}$}
+\STATE ${y = y+ 1}$;
+\STATE ${r_{2} = r_{2} - v_{x}}$
+\ENDIF
+\STATE  Affiche\_point$(x,y,z)$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+Dans la  majorité des cas, ces  tracés de droites s'effectuent pour un
+vecteur  directeur  $(a,b,c)^T$  tel que  $0\leq  a<b<c$.  En d'autres
+termes, la synthèse de la droite  s'effectue dans le premier $48\eme$
+d'espace et pour avoir une droite dans  une autre orientation, il faut
+appliquer des  symétries    d'axes. Le   problème majeur  est     donc
+l'implémentation  efficace  de   ces  algorithmes sachant   qu'il  est
+inconcevable de {\it coder} toutes  les transformations en fonction du
+vecteur directeur comme cela   était  le cas  en  2D avec  le  tableau
+\ref{tab:oct} (voir figure \ref{fig:48}).
+
+Nous utilisons  donc une technique présentée par \cite{reveillesIWCIA}
+pour  calculer la matrice  de  rotation qui  permet d'envoyer
+tout vecteur dans  un d'un certain $48\eme$  d'espace vers le premier
+({\it  e.g.}     tel  que   $0\leq   a<b<c$).     Plus   formellement,
+\cite{reveillesIWCIA} propose  une implémentation   de ce  groupe  des
+symétries du   cube, noté  $O_h$.  L'idée  est  donc  de   calculer la
+transformation $g\in O_h$ telle que, pour tout  vecteur $v$, $g.v$ soit
+dans le premier $48\eme$ d'espace (domaine fondamental noté $F$, voir
+figure \ref{fig:48}).   De manière évidente, nous avons $g^{-1}.g.v=v$
+ce qui nous  permet de retrouver  le vecteur $v$  après transformation
+inverse.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=10cm]{48}
+  \caption{Décomposition de l'espace en $48\eme$, représentation
+    graphique du groupe $O_h$ \citep{reveillesIWCIA}.}
+  \label{fig:48}
+\end{figure}
+
+L'algorithme de \citeauthor{reveillesIWCIA} propose une implémentation
+de  ce   groupe  $O_h$ en   utilisant   le groupe  $\mathcal{E}_3$ des
+permutations de  trois lettres.     L'algorithme \ref{alg:reveillesOh}
+décrit cette méthode très simple à implémenter.
+
+\begin{algorithm}[htbp]
+\caption{Implémentation du groupe $O_h$ pour le changement de
+  $48\eme$ d'espace de \cite{reveillesIWCIA}}
+\label{alg:reveillesOh}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Implementation\_$O_h$\_reveillès$(a,b,c)$}
+\COMMENT{$a$, $b$ et $c$ composent le vecteur $v$}
+\STATE Construction d'une matrice $4\times3$ notée $M$ telle que~:
+\begin{itemize}
+\item la premiere ligne est $(a,b,c)$
+\item le bloc $3\times 3$ en dessous est la matrice unité $I_{3\times
+    3}$
+\end{itemize}
+\STATE Multiplication de chaque colonne de $M$ par le signe des éléments de la
+première ligne
+\STATE Permutation des colonnes pour que les éléments de la première
+ligne soient triés
+\STATE Le bloc $3\times 3$ sous la première ligne est solution
+\end{algorithmic}
+\end{algorithm}
+
+Pour  illustrer   cet  algorithme,   nous  considérons   le    vecteur
+$v=(-3,17,5)$. Nous  souhaitons trouver la transformation permettant
+d'envoyer ce   vecteur vers $F$.    A la suite  de la   première étape
+l'algorithme, nous avons la matrice~:
+\begin{displaymath}
+  M=\left [
+    \begin{array}{ccc}
+      -3 & 17 & 5\\
+      1 & 0 & 0\\
+      0 & 1 & 0\\
+      0 & 0 & 1
+    \end{array}
+  \right ]
+\end{displaymath}
+
+A la seconde étape, nous faisons {\it tomber} les signes dans les
+colonnes~:
+\begin{displaymath}
+  M=\left [
+    \begin{array}{ccc}
+      3 & 17 & 5\\
+      -1 & 0 & 0\\
+      0 & 1 & 0\\
+      0 & 0 & 1
+    \end{array}
+  \right ]
+\end{displaymath}
+
+Nous trions les colonnes par rapport à la première ligne et obtenons
+la matrice~:
+\begin{displaymath}
+  M=\left [
+    \begin{array}{ccc}
+      3 & 5 & 17\\
+      -1 & 0 & 0\\
+      0 & 0 & 1\\
+      0 & 1 & 0
+    \end{array}
+  \right ]
+\end{displaymath}
+
+Finalement, nous avons~:
+
+\begin{displaymath}
+  g=\left [
+    \begin{array}{ccc}
+     -1 & 0 & 0\\
+      0 & 0 & 1\\
+      0 & 1 & 0
+    \end{array}
+  \right ]
+\end{displaymath}
+
+Nous pouvons vérifier~: $g.(-3,17,5)=(3,5,17)$. De plus\footnote{$A^T$ représente la transposée de la matrice
+  $A$.} $g^{-1}=g^T$ et $g^{-1}(3,5,17)=(-3,17,5)$.
+
+Cette technique très simple nous permet donc de généraliser le tracé de
+droite des algorithmes \ref{alg:cohen3D} et \ref{alg:debled3D} à tout
+l'espace.
+
+
+
+\subsection{Reconnaissance et segmentation}
+
+Nous décrivons maintenant les algorithmes de reconnaissance de droites
+discrètes 3D.  L'algorithme de reconnaissance  que nous présentons est
+celui   de \cite{debledthese}  basé  sur  l'écriture  arithmétique des
+droites  discrètes 3D. Cet  algorithme se  base sur  les propriétés de
+projection sur les plans d'axe des droites discrètes naïves 3D. Ainsi,
+étant  donné un ensemble  de  voxels 26-connexes,  noté $\mathcal{E}$,
+l'algorithme    \ref{alg:debled_rec_3D}    permet    de  décider    si
+$\mathcal{E}$ est  un morceau de   droite  discrète 3D. De  plus,  cet
+algorithme nous donne la paramétrisation arithmétique de $\mathcal{E}$
+si celui-ci est un segment discret.
+
+
+
+\begin{algorithm}[htbp]
+\caption{Reconnaissance de segment de droite discrète naïve 3D de \cite{debledthese}}
+\label{alg:debled_rec_3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Reconnaissance\_droite\_3D$(\mathcal{E})$}
+\COMMENT{$\mathcal{E}$ est un ensemble de voxels 26-connexes}
+\IF{la projection de $\mathcal{E}$ ne se projette pas bijectivement
+  sur au moins deux des trois plans d'axe notés $P_1$ et $P_2$}
+\STATE {\RETURN{ Faux}} \COMMENT{$\mathcal{E}$ n'est pas une droite discrète
+  naïve 3D}
+\ELSE
+\STATE soient $C_1$ et $C_2$ les courbes projetées de $\mathcal{E}$
+dans les plans $P_1$ et $P_2$
+\IF{$C_1$ et $C_2$ sont des droites discrètes naïves 2D}
+\STATE soient $\mathcal{D}(c_1,a_1,\mu_1)$ les paramètres de $C_1$
+\STATE soient $\mathcal{D}(b_2,a_2,\mu_2)$ les paramètres de $C_2$
+\STATE soit $m=ppcm(a_1,a_2)$ 
+\STATE soient $k_1$ tel que $m=k_1a_1$ et $k_2$ tel que $m=k_2a_2$ 
+\STATE {\RETURN{ $\mathcal{D}_{3D}(m,k_2b_2,k_1b_1,\mu_1,\mu_2)$}}
+\ELSE
+\STATE {\RETURN{ Faux}} \COMMENT{$\mathcal{E}$ n'est pas une droite discrète
+  naïve 3D}
+\ENDIF
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+
+Bien évidemment, n'importe quel algorithme de reconnaissance de droite
+discrète peut être utilisé à l'étape 5 de cet algorithme, sous réserve
+qu'il  soit possible  de  recalculer les  paramètres arithmétiques des
+droites.   Cependant, pour garder   une forme  unifiée nous  utilisons
+l'algorithme \ref{alg:debled}  de \cite{debledthese}. La complexité de
+cet   algorithme est  optimale   en  temps, c'est-à-dire $O(n)$  si
+$\mathcal{E}$ contient $n$ voxels et $O(1)$ en mémoire.
+
+Nous  souhaitons  maintenant construire une  segmentation d'une courbe
+discrète 3D en morceaux de droites discrètes. Pour  cela, il nous faut
+détecter localement les plans  de projection. Nous considérons donc le
+processus suivant~:   étant  donné un  segment  3D  déjà reconnu, nous
+ajoutons un   voxel $M$ en  maintenant   valides deux contraintes,  la
+première est que  ce point $M$ se  projette bijectivement sur au moins
+deux plans d'axe   et la seconde est   que  sur ces plans valides,   le
+projeté  de $M$  appartient au segment   naïf  2D de  la  projection du
+segment   3D   déjà  reconnu.    Nous   obtenons  ainsi   l'algorithme
+\ref{alg:debled_seg_3D}  qui nécessite un algorithme de reconnaissance
+de droite  2D   capable  de  gérer   des changements   d'octants.  Cet
+algorithme est aussi optimal en temps et en mémoire.
+
+
+\begin{algorithm}[!ht]
+\caption{Segmentation en segments de droites discrètes naïves 3D de \cite{debledthese}}
+\label{alg:debled_seg_3D}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Segmentation\_droite\_3D$(\mathcal{E})$}
+\COMMENT{$\mathcal{E}$ est un ensemble de voxels 26-connexes}
+
+\STATE soit $M$ le premier point de $\mathcal{E}$
+\STATE $M$ est un sommet de la segmentation
+\WHILE{$\mathcal{E}$ n'a pas été entièrement parcouru}
+\STATE Initialiser la reconnaissance 2D  sur les plans d'axe
+\WHILE{$M$ se projette bijectivement dans deux des trois plans et que
+  les projections sont des droites naïves 2D dans ces plans}
+\STATE  soit $M$ le voxel suivant dans $\mathcal{E}$
+\ENDWHILE
+\STATE $M$ est un sommet de la segmentation
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+La figure \ref{fig:ex_seg_3D}  présente des résultats de  segmentation
+de courbes discrètes 26-connexes.
+
+
+\begin{figure}[!ht]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{segbres1}}
+  \subfigure[]{\includegraphics[width=4cm]{segspi2}}
+  \subfigure[]{\includegraphics[width=6cm]{cercle3D}}
+  \subfigure[]{\includegraphics[width=6cm]{ellipse3D}}
+  \caption[Exemples de segmentation de courbe 26-connexe en segments
+  de droite naïve 3D]{Exemples  de segmentation de courbes 26-connexes
+  en segments de droite naïve 3D~:  les voxels sombres correspondent aux
+  sommets de la    segmentation, $(a)$ et  $(b)$  courbes  26-connexes
+  synthétiques,  $(c)$    segmentation   d'un  cercle  3D   et   $(d)$
+  segmentation d'une ellipse 3D \citep{debledthese,3Dnss}}
+  \label{fig:ex_seg_3D}
+\end{figure}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Plans Discrets}
+\label{sec:plans-discrets}
+
+Nous  nous intéressons maintenant à la  notion de  plan discret et aux
+différents  algorithmes permettant   de   les reconnaître.   Dans  les
+paragraphes précédents,  nous avons  vu que,  dans le  cas des  droites
+discrètes, nous avons une caractérisation arithmétique très forte, que
+ce  soit dans  l'espace  dual ou dans  l'espace  primal.  De plus, des
+algorithmes  très efficaces  existent  pour  la  reconnaissance  ou la
+segmentation d'une courbe en droites discrètes.
+
+Dans le cas tridimensionnel,  le problème est plus complexe. L'analyse
+et la reconnaissance de ces objets sont des domaines de recherche bien
+plus  récents que pour les   droites et de  nombreux problèmes restent
+ouverts.
+
+Dans une première partie, nous  commençons par décrire les différentes
+définitions des plans discrets proposées dans la littérature.  Ensuite
+nous présentons  les    solutions algorithmiques  associées   pour  la
+reconnaissance de   plans  discrets.  Puis  nous  nous  intéressons au
+processus de facettisation d'un objet  discret. 
+
+\subsection{Définitions et propriétés}
+
+De la  même    manière qu'en dimension  2,   il  existe  de nombreuses
+approches  pour   définir un  plan  discret.   Une   fois encore,  ces
+définitions sont généralement liées  à un processus de  discrétisation
+du plan euclidien.  En considérant par exemple une discrétisation GIQ,
+on appellera {\it plan discret} l'ensemble des voxels $(x,y,z)$ vérifiant~:
+\begin{equation}
+\label{eq:discr_kim}
+  z= [ \alpha x +\beta y + \gamma ]
+\end{equation}
+pour $(\alpha,\beta,\gamma)$ dans $\R^3$.
+
+
+En se basant sur ce processus de discrétisation, \cite{Kim84f} propose une
+caractérisation des plans discrets à l'aide d'une propriété similaire
+à la propriété de corde de \aut{rosenfeld} (définition
+\ref{defi:corde}). Il utilise  la notion de {\it triangle 
+corde}, illustrée figure \ref{fig:triangle_corde} \citep{kim-rosenfeld82a}.
+
+\begin{defi}[Propriété du triangle corde \citep{kim-rosenfeld82a}]
+Un  ensemble de voxels $\mathcal{E}$ vérifie  la propriété du triangle
+corde si pour    tout triangle $T$ formé    de $u$, $v$   et $w$  dans
+$\mathcal{E}$ et pour tout point $(x,y,z)$ de  $T$, il existe un point
+$p$ de $\mathcal{E}$  tel que~:
+\begin{displaymath}
+ \max\{|p_x-x|,|p_y-y|,|p_z-z|\} < 1
+\end{displaymath}
+\end{defi}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=8cm]{triangle_corde}
+  \caption{Illustration de la propriété du triangle corde avec un
+    morceau de plan discret et trois triangles vérifiant cette propriété.}
+  \label{fig:triangle_corde}
+\end{figure}
+
+
+Grâce à cette définition, \cite{Kim84f} montre que cette propriété
+permet de caractériser un plan discret si celui-ci est infini et sans
+bord. Cependant, dans le cas d'un morceau de plan discret, cette
+propriété n'est ni une condition suffisante, ni une condition
+nécessaire.
+
+Il montre le théorème suivant faisant le lien entre les
+morceaux de  plans discrets et des propriétés sur leur enveloppe
+convexe~(voir figure \ref{fig:envCVX}):
+
+\begin{theo}[Plan discret et enveloppe convexe \cite{Kim84f}]
+\label{theo:kim}
+  Un ensemble de voxels $\mathcal{E}$ est un morceau de plan discret
+  si et seulement si il existe un plan $\mathcal{P}$ s'appuyant  sur une face de
+  l'enveloppe convexe de  $\mathcal{E}$ tel que~:
+  \begin{displaymath}
+    d_H(\mathcal{E},\mathcal{P})<1
+  \end{displaymath}
+avec $d_H$ la distance de \aut{Hausdorff} adaptée à  la grille~:
+\begin{displaymath}
+  d_H(\mathcal{E},\mathcal{P})=\min\{\max_{v\in\mathcal{E}}(d_x(v,\mathcal{P})), \max_{v\in\mathcal{E}}(d_y(v,\mathcal{P})), \max_{v\in\mathcal{E}}(d_z(v,\mathcal{P}))\}
+\end{displaymath}
+où $d_x$ correspond à la distance en $x$ entre un voxel $v(x,y,z)$ et
+le plan $\mathcal{P}$, donnée par $d_x=|x-x'|$ pour $(x',y,z)$ sur
+$\mathcal{P}$. $d_y$ et $d_z$ sont donnés de la même manière.
+\end{theo}
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=4.5cm]{plan_exbis}}
+  \subfigure[]{\includegraphics[width=4.5cm]{envbis}}
+  \subfigure[]{\includegraphics[width=4.5cm]{globalbis}}
+  \caption[Illustration du théorème de  \cite{Kim84f}]{Illustration du
+    théorème de  \cite{Kim84f}~: $(a)$ plan discret donné par
+    l'équation \ref{eq:discr_kim}, $(b)$ enveloppe convexe des voxels
+    et $(c)$ les deux volumes dans le même repère.}
+  \label{fig:envCVX}
+\end{figure}
+
+
+\cite{debledthese} a cependant montré un  cas négligé par ce théorème.
+Ce contre-exemple  correspond  à la discrétisation   du plan euclidien
+$5x+9y-29z=0$ (voir figure \ref{fig:kim_foire}).   Dans ce cas,  aucun
+plan s'appuyant sur une facette de l'enveloppe convexe de cet ensemble
+de voxels n'est à une distance inférieure à 1 de tous les voxels.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{kim_foire}}
+  \subfigure[]{\includegraphics[width=6.5cm]{env_kim_foire}}
+  \caption[Cas négligé dans le théorème de \cite{Kim84f} présenté par
+    \cite{debledthese}]{Cas négligé dans le théorème de \cite{Kim84f} présenté par
+    \cite{debledthese}~: $(a)$ morceau de plan qui correspond à la
+    discrétisation de $5x+9y-29z=0$ pour $0 \leq x\leq 6$ et $0 \leq
+    y\leq 7$ et $(b)$ enveloppe convexe des points.}
+  \label{fig:kim_foire}
+\end{figure}
+
+\cite{debledthese} propose donc   une reformulation de  ce théorème en
+ajoutant une condition pour qu'un ensemble de voxels soit un morceau de
+plan~:
+
+
+{\it  Un ensemble   de voxels  $\mathcal{E}$ est  un  morceau de  plan
+discret si et seulement  si  le plan  $\mathcal{P}$ défini  par deux
+arêtes de l'enveloppe convexe de $\mathcal{E}$ vérifie~:
+ \begin{displaymath}
+    d_H(\mathcal{E},\mathcal{P})<1
+  \end{displaymath}
+}
+
+Si les deux arêtes en question appartiennent à la même face, nous nous
+ramenons au théorème initial de \aut{kim}.
+
+Une autre caractérisation des plans discrets a été proposé par
+\cite{veelaert_hyper,veelaert}. Celle-ci se base sur une
+généralisation de la propriété de régularité de \cite{Hung85} en 2D.
+
+
+\begin{defi}[Propriété de régularité des plans discrets \cite{veelaert_hyper}]
+\label{defi:veelaert} 
+ Un ensemble voxels $\mathcal{E}$ est dit régulier (ou {\it even}) si et
+  seulement si~:
+  \begin{itemize}
+  \item la projection de $\mathcal{E}$ sur le plan $Oxy$ est bijective
+  \item pour tout quadruplet $(u,v,w,t)$ de voxels de $\mathcal{E}$
+    tel que $(\vec{vu}_x,\vec{vu}_y)=(\vec{tw}_x,\vec{tw}_y)$, nous avons~:
+    \begin{displaymath}
+      |\vec{vu}_z-\vec{tw}_z| <1
+    \end{displaymath}
+  \end{itemize}
+\end{defi}
+
+Ensuite, \cite{veelaert_hyper,veelaert} montre que cette propriété de
+régularité est nécessaire et suffisante pour caractériser  tout morceau de
+plan discret dont la projection sur l'axe $Oxy$ est un rectangle. Il
+montre aussi cette équivalence pour un ensemble de voxels dont la
+projection sur $Oxy$ est un rectangle {\it partiellement étendu} ce
+qui correspond intuitivement à un rectangle auquel on ajouterait une
+ligne ou une colonne non complète (voir figure \ref{fig:veelaert}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{partiellement_veelaert}
+  \caption{Rectangle et rectangle partiellement étendu en $x$ de \cite{veelaert}.}
+  \label{fig:veelaert}
+\end{figure}
+
+
+Pour terminer cette étude sur les différentes caractérisations des
+plans, nous présentons l'approche arithmétique. La définition
+d'un plan discret arithmétique a été proposée par \cite{andres} et se
+base sur une généralisation en 3D de la notion de droite discrète
+arithmétique~:
+
+\begin{defi}[Plan discret arithmétique \citep{andres}]
+  Un ensemble de voxels $\mathcal{E}$ appartient à un plan discret
+  arithmétique de vecteur normal $(a,b,c)^T$, de borne inférieure $\mu$ et
+  d'épaisseur $\omega$ (avec $a$, $b$, $\mu$ et $\omega$ dans $\Z$,
+  et   $pgcd(a,b,c)=1$), si et seulement si tous les voxels $(x,y,z)$ de
+  $\mathcal{E}$ vérifient la double inéquation diophantienne~:
+  \begin{equation}
+    \label{eq:plan_disc}
+    \mu \leq ax+by+cz<\mu+\omega
+  \end{equation}
+Ce plan discret se note $\mathcal{P}(a,b,c,\mu,\omega)$.
+\end{defi}
+
+Comme en 2D, l'épaisseur arithmétique permet de contrôler la topologie
+du plan discret. Ainsi nous pouvons définir~:
+
+\begin{defi}[Plan naïf et plan standard]
+  Soit $\mathcal{P}(a,b,c,\mu,\omega)$ un plan discret
+  arithmétique. Nous avons~:
+  \begin{itemize}
+  \item si $\omega=max(|a|,|b|,|c|)$, $\mathcal{P}$ est alors un plan
+    discret naïf, ce plan est $18$-connexe et il ne possède pas de
+    trous 6-connexe \citep{andres} (figure
+    \ref{fig:naifstandard}$-(a)$)~;
+    \item si $\omega=|a|+|b|+|c|$,  $\mathcal{P}$ est alors un plan
+      discret standard (figure \ref{fig:naifstandard}$-(b)$).
+  \end{itemize}
+\end{defi}
+\begin{figure}[htbp]
+  \centering
+  \subfigure{}{\includegraphics[width=6.5cm]{naif}}
+  \subfigure{}{\includegraphics[width=6.5cm]{standard}}
+  \caption{$(a)$ plan arithmétique naïf $\mathcal{P}(6,13,17,17)$ et
+    $(b)$ plan arithmétique standard $\mathcal{P}(6,13,17,36)$ pour
+    $0\leq x,y \leq 10$.} 
+\ \label{fig:naifstandard}
+\end{figure}
+
+Dans ce qui suit, nous nous intéressons  uniquement aux plans naïfs.
+Nous  pouvons faire le lien entre  ce  plan discret et celui introduit
+par \aut{kim} basé sur une discrétisation GIQ~:
+
+\begin{prop}[\cite{debledthese,vittonethese}]
+  Soit    $P$     un    plan    euclidien      rationnel    d'équation
+  $z=-\frac{ax+by+\mu}{c}$  avec $0\leq a\leq b\leq   c$ et $c\neq 0$,
+  nous avons~:
+  \begin{itemize}
+  \item la   discrétisation GIQ de $P$ (équation \ref{eq:discr_kim})
+    coïncide  avec le plan naïf $\mathcal{P}(a,b,c,\mu+\left [ \frac{c}{2}\right ])$
+  \item la discrétisation OBQ de $P$ coïncide avec le plan naïf $\mathcal{P}(a,b,c,\mu)$
+  \end{itemize}
+\end{prop}
+
+Nous     pouvons  caractériser,  comme  pour     les droites discrètes
+arithmétiques, des éléments  importants  comme les plans d'appui.  Tout
+d'abord,  nous appelons {\bf réseau   d'indice $k$} l'ensemble des voxels
+vérifiant~:
+\begin{displaymath}
+ax+by+cz=k
+\end{displaymath}
+Les  voxels vérifiant cette   équation  sont solutions d'une  équation
+linéaire diophantienne. Il existe  donc de nombreuses  techniques pour
+trouver  une base de  cet ensemble permettant  de générer tous les voxels
+solutions. Par exemple, \cite{reveillesIWCIA} propose l'utilisation de
+l'algorithme de \cite{blankinhsip}.
+
+
+
+Dans une représentation  du plan par   restes, un voxel appartenant  au
+réseau  d'indice  $k$   sera  associé  au   {\bf  reste}   $k$.  Plus
+formellement, pour un plan discret $\mathcal{P}(a,b,c,\mu,\omega)$, la
+fonction  des restes,  notée  $R(a,b,c)(x,y,z)$ est  définie  par (voir
+figure \ref{fig:reste_plan})~:
+\begin{displaymath}
+R(a,b,c)(x,y,z)=ax+by+cz
+\end{displaymath}
+
+\begin{prop}
+Le plan discret  $\mathcal{P}(a,b,c,\mu,\omega)$ est~:
+\begin{itemize}
+\item l'union des réseaux d'indices $k$ pour $k$ dans
+$[\mu,\mu+\omega[$
+\item l'ensemble des voxels de restes compris dans $[\mu,\mu+\omega[$
+\end{itemize}
+\end{prop}
+
+\begin{figure}[htbp]
+\begin{center}
+{\includegraphics[width=10cm]{reste_plan}}
+\caption{Morceau de plan discret $\mathcal{P}(7,17,57,0)$ et
+repr\'esentation par reste pour $0\leq x,y \leq 10$.}
+\label{fig:reste_plan}
+\end{center}
+\end{figure}
+
+
+Comme en 2D, nous appelons {\bf plan d'appui supérieur} l'ensemble des
+voxels du réseau d'indice $\mu$,  ces voxels vérifient donc~:
+\begin{displaymath}
+ax+by+cz=\mu
+\end{displaymath}
+
+Nous appelons aussi  {\bf plan d'appui inférieur} l'ensemble des
+voxels du réseau d'indice $\mu+\omega-1$. En d'autres termes, ces voxels
+vérifient~:
+\begin{displaymath}
+ax+by+cz=\mu+\omega-1
+\end{displaymath}
+
+Les voxels  du plan d'appui  supérieur (resp.  plan d'appui inférieur) sont appelés
+{\bf  points    d'appui  supérieurs}    (resp.  {\bf    points  d'appui
+inférieurs}).
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=10cm]{plan_appui}
+\caption[Illustration des points d'appui d'un plan
+discret]{Illustration des points d'appui d'un plan discret~: plan
+na\"if d'équation $\mathcal{P}(7,17,57,0)$ pour $0\leq x\leq 15$ et
+$0\leq y\leq 15$.}
+\label{fig.plan_appui}
+\end{center}
+\end{figure}
+
+
+
+
+En  dimension 2, la notion  de  périodicité des  droites discrètes est
+assez claire avec  l'ordre intrinsèque des  pixels de  ces courbes. En
+3D, les plans discrets présentent aussi  de telles structures. Dans le
+cas d'un plan naïf, nous avons~:
+\begin{displaymath}
+R(a,b,c)(x,y+\kappa c,z+\lambda c)=R(a,b,c)(x,y,z)
+\end{displaymath}
+pour $\kappa,~\lambda$ dans $\mathbb{N}$.
+
+Le  reste   des  voxels d'un   plan  discret   a  donc   une structure
+bi-périodique \citep{debledthese}.   Ainsi, de manière   intuitive, si
+nous regardons le  voisinage d'un voxel  de reste $k$ du plan discret,
+ce voisinage sera identique pour tout autre voxel de même reste.
+
+Plus formellement, les voxels d'un plan naïf sont formés par une base
+de deux vecteurs $\vec{u}$ et $\vec{v}$ liés aux paramètres du plan~:
+
+\begin{theo}[\cite{debledthese}]
+Une base $\mathcal{B}$ du plan $\mathcal{P}(a,b,c,\mu)$ est composée
+des vecteurs $u(u_x,u_y,u_z)$ et $v(v_x,v_y,v_z)$ vérifiant~:
+\begin{align*}
+|c|&=\begin{array}{|cc|}
+        u_x & v_x\\
+        u_y & v_y
+     \end{array}\\
+|b|&=\begin{array}{|cc|}
+        u_x & v_x\\
+        u_z & v_z
+     \end{array}\\
+|a|&=\begin{array}{|cc|}
+        u_y & v_y\\
+        u_z & v_z
+     \end{array}
+\end{align*}
+\end{theo}
+
+En plus   de   cette périodicité,   nous pouvons   caractériser   plus
+précisément    la structure des plans  discrets.     En effet, si nous
+considérons  toutes  les configurations possibles   de  voxels dans un
+voisinage de taille $n\times m$, nous pouvons  complètement écrire la grammaire
+d'apparition de ces formes  géométriques en fonction des paramètres du
+plan    discret    considéré.   On parle   alors     de  $(n,m)-cubes$
+\citep{debledthese,tricube,vittonethese}.
+
+Enfin nous terminons notre analyse des plans discrets par la structure
+des droites discrètes présentes dans ceux-ci (voir figure \ref{fig:plan_droites}). En effet, nous avons la
+propriété suivante~:
+
+\begin{theo}[\cite{debledthese}]
+Soit $\mathcal{P}(a,b,c,\mu)$ un plan discret naïf, l'intersection de
+celui-ci avec le plan~:
+\begin{itemize}
+\item $z=z_0$, la projection sur le plan $Oxy$ est la droite
+discrète épaisse $\mathcal{D}(a,b,\mu-cz_0,c)$~;
+\item $y=y_0$, la projection sur le plan $Oxz$ est la droite
+discrète naïve $\mathcal{D}(a,c,\mu-by_0,c)$~;
+\item $x=x_0$, la projection sur le plan $Oyz$ est la droite
+discrète naïve $\mathcal{D}(b,c,\mu-ax_0,c)$.
+\end{itemize}
+\end{theo}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=12cm]{plan_droitesbis}
+  \caption[Présence de droites discrètes dans des plans naïfs]{Présence de droites discrètes dans des plans naïfs~: plan
+    discret    naïf   $\mathcal{P}(7,17,57,0)$    et  droites   naïves
+    $\mathcal{D}(7,57,-102)$  (A)      et  $\mathcal{D}(17,57,-42)$
+    (B).}
+  \label{fig:plan_droites}
+\end{figure}
+
+
+
+
+\subsection{Reconnaissance et facettisation d'objets discrets}
+
+
+Nous nous intéressons maintenant au problème de reconnaissance d'un
+plan discret. Comme en 2D, nous pouvons distinguer deux classes
+d'algorithmes. La première permet de tester la {\it coplanarité} d'un
+ensemble de voxels. En d'autres termes, ces algorithmes implémentent
+un prédicat qui permet de décider si un ensemble de voxels est un
+morceau de plan discret ou non. La seconde classe s'intéresse à une
+caractérisation des plans solutions. Ainsi, comme en dimension 2, nous
+souhaitons obtenir soit la {\it pré-image} du plan discret, c'est-à-dire
+l'ensemble des plans euclidiens se discrétisant dans l'ensemble de
+voxels considérés, soit une paramétrisation arithmétique de celui-ci.
+
+\subsubsection{Approches de \citeauthor{Kim84f}, \citeauthor{veelaert}
+et \citeauthor{debledthese}}
+Dans un premier temps, nous présentons l'approche basée sur le
+théorème \ref{theo:kim} de \cite{Kim84f}. Une implémentation
+directe de ce théorème se déroulerait en trois  étapes
+\citep{Kim84f}~:
+\begin{enumerate}
+\item vérifier les hypothèses émises par \citeauthor{Kim84f} sur
+l'ensemble de voxels (projection bijective sur un des plans d'axe,
+projection convexe\ldots)~;
+\item construire l'enveloppe convexe des voxels~;
+\item s'il existe une face de l'enveloppe convexe vérifiant le
+théorème \ref{theo:kim}, l'ensemble de voxels est un morceau de plan.
+\end{enumerate}
+
+Sous cette forme, cet algorithme n'est pas très efficace à cause du
+test exhaustif des facettes de l'enveloppe convexe. Plus formellement,
+si nous testons la coplanarité d'un ensemble de $n$ voxels, cet
+algorithme est en $O(n^4)$.
+
+Une optimisation a cependant été proposée par \cite{kim91}
+permettant un parcours plus efficace des facettes testées. La
+complexité de ce dernier algorithme se ramène donc à $O(n^2log(n))$.
+
+En énonçant la propriété de régularité des plans discrets (définition
+\ref{defi:veelaert}), \cite{veelaert} propose un algorithme de
+reconnaissance de morceaux de plan discret rectangulaires ou
+rectangulaires partiellement étendus. Ainsi, considérant cette
+propriété de régularité des plans, nous obtenons finalement un
+algorithme en $O(n^2)$ où $n$ est le nombre de voxels de l'ensemble
+reconnu.
+
+
+En se basant sur la reformulation du théorème de \aut{Kim}, \cite{debledthese}
+propose une reconnaissance   incrémentale de   plan arithmétique.  Cette
+approche  se base sur  la  construction du polygone d'appui  inférieur
+(resp. supérieur)   d'un  plan discret  qui  correspond à l'enveloppe
+convexe des  points d'appui inférieurs  (resp. supérieurs). L'idée est
+de construire les  vecteurs $\vec{u}$ et  $\vec{v}$ de la base du plan
+en considérant les   sommets de  ces  polygones  d'appui (voir  figure
+\ref{fig:polygone_appui}).
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=10cm]{polygone_appui}
+\caption{Illustration des polygones d'appui pour un morceau de plan na\"if $\mathcal{P}(7,17,57,0)$.}
+\label{fig:polygone_appui}
+\end{center}
+\end{figure}
+
+
+
+Le principe de cet algorithme est qu'à chaque insertion de point, nous
+reconstruisons, si besoin, ces polygones d'appui pour ensuite
+reconstruire la base du plan reconnu. 
+\cite{debledthese} a montré la complexité de cette approche pour
+résoudre tous les cas pathologiques permettant une reconstruction
+arithmétique. En effet, certains points de cet algorithme se base sur
+des conjectures dont certaines ont été récemment résolues par \cite{mesmoudi}.
+
+Dans le paragraphe suivant, nous détaillons  un peu plus les approches
+basées sur une analyse de la pré-image,  dans l'espace des paramètres,
+associée aux plans discrets.
+
+\subsubsection{Approche basée sur la structure du dual}
+\label{sec:approche-dual-3D}
+
+
+Considérons  un ensemble $\mathcal{E}$  de voxels.  Si cet ensemble de
+voxels forme  un plan discret naïf  dans le premier $48\eme$ d'espace
+({\it i.e.}  $x\geq y \geq z >0$),  il existe alors  un plan euclidien
+dont la discrétisation contient  $\mathcal{E}$.  Plus formellement, il
+existe un triplet $(\alpha,\beta,\gamma)$ dans    $[0,1]^2\times[0,1[$
+tel que $\mathcal{E}$ soit contenu dans l'ensemble~:
+\begin{displaymath}
+\mathcal{P}=\{(x,y,z)\in\Z^3~|~0\leq \alpha x+\beta y+ \gamma + z <1\}
+\end{displaymath}
+
+Si  nous voulons construire  l'ensemble des plans se discrétisant dans
+l'ensemble   $\mathcal{E}$,   nous         définissons      l'ensemble
+$\bar{\mathcal{E}}$   dans  l'espace des  paramètres  défini par (voir
+figure   \ref{fig_intersection}\footnote{Merci  à Isabelle Sivignon du
+LIS (Grenoble)  pour son aide sur   la construction de  ces pré-images
+avec l'algorithme de \cite{vittonethese}.})~:
+\begin{equation}
+\label{eq:ebar}
+\bar{\mathcal{E}}=\{
+(\alpha,\beta,\gamma)\in[0,1]^2\times[0,1[~|~\forall(x,y,z)\in\mathcal{E}
+ ~0\leq\alpha x+\beta y+ \gamma +z <1 \}
+\end{equation}
+
+Comme en dimension 2,  la construction de  ce domaine ou simplement le
+test d'existence d'une  solution se ramène à  un problème classique de
+programmation linéaire.
+
+
+\begin{figure}[htbp]
+\begin{center}
+\subfigure[]{\includegraphics[width=5cm]{isa_fig8.ps}}
+\subfigure[]{\includegraphics[width=6cm]{vue1.ps}}
+\subfigure[]{\includegraphics[width=6cm]{vue2.ps}}
+\caption{$(a)$ Morceau de plan $P(1,3,4,0)$ avec ses points d'appui et  $(b)$-$(c)$
+  différentes  vues     du     polyèdre    des     plans    euclidiens
+  $\bar{\mathcal{E}}$ dont la discrétisation contient le morceau $P$.}
+\label{fig_intersection}
+\end{center}
+\end{figure}
+
+Nous pouvons, par   exemple, utiliser  l'algorithme  de \cite{megiddo}
+(théorème  \ref{theo:megiddo})  qui nous permet  d'avoir un algorithme
+linéaire  en le   nombre de points    pour tester la coplanarité  d'un
+ensemble de voxels.  De plus, nous  disposons de l'amélioration de cet
+algorithme proposée par \cite{buzer} qui nous permet d'avoir un test de
+coplanarité incrémental en $O(n)$ où $n$ est  le nombre de voxels dans
+$\mathcal{E}$ ce qui est optimal pour le problème.
+
+\sloppy Si  nous   souhaitons  décrire entièrement  le   polyèdre  des
+solutions, \cite{fourier} proposent  l'utilisation de la  réduction de
+\aut{Fourier-Motzkin} pour  construire le polyèdre $\bar{\mathcal{E}}$
+mais la  complexité, très   coûteuse,  de  cet algorithme   rend   son
+utilisation très peu avantageuse pour la reconnaissance de plan.
+
+Afin  d'avoir une  écriture   des sommets du  polyèdre  sous  forme de
+fractions irréductibles,  \cite{vittonethese} propose  une utilisation
+de l'algorithme de  \cite{grabiner}. Ainsi, les  sommets sont sous  la
+forme $\left (\frac{a}{c},\frac{b}{c},\frac{\mu}{c} \right )$ (dans le
+premier   $48\eme$  d'espace)  permettant   ainsi l'extraction  d'une
+paramétrisation arithmétique naïve   du  morceau  reconnu  donnée  par
+$\mathcal{P}(a,b,c,\mu)$.
+
+L'idée est similaire au cas  2D,  à chaque insertion d'une  contrainte
+dans le système (c'est-à-dire à chaque ajout de voxel), nous regardons
+l'ensemble des   arêtes coupées   par celle-ci.   Chaque  intersection
+engendre   donc   un nouveau  sommet  du polyèdre   solution  dont les
+coordonnées, sous forme de  fractions irréductibles, sont calculées en
+appliquant  l'algorithme  de \cite{grabiner}  sur les  coordonnées des
+extrémités de l'arête coupée (voir algorithme \ref{alg:grabiner}).
+
+L'algorithme initial de \cite{vittonethese} est  peu efficace à  cause
+du test exhaustif sur toutes les arêtes du polyèdre introduisant ainsi
+une complexité  en   $O(n^3log(n))$.  Nous pouvons   cependant baisser
+cette  borne  asymptotique  en  utilisant des    algorithmes optimaux,
+classiques  en géométrie  algorithmique ou  en programmation linéaire,
+couplés avec  l'algorithme de réduction  de \aut{Grabiner}.  Ainsi, en
+utilisant  une   extension   tridimensionnelle   de   l'algorithme  de
+\cite{P16}, et  en appliquant  la   réduction de \aut{Grabiner},  nous
+pouvons proposer   une borne en  $O(nlog^2(n))$.  Nous  ne  détaillons  pas cet
+algorithme  car   celui-ci  est    très    similaire  à   l'algorithme
+\ref{alg:vittonebis}.
+
+\subsubsection{Vers une structure complète du domaine dans l'espace  dual}
+
+Lors de   l'analyse des  droites   discrètes dans  l'espace dual,  des
+théorèmes très puissants   ont été démontrés permettant  de  connaître
+exactement la  structure de la  pré-image dans l'espace des paramètres
+associée à  un segment discret.  De  plus, cette analyse nous a permis
+d'écrire    des  algorithmes  optimaux    pour   le problème    de  la
+reconnaissance de ces objets.
+
+\sloppy Dans le cas tridimensionnel, des solutions algorithmiques très
+efficaces, pour le  test de coplanarité ou  la construction  du domaine
+dans le   dual, existent en programmation linéaire
+\citep{buzer,P16}.  Cependant    très peu   de  solutions   exploitent
+pleinement  la structure très particulière  des plans discrets. Ainsi,
+de nombreuses questions  nous semblent intéressantes~: en imposant une
+contrainte de connexité  de l'ensemble $\mathcal{E}$, peut-on  réduire
+la   borne $O(nlog(n))$ proposée  par \citeauthor{P16}  ?  Quel est le
+nombre de faces  du polyèdre des solutions ?   Est-ce que ce  polyèdre
+possède une structure arithmétique~?
+
+Dans   cette  analyse, nous  montrons    que ce polyèdre   possède une
+structure   particulière qu'il serait  dommage  de  ne  pas prendre en
+compte dans les algorithmes de reconnaissance de plans discrets.
+
+Dans  un   premier  temps,  nous montrons  qu'il   existe deux sommets
+particuliers du polyèdre qui correspondent aux plans d'appui d'un plan
+discret~:
+
+\begin{prop}
+Étant donné un morceau de plan na\"if $\mathcal{P}(a,b,c,\mu)$,
+le polyèdre $\bar{\mathcal{E}}$ des plans euclidiens dans l'espace des paramètres
+contient deux sommets particuliers~:
+\begin{itemize}
+\item  $\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$
+qui correspond au plan d'appui inférieur de $\mathcal{P}$~;
+\item  $\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$
+qui correspond au plan d'appui supérieur de $\mathcal{P}$.
+\end{itemize}
+De plus, nous avons~:
+\begin{itemize}
+\item les faces du polyèdre adjacentes au point
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$ correspondent aux
+sommets du polygone d'appui inférieur~;
+\item     les     faces  du       polyèdre    adjacentes   au    point
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$   correspondent
+aux sommets du polygone d'appui supérieur.
+\end{itemize}
+\end{prop}
+
+
+
+\begin{mapreuve}
+
+
+Considérons  tout    d'abord  un  morceau   connexe   de  plan discret
+$\mathcal{P}(a,b,c,\mu)$ dans  le premier $48\eme$ d'espace.  L'ajout
+du voxel   $(x,y,z)$ correspond à l'introduction de deux
+demi-espaces dans l'espace des paramètres~:
+\begin{align*}
+C_1&:\quad\alpha x+\beta y +\gamma +z\geq 0\\
+C_2&:\quad\alpha x+\beta y +\gamma +z<1
+\end{align*}
+
+De la même  manière   que l'algorithme  de \cite{P16}, nous   traitons
+indépendamment  les  contraintes  $C_1$  et  $C_2$.    Concernant  les
+contraintes $C_2$, nous  souhaitons calculer l'enveloppe inférieure de
+celles-ci et  sur les contraintes  $C_1$, nous considérons l'enveloppe
+supérieure.    Étant  donné que  les voxels    appartiennent à un plan
+discret,  l'union de ces  deux  enveloppes sera  non vide  et définira
+exactement le polyèdre des plans euclidiens  se discrétisant dans $P$,
+dans l'espace des param\`etres. Dans ce qui suit, nous considérons les
+contraintes   $C_2$ sans  l'inégalité   stricte  pour simplifier   les
+explications. Le  polyèdre  final s'obtiendra  en excluant  toutes les
+faces et sommets issus des contraintes $C_2$.
+
+
+Si  nous   considérons  uniquement les contraintes   $C_2$,  celles-ci
+correspondent au  passage dans l'espace dual des  points  $(x,y,z)$.  Les
+contraintes   $C_1$ correspondent  au  passage  dans  le dual   des points
+$(x,y,z+1)$.
+
+Soit $P_{sup}$ le  plan d'appui supérieur associé  au morceau  de plan
+$\mathcal{P}$. Par définition de ce plan, tous les voxels $(x,y,z)$ de
+$\mathcal{P}$ sont sous ce plan (dans  le premier $48\eme$ d'espace).
+Ainsi, dans   l'espace dual, toutes  les contraintes  $C_2$ des points
+$(x,y,z)$ contiennent le point $P^*_{sup}$ transformé de $P_{sup}$. De
+la m\^eme manière,  toutes les contraintes  $C_1$, dans l'espace dual,
+associées  aux  points  $(x,y,z+1)$  contiennent le point  $P^*_{inf}$
+correspondant au plan  d'appui inférieur $P_{inf}$  translaté de  1 en
+$z$.
+
+De plus, si  nous   considérons les  contraintes $C_2$  associées  aux
+points d'appui supérieurs,  celles-ci passent par le point $P^*_{sup}$
+(par définition  des points d'appui, ceux-ci  sont les seuls points de
+$\mathcal{P}$  contenus  dans $P_{sup}$).   Étant   donné que   chaque
+contrainte partitionne l'espace  des paramètres, le  point $P^*_{sup}$
+est  donc un  sommet  du polyèdre  final  associé  au morceau de  plan
+$\mathcal{P}$. De plus les faces adjacentes correspondent à des points
+d'appui supérieurs de $\mathcal{P}$.   De m\^eme, le point $P^*_{inf}$
+est   un   sommet  du polyèdre  final    associé  au  morceau  de plan
+$\mathcal{P}$ et les  faces adjacentes à ce  point correspondent à des
+points d'appui inférieurs $\mathcal{P}$.
+
+Nous pouvons affiner  encore notre analyse  en ne considérant  que les
+points d'appui sommets   des polygones d'appui.   En effet,  un  voxel
+$v(v_x,v_y,v_z)$ intérieur au polygone  d'appui supérieur engendre une
+face   adjacente à  $P^*_{sup}$    dont la   normale  est  donnée  par
+$(v_x,v_y,v_z)^T$.  Ce vecteur normal  est orthogonal à  la face et sa
+direction est contraire à celle de l'inégalité.
+
+Si nous   notons $\{e^i\}_{i=1..N}$  les  sommets du  polygone d'appui
+supérieur et si $v$ est intérieur à ce polygone, nous avons~:
+
+\begin{displaymath}
+v=\sum_{i=1}^N w^i e^i
+\end{displaymath}
+
+avec $\{w^i\}_{i=1..N}$ dans $\R^3$ et $w^i_j>0$ pour $1\leq i\leq N$
+et $1\leq j\leq 3$.
+
+En d'autres termes,   la  normale du plan    engendré par $v$  est  un
+barycentre  à poids positifs, notés  $w^i_j$,  des normales issues des
+sommets  du polygone d'appui  supérieur. Ainsi, la contrainte issue de
+$v$   ne  crée    donc  pas    de face  au      polyèdre (voir  figure
+\ref{fig:barycentre}).
+
+Un raisonnement  similaire permet de montrer que  seuls les sommets du
+polygone d'appui    inférieur engendrent  des   facettes adjacentes  à
+$P^*_{inf}$.
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=10cm]{barycentre_dual.ps}
+\caption{Illustration de la contrainte engendrée  par un point
+d'appui $v$ contenu dans le polygone d'appui de sommets notés
+$\{e^i\}_{i=1..4}$.}
+\label{fig:barycentre}
+\end{center}
+\end{figure}
+\end{mapreuve}
+
+Nous connaissons maintenant  certaines  propriétés de la géométrie  du
+polyèdre~:  nous  avons  deux  sommets  particuliers  ayant  la m\^eme
+abscisse et  la m\^eme ordonnée avec  une  hauteur en  $\gamma$ qui ne
+diffèrent que de $\frac{1}{c}$ et qui  correspondent aux plans d'appui
+du morceau  de plan discret.   De plus, nous connaissons exactement la
+géométrie  des    faces  adjacentes  à  ces   sommets.   D'une manière
+informelle,   la   figure   \ref{fig:double_cone}    illustre    notre
+connaissance  actuelle du polyèdre~: nous  connaissons deux sommets et
+les faces adjacentes  à ceux-ci.  Par contre,  nous ne connaissons pas
+encore ce qu'il se passe à l'intersection de ces {\it cônes}.
+\begin{figure}[htbp]
+\begin{center}
+\subfigure[]{\includegraphics[width=3.5cm]{double_cone.ps}}
+\subfigure[]{\includegraphics[width=5cm]{vue_1}}
+\subfigure[]{\includegraphics[width=5cm]{vue_2}}
+\caption[Illustration du polyèdre avec la notion de
+double-cône]{Illustration du polyèdre avec  la notion de double-cône~:
+$(a)$    illustration schématique  du   double-cône et  $(b)$-$(c)$ le
+polyèdre dans l'espace  dual du  morceau  de plan  $P(1,3,4,0)$  (voir
+figure \ref{fig_intersection}),  les flèches  indiquent respectivement
+les sommets $P^*_{sup}$ et $P^*_{inf}$.}
+\label{fig:double_cone}
+\end{center}
+\end{figure}
+
+
+Avant de continuer, nous pouvons encore affiner notre analyse actuelle
+en   dénombrant  les facettes  adjacentes  aux  sommets $P^*_{sup}$ ou
+$P^*_{inf}$.   Nous avons montré que ce  nombre  est égal au nombre de
+sommets de l'enveloppe convexe   des points d'appui.  Or,  ces  points
+d'appui  ont    une  structure arithmétique  particulière   puisqu'ils
+appartiennent  à  un réseau défini  par  deux vecteurs solutions d'une
+équation diophantienne $ax+by+cz=r$.
+
+Considérons   un  réseau   donné par    (voir figure
+\ref{fig:env_cvx_appui})~:
+\begin{displaymath}
+\left (i,\left\{\frac{ai}{b}\right\}\right)\quad\text{pour}\quad 0<i<b
+\end{displaymath}
+
+\cite{reveilles_cvx} ont  montré que le  calcul de l'enveloppe convexe
+d'un tel réseau  est  lié au   développement en fraction  continue  de
+$\frac{a}{b}$.    Ils ont   ensuite proposé un    algorithme,  dont la
+complexité   est en $O(log(a))$, permettant  de   construire une telle
+enveloppe convexe  dont  le  nombre de   sommets est  aussi borné  par
+$O(log(a))$.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6cm]{env_cvx_appui}
+\caption{Enveloppe convexe du réseau engendré par la suite $\left\{(i,\left\{\frac{ai}{b}\right\})~\text{avec}~0<i<b\right \}$ pour $a=5$ et $b=17$.}
+\label{fig:env_cvx_appui} 
+\end{center}
+\end{figure}
+
+Ce cas de figure est  idéal dans le sens où  nous n'avons qu'une seule
+période du  réseau.   Cependant, en  considérant  un  morceau  de plan
+quelconque, cette théorie devrait  nous permettre de borner ce  nombre
+de faces avec des bornes assez  intéressantes par rapport au nombre de
+voxels.   D'une manière générale,  nous  pouvons utiliser  la borne de
+\cite{acketa} sur le  nombre  maximal d'arêtes d'un  polygone  discret
+convexe  dans  une grille $n\times  n$  qui est  en $O(n^{2/3})$ (voir
+paragraphe \ref{sec:arith_rec_cerc}).
+
+
+Si nous revenons maintenant à  notre analyse du polyèdre, nous pouvons
+prouver le théorème suivant~:
+
+\begin{theo} 
+\label{propenv_cvx}
+Étant  donné un  morceau de plan   discret $\mathcal{P}$  dans le premier
+$48\eme$ d'espace dont  les voxels se projettent,  sur le plan $Oxy$,
+\`a l'intérieur des  projections des  polygones d'appui.  Le  polyèdre
+$\bar{\mathcal{E}}$  dans   l'espace   des  paramètres   est  exactement
+l'intersection des deux cônes issus de $P^*_{sup}$ et $P^*_{inf}$.
+\end{theo}
+
+\begin{mapreuve}
+Considérons un  voxel  $v$ dont la contrainte   $C_2$ associée à  $v$,
+notée $C_2(v)$,  ne passe pas par $P^*_{sup}$  ($v$ n'est  donc pas un
+point d'appui).  Supposons  que  la contrainte $C_2(v)$   engendre une
+nouvelle face au polyèdre, en  d'autres termes, supposons que $C_2(v)$
+appartient à l'enveloppe inférieure des contraintes $C_2$ (voir figure
+\ref{fig:preuve_cvx_appui}-$(a)$ pour une illustration en 2D).
+
+
+La  contrainte $C_2(v)$ coupe  la  droite parallèle  à l'axe  $\gamma$
+passant  par $P^*_{sup}$  au  point  $p$.  Sur  cette droite,  $p$ est
+nécessairement au-dessus de $P^*_{sup}$ sinon ce dernier ne serait pas
+sommet du polyèdre (voir figure \ref{fig:preuve_cvx_appui}$-(b)$).
+
+La  projection  verticale  du voxel  $v$  sur le   plan $P_{sup}$ dans
+l'espace primal correspond dans l'espace  dual à une translation de la
+contrainte  $C_2(v)$  de   vecteur  $\overrightarrow{pP^*_{sup}}$.  Si
+$C_2(v)$  fait  partie  de l'enveloppe  inférieure des  contraintes, la
+contrainte    issue    de       la     translation     de      vecteur
+$\overrightarrow{pP^*_{sup}}$  est aussi  dans l'enveloppe  inférieure
+des contraintes (figure \ref{fig:preuve_cvx_appui}-$(c)$).
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=14cm]{preuve_cvx_appui.ps}
+\caption[Illustration dans le cas 2D de la preuve du théorème
+\ref{propenv_cvx}]{Illustration dans  le  cas   2D de la     preuve du
+théorème \ref{propenv_cvx}~: $(a)$ la contrainte $C_2(v)$ ne passe pas
+par $P^*_{sup}$ mais  engendre une face du   polyèdre, $(b)$ et  $(c)$
+translation     de        la     contrainte         du         vecteur
+$\overrightarrow{pP^*_{sup}}$.}
+\label{fig:preuve_cvx_appui} 
+\end{center}
+\end{figure}
+
+
+Si $v$ se    projette verticalement sur  $P_{sup}$  à   l'intérieur du
+polygone d'appui, la normale associée à  la contrainte $C_2(v)$ est un
+barycentre  à  poids positifs des normales   associées aux  sommets du
+polygone d'appui (nous rappelons que le vecteur normal est orthogonal
+à la face et sa direction est contraire  à celle de l'inégalité). Cela
+implique      que   la     contrainte    $C_2(v)$    translatée     de
+$\overrightarrow{pP^*_{sup}}$ ne fait    pas  partie de    l'enveloppe
+inférieure des contraintes et  donc la contrainte $C_2(v)$  n'engendre
+pas de face supplémentaire au polyèdre.
+
+Finalement, une  condition nécessaire pour  que  les contraintes $C_2$
+associées à un morceau de plan $\mathcal{P}$ n'engendrent pas de faces
+au polyèdre, est  que les voxels associés se  projettent sur le plan $Oxy$ dans
+la projection du polygone d'appui supérieur.
+
+En utilisant le m\^eme raisonnement pour les contraintes $C_1$, si le
+morceau de  plan $\mathcal{P}$ dans  le premier $48\eme$ d'espace est
+tel  que ses voxels se projettent  sur le plan $Oxy$, \`a l'intérieur
+des      projections    des     polygones   d'appui    (voir    figure
+\ref{fig:proj_poly_appui}),  alors le    polyèdre des  solutions   est
+exactement l'union des deux c\^ones   issus des points $P^*_{sup}$  et
+$P^*_{inf}$.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=8cm]{proj_poly_appui}
+\caption[Condition nécessaire pour que le polyèdre des solutions
+dans  l'espace   des  paramètres   soit    un double-c\^one]{Condition
+nécessaire   pour  que le  polyèdre des   solutions  dans l'espace des
+paramètres soit un  double-c\^one~: chaque voxel  doit se projeter sur
+le plan $Oxy$, dans les projections des polygones d'appui.}
+\label{fig:proj_poly_appui}
+\end{center}
+\end{figure}
+\end{mapreuve}
+
+
+Grâce à ce théorème, nous pouvons calculer le nombre de facettes du
+polyèdre $\bar{\mathcal{E}}$~:
+\begin{coro}
+Soit   $\bar{\mathcal{E}}$ le  polyèdre  dans  l'espace des paramètres
+associé à un morceau de plan  $P$ vérifiant les hypothèses du théorème
+\ref{propenv_cvx}. Le nombre de faces de ce polyèdre  est le nombre de
+sommets des deux polygones d'appui de $P$.
+\end{coro}
+
+
+Remarquons  que dans les   hypothèses   du théorème,  les voxels    de
+$\mathcal{P}$ n'ont aucune autre contrainte que celle de la projection
+dans les polygones d'appui.  $\mathcal{P}$ peut donc \^etre déconnecté
+ou avoir des trous, la forme du domaine est identique.
+
+Dans les  analyses expérimentales que nous  avons effectuées, tous les
+polyèdres  $\bar{\mathcal{E}}$ avaient cette structure en double-cône,
+même  dans  les cas   où les hypothèses    du théorème  n'étaient pas
+vérifiées.  Ceci nous permet  d'énoncer la conjecture dans laquelle la
+seule contrainte sur $P$ est qu'il soit connexe~:
+
+\begin{conj}
+Soit  $\mathcal{P}(a,b,c,\mu)$ un morceau de  plan connexe, le polyèdre
+dans l'espace  des paramètres associé  à  $\mathcal{P}$ a  la forme du
+double-cône, c'est-à-dire~:
+\begin{itemize}
+\item   il existe   deux    sommets caractéristiques  de   coordonnées
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu}{c}\right)$                et
+$\left(\frac{a}{c},\frac{b}{c},\frac{\mu+1}{c}\right)$~;
+\item les faces du polyèdre correspondent uniquement aux sommets des
+polygones d'appui de $\mathcal{P}$.
+\end{itemize}
+\end{conj}
+
+
+Dans le  paragraphe suivant, nous  nous intéressons  à une application
+classique de ces algorithmes de reconnaissance de plan qui consiste en
+la facettisation d'un objet discret.
+
+
+\subsubsection{Facettisation d'objets discrets}
+\label{sec:facett-dobj-discr}
+
+Dans de nombreuses   applications, la  manipulation ou simplement   la
+visualisation  d'objets    discrets  3D  est   assez    co\^uteuse  en
+temps. Ainsi,    la  facettisation ou   polyédrisation de  ces  objets
+discrets apparait comme outil primordial.
+
+L'objectif est de  constuire une approximation poly\'edrique du  volume
+discret avec les contraintes suivantes~: {\it  les sommets du polyèdre
+doivent \^etre  des   points discrets et  l'approximation  doit \^etre
+réversible}. En  d'autres  termes, cette facettisation ne  doit perdre
+aucune information et le volume  discret doit pouvoir être reconstruit
+entièrement à partir de celle-ci.
+
+Dans le cas d'objets 2D, les algorithmes de segmentation en droite
+discrète offrent une solution tr\`es efficace à ce problème. Dans
+le cas tridimensionnel, les choses sont plus complexes comme nous le
+verrons.
+
+
+Tout   d'abord,   nous  présentons   deux  techniques de facettisation
+réversibles que l'on  peut qualifier de  {\it na\"ives}.  La  première
+n'est valide que  pour les  volumes discrets   convexes  (qui sont  la
+discrétisation d'objets euclidiens  convexes) et consiste en un calcul
+de l'enveloppe convexe 3D (voir figure \ref{fig:sphere_cvx}-$(a)$). La
+facettisation  s'obtient   en utilisant  un  algorithme  classique  en
+géométrie algorithmique  dont il existe de nombreuses implémentations
+très             optimisées              (outil                   {\tt
+qhull}\footnote{\url{http://www.geom.umn.edu/software/qhull}}      par
+exemple).  Cet poly\'edrisation  n'est bien évidemment  réversible que
+dans le cas d'objets convexes.
+
+\begin{figure}
+\begin{center}
+\subfigure[]{\includegraphics[width=6cm]{sphere_cvx}}
+\subfigure[]{\includegraphics[width=6.5cm]{sphere_MC}}
+\caption{Facettisation basée sur l'enveloppe convexe 3D $(a)$ et sur
+  un algorithme de type Marching-Cubes $(b)$.}
+\label{fig:sphere_cvx}
+\end{center}
+\end{figure}
+
+
+Une seconde approche {\it na\"ive} se base sur les algorithmes de type
+{\it Marching-Cubes} \citep{marching,kenmochi_dag}.   Dans ce cas,  la
+facettisation  s'effectue à l'aide  une table  de correspondance entre
+configurations $2\times  2\times  2$ de  voxels  et les  ensembles  de
+facettes    associés à    ces       configurations     (voir      figure
+\ref{fig:sphere_cvx}-$(b)$). Ainsi, en parcourant la surface discrète,
+chaque configuration de voxel est remplacée par  un morceau de surface
+triangulée. Bien évidemment, la table de correspondance est construite
+de manière à garantir un certain nombre de propriétés topologiques sur
+cette surface \citep{lachaud_MC}.
+
+Par construction de la table de  correspondance, ce processus est bien
+évidemment réversible  mais le  nombre de  facettes peut   \^etre très
+important m\^eme pour  des  objets simples  comme des  plans discrets.
+Dans un objectif de visualisation, des techniques de simplification ou
+de  décimation  de surfaces sont  alors  nécessaires (voir par exemple
+\citealt{dcoeurjo_decim}).  Une fois  encore, des implémentations très
+efficaces   existent   en séquentiel   ou   sur  machines   parallèles
+\citep{miguet}.  En plus de leur simplicité, ces deux approches ont un
+avantage très important~: la facettisation est unique.
+
+En  utilisant des objets classiques  de la  géométrie discrète, il est
+tout à fait normal de considérer une facettisation basée sur la notion
+de plan  discret.  Ainsi,  un   tel algorithme de  facettisation  doit
+contenir les caractéristiques suivantes~:
+
+\begin{itemize}
+\item un algorithme de reconnaissance de plan discret~;
+\item  un   processus  de  placement  de  {\it  germes}   de mani\`ere
+parall\`elle ou incrémentale~;
+\item à partir  d'un germe, un  processus d'ajout de voxels  adjacents
+afin de construire les morceaux de plans discrets.
+\end{itemize}
+
+Une  des premières approches   fut  proposée  par \cite{BF94} mais   le
+processus  de reconnaissance  de plan  se   basait sur une analyse  au
+moindre carré ce qui rendait le processus non discret.
+
+Par  la suite, \cite{debledthese}  propose  une approche basée sur son
+algorithme  de reconnaissance  de  plans discrets naïfs  mais uniquement
+pour des objets  symétriques par rapport à un  $48\eme$ d'espace.  La
+polyédrisation  se fait  incrémentalement, c'est-à-dire qu'un  premier
+germe est choisi sur la surface et à partir de celui-ci, un morceau de
+plan discret maximal est calculé. Une fois la reconnaissance terminée,
+un autre germe est choisi sur la surface (adjacent  au morceau de plan
+reconnu)  et le processus continue tant  que  tous les voxels n'ont pas
+été visités.  Le parcours utilisé se fait ligne par  ligne pour un $y$
+fixé.
+
+Par  la  suite,   \cite{francon,papierthese} proposent  un  algorithme
+séquentiel basé sur une   reconnaissance de plan par l'algorithme   de
+\aut{Fourier-Motzkin} adapté aux plans discrets \citep{fourier}. Étant
+donné un  germe choisi sur  la surface,  le mode  de parcours est  une
+propagation {\it topologique}  ({\it  i.e.}   basée sur  la   relation
+d'adjacence des surfels) autour  de celui-ci.  En d'autres  termes, un
+parcours en largeur   du  graphe d'adjacence des éléments   de surface
+(surfels) est  calculé avec un test  d'appartenance  au plan discret à
+chaque visite de surfel.  Ce processus de  propagation se termine soit
+quand    il ne  reste   plus de  surfels à    visiter,  soit  quand la
+reconnaissance de plan échoue, soit enfin quand le  bord du morceau de
+plan en cours de reconnaissance n'est plus un disque topologique.
+
+Récemment,  \cite{sivignondea} a proposé  une facettisation  basée sur
+l'algorithme de reconnaissance  de \cite{vittonethese}.   Le processus
+global est lui aussi séquentiel mais l'utilisation d'un étiquetage par
+tricube permet  de réduire le nombre de  faces  générées par rapport à
+l'approche de  \citeauthor{papierthese}.   De  plus,  l'algorithme  de
+reconnaissance  étant     bien  plus efficace  que    la  réduction de
+\aut{Fourier-Motzkin}, le coût global de cet algorithme est moindre.
+
+Enfin, même si  cette approche ne  se base  pas sur la  notion de plan
+discret, nous    pouvons  citer   l'algorithme  de  polyédrisation  de
+\cite{burguet}  qui   consiste  en  une  approche  parallèle   pour la
+construction  des  faces~:  dans  un premier   temps,  des germes sont
+distribués sur la surface en fonction  de sa courbure, les
+faces sont calculées   en étiquetant les  surfels  par une propagation
+topologique autour de  chaque germe.  Dans   ce cas, la  facettisation
+n'est pas réversible étant donné qu'il n'y a aucune prise en compte de
+la géométrie lors de la construction des faces.
+
+Comme nous  pouvons le voir  dans  cette bibliographie,  de nombreuses
+approches existent en fonction des  choix d'initialisation des  germes
+ou   de   processus de  propagation.    Nous   pouvons cependant  nous
+interroger  sur   le  problème  suivant~: {\it   Comment   évaluer une
+facettisation ?}  Dans un premier temps, si nous ne considérons pas la
+complexité des   algorithmes,  nous pouvons dire  qu'un   polyèdre est
+optimal s'il possède un nombre minimal de sommets.  Par la suite, nous
+pourrons ajouter d'autres critères comme {\it l'aspect des facettes}~:
+on dit que l'aspect des facettes d'une  triangulation est {\it bon} si
+les triangles    sont   aussi  proches  que    possible  de  triangles
+équilatéraux et ne sont pas dégénérés.
+
+Considérons donc le  problème du nombre minimal  de sommets. Lors d'un
+travail récent avec \aut{Isabelle Sivignon} du LIS-Grenoble, nous nous
+sommes interrogés sur  la construction d'une représentation polyèdrale
+d'un  volume discret  à  partir    du  résultat d'une    facettisation
+quelconque. Ainsi, nous considérons le contexte général suivant~: soit
+$E(v)$  un étiquetage de chaque voxel  $v$ avec une liste d'indices de
+plans discrets auxquels il appartient.  À partir de cette information,
+nous   voulons construire  une  graphe  représentant  la topologie  du
+polyèdre  final.   En d'autres termes,  le  plongement dans $\Z^3$ des
+sommets de ce graphe sont les sommets  de la facettisation, les arêtes
+du graphe seront les arêtes du polyèdre et des cycles non réductibles,
+les faces.
+
+Pour une description plus détaillée de  cette étude, le lecteur pourra
+se  référer à  l'article  \cite{facettisation_sivi}.  Brièvement, pour
+obtenir une représentation polyèdrale  minimale en nombre de sommets à
+partir de $E(v)$, nous commençons par construire un graphe d'adjacence
+dont les sommets sont des triplets $(i,j,k)$ d'indices de plan discret
+tels qu'il  existe un pointel  voisin immédiat de voxels étiquetés par
+$i$, $j$ et $k$.   Une  arête existe  entre deux sommets  $(i,j,k)$ et
+$(i',j',k')$ s'il existe deux indices en commun.
+
+Pour  obtenir le graphe de sommets  minimaux, il  nous faut réduire le
+graphe   précédent  à l'aide de   deux   processus de contraction~: le
+premier  consiste  en  une réduction  des  cliques  de  ce graphe (voir
+\citealt{west} pour une  introduction sur les  graphes). En effet, ces
+cliques correspondent à des  intersections de plans discrets. Ainsi, en
+utilisant  un algorithme de  calcul  d'une  couverture d'un graphe  en
+nombre minimal de cliques (problème du {\it Minimum clique covering}),
+nous construisons un nouveau graphe où les sommets sont ces cliques et
+nous   plaçons  une  arête entre  deux   sommets  si les  deux cliques
+correspondantes partagent un sommet.
+
+Ensuite, nous montrons  dans \cite{facettisation_sivi} qu'une  seconde
+contraction est nécessaire. Celle-ci se  base sur la construction d'un
+nouveau graphe dans lequel les sommets sont des  cycles dans le graphe
+précédent.  Une   fois  encore, pour extraire   un   nombre minimal de
+sommets, nous utilisons un processus de calcul de couverture en nombre
+minimal de cycles.
+
+Finalement, nous obtenons un   graphe qui correspond exactement à   la
+représentation polyédrique de notre objet 3D avec un nombre minimal de
+sommets.
+
+Bien évidement, ce travail  est avant tout  théorique puisque les deux
+algorithmes d'extraction  de cliques  ou  de cycles  sont  NP-complets
+\citep{Thomassen1997,west}.     Il existe cependant des approximations
+polynomiales \citep{hochbaum} proches de l'optimal.
+
+
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics[width=8cm]{facettisation_sivi}
+%  \caption{Illustration facet}
+%  \label{fig:facett_sivi}
+%\end{figure}
+
+
+\section{Statistique pour la reconnaissance de droites et plans discrets}
+\label{sec:statistique-pour-la}
+
+
+Dans cette partie, nous revenons sur  le problème de reconnaissance de
+droite et de plan discret du point  de vue statistique. L'objectif ici
+est   de  mettre en  place un    test  statistique nous permettant  de
+reconnaître un  morceau de plan  discret  ou un segment  discret. Bien
+évidement, pour ce  dernier  problème en 2D,  nous avons  présenté des
+algorithmes optimaux   pour la  reconnaissance  de  droite de  manière
+exacte. Cependant, nous   avons  aussi illustré les  difficultés  pour
+obtenir  un algorithme  de  reconnaissance  de plan discret   vraiment
+efficace.
+
+Considérons    le   code       de   \aut{Freeman}     (voir     figure
+\ref{fig:freeman_prop})   associé  à    la   droite   discrète   naïve
+$\mathcal{D}(a,b,\mu)$. Dans le premier octant, ce codage contient les
+codes $''0''$ et $''1''$ tels que les $''1''$ se trouvent {\it isolés}
+(voir détails dans le paragraphe~\ref{sec:droites-discretes-2d}).
+
+Dans une approche probabiliste, nous avons la proposition suivante~:
+
+\begin{prop}
+Considérons le processus qui consiste à choisir aléatoirement un code,
+sur  le mot correspondant  à la  droite  infinie $D(a,b,\mu)$  dans le
+premier octant.  La   probabilité  d'obtenir le  code  $''1''$  est de
+$\frac{a}{b}$, la probabilité    d'obtenir  le code  $''0''$   est  de
+$1-\frac{a}{b}$.
+\end{prop}
+
+Cette proposition se prouve  directement par construction des  droites
+discrètes.
+
+La  figure \ref{fig:graphe_stat_alea} illustre  ce  processus  sur une
+droite  de  pente $\frac{1}{4}$~: en  abscisse nous  avons les tirages
+successifs  d'un  code  du codage    et  en  ordonnée  les  fréquences
+d'apparition  des codes $''0''$ et  $''1''$.  Nous remarquons donc que
+les   courbes    convergent   vers  les     valeurs  $\frac{1}{4}$  et
+$\frac{3}{4}$.
+
+Plus  formellement,  le  processus décrit ci-dessus    suit une loi de
+\aut{Bernoulli} de paramètre $p=\frac{a}{b}$  qui correspond à un pile
+ou face avec une probabilité de $p$ pour l'une des deux valeurs.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{graphe_stat_aleatoirebis}
+  \caption[Liens entre droite discrète et loi de
+\aut{Bernoulli}]{Liens   entre     droite   discrète   et     loi   de
+\aut{Bernoulli}~: en ordonnée  se trouvent les fréquences d'apparition
+des codes  $''0''$ (courbe A) et  $''1''$  (courbe B)  lors d'un tirage
+aléatoire d'un  code   dans le  mot  infini issu   de  la droite naïve
+$\mathcal{D}(1,4,0)$. L'abscisse correspond aux tirages successifs.}
+  \label{fig:graphe_stat_alea}
+\end{figure}
+
+Sur le  plan théorique, nous avons des  résultats de convergence d'une
+telle estimation de la loi.  En effet, si nous notons $p$ le paramètre
+de la   loi de \aut{Bernouilli}  et  $\hat{p}$  le paramètre empirique
+estimé  sur les  observations  (celles-ci doivent être indépendantes),
+nous  savons  que les  observations  de   $\hat{p}$  suivent  une  loi
+binomiale de   paramètre    $n$ et $p$   ($n$  représente   le  nombre
+d'observations analysées).    De plus,   la   variance de   cette  loi
+binomiale  est $p(1-p) /  n$, ceci  signifie que l'estimation converge
+vers $p$   (au sens de la  moyenne  quadratique)  quand $n$  tend vers
+l'infini.  Finalement, en  utilisant le {\it théorème central limite},
+nous avons que $\sqrt{n}(\hat{p} -p)  / \sqrt{p(1-p)}$ converge en loi
+vers une loi normale $N(0,1)$.  Ainsi, par abus de  langage on dit que
+l'estimation de $p$ par $\hat{p}$ converge vers $0$ en $1/\sqrt{n}$.
+
+
+
+Si nous  modifions notre processus  en  prenant les codes en  abscisse
+croissante, la géométrie des droites discrètes nous permet d'avoir une
+vitesse de convergence très rapide  vers les valeurs qui correspondent
+effectivement    à  la     pente     de  la   droite    (voir   figure
+\ref{fig:graphe_stat_seq}).   Le  passage  d'un segment à un
+autre correspond à un  changement  du  paramètre $p$ de la loi  de
+\aut{Bernoulli}.  C'est   ce changement  de  loi que   nous souhaitons
+détecter.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{graphe_stat_sequentielbis}
+  \caption{Fréquences d'apparition des codes quand ceux-ci sont
+analysés en abscisse croissante.}
+  \label{fig:graphe_stat_seq}
+\end{figure}
+
+En se basant sur cette  analyse, tout  test   statistique nous permettant   de
+mesurer l'adéquation  des codes du codage de  \aut{Freeman} à une loi
+de \aut{Bernoulli} nous  permet de mettre en   place un algorithme  de
+reconnaissance de droite discrète. Encore une fois,  le cas 2D n'a que
+peu d'intêret mais continuons l'analyse.
+
+Une façon  très  simple  de vérifier   si  un ensemble  d'observations
+vérifie une loi  repose sur le  principe suivant~: on coupe l'ensemble
+en deux, on estime  les paramètres de  la  loi de \aut{Bernoulli}  sur
+chacun des ensembles  et ensuite on mesure  la distance entre les deux
+estimations. De nombreuses  autres approches sont possibles mais cette
+dernière nous permet une interprétation géométrique très simple.
+
+Dans un premier temps,  regardons ce qui se  passe si nous calculons
+les  fréquences sur une  courbe discrète formée  de quatre segments de
+droites  (figure  \ref{fig:graphe_stat_seg}).  Sur  cet exemple,  nous
+pouvons distinguer très     nettement  les changements   de   segments
+discrets.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{graphe_stat_segmentationbis}
+  \caption{Fréquences d'apparition des codes quand ceux-ci sont
+analysés  suivant une   abscisse  croissante sur  une  courbe discrète
+formée de  4    segments de   droite de   100    pixels et  de   pente
+$\frac{1}{4}$, $\frac{1}{2}$, $\frac{1}{4}$ et $\frac{2}{3}$.}
+  \label{fig:graphe_stat_seg}
+\end{figure}
+
+
+
+Considérons le processus suivant~: à partir d'un code $M$ du codage de
+\aut{Freeman}, nous allons maintenir  deux fréquences $\mathcal{G}$ et
+$\mathcal{D}$ des codes  respectivement à gauche  et à  droite de $M$.
+Ainsi, à chaque étape, nous  mettons à jour $\mathcal{G}$ avec l'ajout
+du  premier code non visité  à gauche de $M$.   De la même façon, nous
+mettons à jour les fréquences de  $\mathcal{D}$ avec le premier code à
+droite  de  $M$  non    visité.    Les ensembles  $\mathcal{G}$     et
+$\mathcal{D}$   nous  servent   de test d'adéquation    à   la loi  de
+\aut{Bernoulli}   de   l'ensemble des   codes  visités (de  paramètres
+respectifs  $p_\mathcal{G}$  et $p_\mathcal{D}$).  Ainsi, nous pouvons
+nous intéresser  à  une distance  entre les deux  estimations  afin de
+construire  notre test statistique.    D'un point de vue  géométrique,
+l'ensemble $\mathcal{G}$  (resp.  $\mathcal{D}$) nous permet d'estimer
+les paramètres  de  la tangente à  gauche  en $M$ (resp.  à droite  en
+$M$)~; l  distance entre les mesures  correspondrait à un test d'écart
+angulaire entre ces tangentes.
+
+Dans ce qui suit, nous avons  choisi la distance euclidienne entre les
+estimations  mais  de  nombreuses    autres  métriques  peuvent   être
+utilisées.   Ainsi, notre test  d'adéquation est  donné  par la mesure
+d'erreur~:
+\begin{displaymath}
+\epsilon= |p_\mathcal{G} - p_\mathcal{D}|
+\end{displaymath}
+
+La figure  \ref{fig:graphe_stat_tan}  illustre   cette mesure   sur un
+exemple.  Dans un premier   temps, l'erreur $\epsilon$ décroît,  ce qui
+nous permet d'avoir une bonne estimation des paramètres de la tangente
+discrète en $M$ (voir paragraphe \ref{sec:tangentes-normales}). Par la
+suite,  une fois  que les  codes analysés sont  issus  d'autres loi de
+\aut{Bernoulli}, l'erreur croit.  Le changement  de loi est facilement
+détectable sur cet exemple puisque le  long segment centré en $M$ nous
+permet de bien estimer la tangente avant de  changer de loi. Ainsi, si
+nous  réduisons    la    taille du  segment   central    (voir  figure
+\ref{fig:graphe_stat_tan_bis}-$(a)$  pour une taille  de 25 pixels) le
+changement est toujours détectable mais moins précisément.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{graphe_stat_tangentebis}
+  \caption[Test d'adéquation à une loi de \aut{Bernoulli} pour la
+    reconnaissance  de     droite]{Test d'adéquation   à  une   loi de
+    \aut{Bernoulli}  pour  la reconnaissance de  droite~:  les courbes
+    A et B indiquent les estimations $p_\mathcal{G}$ et $p_\mathcal{D}$
+    sur une courbe composée de 200 pixels, la courbe C correspond à
+    la  mesure d'adéquation $\epsilon$.  Les 50 premiers sont issus de
+    la droite de pente $\frac{2}{3}$, les 100 suivants de la droite de
+    pente  $\frac{1}{4}$ et  les 50  derniers   de la droite  de pente
+    $\frac{1}{3}$. Le point $M$ correspond au pixel d'abscisse 105.}
+  \label{fig:graphe_stat_tan}
+\end{figure}
+
+
+Bien  évidemment, les  lois  associées aux segments  adjacents à celui
+contenant $M$ influent aussi sur la détection de la rupture. Ainsi, un
+cas pathologique  pour cette  méthode   est illustré dans   la figure
+\ref{fig:graphe_stat_tan_bis}-$(b)$.   Dans  ce cas,    les   segments
+adjacents à $M$ ont la même loi et donc si $M$ est situé exactement au
+milieu  du  segment  central,   la  disymmétrie  entre   les ensembles
+$\mathcal{G}$ et $\mathcal{D}$ n'est plus perceptible.
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6.5cm]{graphe_stat_tangente_petitbis}}
+  \subfigure[]{\includegraphics[width=6.5cm]{graphe_stat_tangente_tordubis}}
+  \subfigure[]{\includegraphics[width=6cm]{stat_cas_tordu}}
+  \caption[Illustration du test statistique]{Illustration du test
+    statistique~:  $(a)$ exemple où le  segment central est plus petit
+    (25    pixels  avec les mêmes      paramètres) que dans  la  figure
+    \ref{fig:graphe_stat_tan}, $(b)$  cas pathologique où les segments
+    à l'extrémité ont la  même loi et où $M$  est au milieu du  segment
+    central~; $(c)$ illustration géométrique de ce cas pathologique.}
+  \label{fig:graphe_stat_tan_bis}
+\end{figure}
+Une idée simple qui pourrait résoudre ce problème consiste en
+l'utilisation d'un troisième ensemble $\mathcal{A}$ qui serait un
+échantillonnage aléatoire des ensembles  $\mathcal{G}$ et
+$\mathcal{D}$.
+
+Dans le cas tridimensionnel, nous avons le même type de propriété~:
+soit un plan discret naïf $\mathcal{P}(a,b,c,\mu)$ dans le premier
+$48\eme$ d'espace ({\it i.e.} $0\leq a\leq b < c$). Étant donnée la
+classification des surfels de la figure \ref{fig:morceau_plan_stat}, nous avons~:
+
+\begin{prop}
+Considérons le processus qui consiste à  choisir aléatoirement, sur ce
+plan infini, un surfel.  La probabilité d'obtenir  un surfel de type 3
+est de $\frac{b}{c}$, la    probabilité d'obtenir  un surfel de type 2
+est de $\frac{a}{c}$ et la probabilité d'obtenir un surfel de type 1
+est de $1-\frac{b}{c}-\frac{a}{c}$
+\end{prop}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=10cm]{stat_plan}
+  \caption{Morceau de plan discret  $\mathcal{P}(7,17,57,0)$ et
+    classification des différents surfels.}
+  \label{fig:morceau_plan_stat}
+\end{figure}
+
+
+La preuve de cette proposition est directe par décomposition du plan
+discret en droites discrètes.
+
+Dans ce cas, on ne parle plus de loi de \aut{Bernoulli} mais de loi
+empirique  de paramètres  $(p_1=\frac{b}{c},p_2=\frac{a}{c})$.   De la
+même   manière que pour  le cas  2D, un  test  d'adéquation  à une loi
+empirique des types   de  surfels  correspond  à  une   reconnaissance
+statistique de plan discret. Étant donnés la complexité et le coût des
+algorithmes de reconnaissance classiques de plan discret, l'enjeu pour
+le  cas 3D  est important.   Par exemple,  si  nous voulons estimer la
+normale en un point  d'une surface discrète, une approche consisterait
+en le calcul du plan discret tangent, c'est-à-dire  du plan discret le
+plus   grand qu'il  est  possible   de  reconnaître  centré  au  point
+considéré. Dans ce cas,  si nous voulons la normale  en tout surfel de
+la surface, l'utilisation des algorithmes classiques de reconnaissance
+entraîne   un coût    prohibitif.   Pour cela,   avoir  un  estimateur
+statistique de plan tangent serait très intéressant.
+
+De même   qu'en  2D, nous pouvons  imaginer  un  test qui  consiste  à
+découper  les  observations  en  deux ensembles,  à  estimer les  lois
+séparément   et   ensuite à évaluer    l'adéquation  en  comparant les
+résultats. Pour cela, la figure \ref{fig:idee_plan_stat} présente deux
+approches possibles.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=10cm]{idee_stat_plan}
+  \caption[Quelques pistes pour la création d'un test d'adéquation à la
+    loi empirique]{Quelques pistes pour la création d'un test d'adéquation à la
+    loi empirique~: la première se base sur une décomposition en deux
+    disques géodésiques de taille croissante, la seconde sur une
+    décomposition en {\it quadrant surfacique}.}
+  \label{fig:idee_plan_stat}
+\end{figure}
+
+
+\section{Conclusion}
+
+Dans ce chapitre, nous  avons présenté les différentes  approches pour
+la   synthèse et la reconnaissance  d'objets  géométriques simples que
+sont les   droites et plans  discrets.   Non seulement l'étude  de ces
+objets  présente un intérêt théorique  très important, mais en plus,
+nous verrons par  la suite  qu'ils sont  essentiels pour  l'analyse de
+forme  ou l'estimation de    nombreuses mesures euclidiennes  comme la
+longueur, l'aire ou encore les normales ou l'estimation de courbure.
+
+Dans le dernier paragraphe, nous avons présenté une approche nouvelle
+du problème de reconnaissance de droites et de plans discrets basée
+sur une analyse statistique de ces objets. Cette alternative
+statistique à la géométrie nécessite maintenant d'être utilisée dans
+des applications réelles.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 
+
+

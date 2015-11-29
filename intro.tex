@@ -1,0 +1,158 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\chapter*{Introduction\\\rule{\textwidth}{0.1cm}}
+\chapter*{Introduction\vspace{1mm}\hrule}
+\addcontentsline{toc}{starchapter}{Introduction}
+\thispagestyle{plain}
+\markboth{Introduction}{Introduction}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Tous   les systèmes  d'acquisition de  données  images fournissent des
+données  organisées sur  une  grille régulière, appelées {\it  données
+discrètes}.  Que ce  soit pour une  visualisation ou pour l'extraction
+de mesures sur ces objets discrets (paramètres de formes), les axiomes
+et théorèmes  de   la géométrie euclidienne  ne  sont  pas directement
+applicables.  Deux solutions s'offrent à nous.  La première consiste à
+plonger les données discrètes dans un  espace continu où ces théorèmes
+et mesures    sont définis (par exemple   en   utilisant des processus
+d'interpolation).  Une seconde alternative   se base sur  une transposition de
+ces théorèmes   et mesures dans    l'espace discret.  Ces  différentes
+re-définitions     donnent lieu    à  un    paradigme mathématique  et
+informatique appelé {\it géométrie discrète}.
+
+Un premier intérêt  d'une telle définition  est que nous évitons ainsi
+un  changement  de modèle coûteux en   temps et potentiellement source
+d'imprécisions.  Dans le cadre   de  la géométrie  algorithmique,  les
+erreurs  d'arrondi engendrées par  de  tels processus peuvent affecter
+non  seulement les   résultats mais   aussi   la terminaison même   de
+l'algorithme.   Dans    l'introduction   de   la   thèse    d'état  de
+\aut{Jean-Pierre} \cite{reveilles}, nous pouvons lire~:
+
+\begin{quote}
+{\it  De façon générale, dès que des données ont  été tronquées plus aucun
+  théorème   géométrique n'est   vrai.   On peut   dire alors  que  la
+  géométrie, qui, sur  le papier, était  déjà l'art de raisonner juste
+  sur des figures fausses,  devient,  sur machine, l'art de  raisonner
+  juste à partir de calculs   faux produisant des figures fausses,  si
+  toutefois les calculs terminent.}
+\end{quote}
+
+D'un  point de vue  algorithmique, l'analyse  de  ces  objets sur  une
+grille   régulière à l'aide   d'une  méthodologie  en nombres  entiers
+permet, non seulement une   gestion  de ces incertitudes,  mais  aussi
+l'écriture d'algorithmes très   efficaces.   En effet,  comme  nous le
+verrons par la suite, la manipulation de  nombres entiers et les liens
+très forts  entre les objets discrets  et des théorèmes de  la théorie
+des    nombres  ou     d'arithmétique    offrent   des    possibilités
+d'implémentations d'outils géométriques très efficaces.
+
+Derrière ces considérations  d'ordre  théorique  se cache  un  intérêt
+pratique très  important.  En  effet, une  théorie géométrique  et une
+algorithmique   adaptée  aux images  nous   permettent d'accélérer les
+processus   mais surtout de  proposer des  outils  d'analyse de formes
+cohérents avec la modalité des objets analysés.
+
+Cet  intérêt pratique a été illustré  depuis très longtemps. Ainsi, en
+1771, en présentant un principe  d'interpolation linéaire basé sur des
+entiers  et  sur des    modulos (ce  qui   correspond  exactement  aux
+fondements des droites  discrètes), \aut{Jean Bernouilli}  conclut son
+article avec la  certitude d'avoir présenté  une technique  qui allait
+être un outil de base de la géométrie discrète contemporaine~:
+
+\begin{quote}
+{\it [...]  je  me  flatte de   mettre  sous les yeux   des astronomes
+différentes méthodes  d'abréger considérablement leurs calculs, qu'ils
+ne connaissaient pas  encore, ou que,  par des  raisons qui cesseront,
+ils ont négligé de saisir lorsqu'elles leur ont été présentées pour la
+première fois ; [...]  }
+\end{quote}
+
+
+
+Les recherches présentées dans ce manuscrit s'inscrivent dans ce cadre
+de la géométrie discrète  et concernent plus particulièrement  l'étude
+des courbes et des surfaces discrètes.
+
+\section*{Organisation du manuscrit}
+
+Ce manuscrit est décomposé en trois parties~: la première concerne les
+notions de base et les différents objets du modèle discret. La seconde
+s'intéresse à l'analyse de  formes   et aux  mesures sur  ces   objets
+discrets.  Enfin, la     troisième partie correspond  aux   annexes.
+
+Plus   précisément, après avoir présenté  quelques  notions de base en
+géométrie utiles pour la suite, nous analysons les  objets de base que
+sont les droites, les plans et les cercles discrets, et présentons les
+algorithmes qui permettent  de les caractériser.  En particulier, nous
+proposons   une  synthèse des    différentes approches et  algorithmes
+associés aux droites discrètes en dimension 2  et 3. Nous reprenons ce
+travail bibliographique sur   les   plans discrets en    proposant une
+première caractérisation    de la pré-image   d'un morceau    de  plan
+discret. Nous concluons ce  chapitre sur les droites  et les plans par
+une analyse statistique de ces objets.
+
+Nous nous intéressons par la suite aux notions  de cercles discrets et
+aux différents  algorithmes de reconnaissance associés. Nous proposons
+dans ce chapitre un algorithme de reconnaissance  de cercle discret et
+de segmentation d'une courbe  discrète en arcs  de cercle basé sur une
+résolution arithmétique du problème.
+
+Dans  la seconde  partie, nous  utilisons  cette analyse des objets de
+base pour caractériser des  formes ou des contours  de formes.  Ainsi,
+nous  présentons un  algorithme de calcul  de  transformée en distance
+euclidienne sans erreur  basé sur la  notion  de diagramme  de Voronoï
+discret.   En utilisant ce  diagramme particulier, nous présentons des
+premières pistes vers  une extraction de  squelette de forme.  Dans ce
+même chapitre, nous proposons une définition de la visibilité discrète
+dans des domaines discrets non-convexes basée sur  la notion de droite
+discrète.  Cette définition de la visibilité  nous permet par la suite
+de proposer un calcul de chemins géodésiques discrets.
+
+Ensuite, nous nous  intéressons aux   re-définitions, dans le   modèle
+discret, de mesures euclidiennes.   En utilisant le cadre théorique de
+la convergence  asymptotique, nous  présentons différents  algorithmes
+permettant  d'estimer la longueur d'une  courbe discrète, les normales
+en tout point de cette courbe et la  courbure associée à chaque pixel.
+Dans  le  cas  des   surfaces  discrètes, nous   proposons  différents
+estimateurs  permettant d'estimer l'aire  de la  surface, les vecteurs
+normaux en  tout point  et   une estimation de   différentes courbures
+(moyenne et gaussienne).
+
+
+ 
+Finalement,  la dernière partie correspond  aux annexes et contient un
+premier  chapitre   présentant les différentes   applications  qui ont
+inspiré  ces    développements théoriques,   un  second  contenant les
+différentes preuves de  convergence asymptotique ainsi qu'un troisième
+détaillant un algorithme de  programmation linéaire que nous utilisons
+dans les parties précédentes.
+
+La figure  \ref{fig:plan_these}  présente les différentes  dépendances
+entre ces chapitres et parties.  Par  exemple, les notions introduites
+dans  le chapitre sur les droites   et plans discrets seront utilisées
+pour construire des     estimateurs de mesures euclidiennes   et  nous
+permettent de définir la notion de visibilité discrète.
+
+Une  lecture   linéaire des chapitres   de  ce manuscrit est possible,
+cependant  nous pouvons conseiller au   lecteur de commencer par  le chapitre
+relatant les  différentes applications (annexe \ref{chap-app}) afin de
+débuter par ce qui a motivé nos recherches.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=14cm]{plan_these}
+  \caption{Organisation du manuscrit,   les flèches
+    indiquent les dépendances entre chapitres.}
+  \label{fig:plan_these}
+\end{figure}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% End: 

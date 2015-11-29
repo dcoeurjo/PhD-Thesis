@@ -1,0 +1,7 @@
+BEGIN{}
+{
+x=$4;
+y=$5;
+print "set label \""$1"\" at " x"+0.25,"y"+0.25"
+}
+END{}

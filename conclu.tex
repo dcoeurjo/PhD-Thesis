@@ -1,0 +1,205 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\chapter*{Introduction\\\rule{\textwidth}{0.1cm}}
+\chapter*{Conclusions et perspectives\vspace{1mm}\hrule}
+
+\addcontentsline{toc}{starchapter}{Conclusions et perspectives}
+%\thispagestyle{plain}
+\markboth{Conclusions et perspectives}{Conclusions et perspectives}
+%\pagenumbering{arabic}
+%\setcounter{page}{1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Durant cette thèse, différents problèmes  de la géométrie discrète ont
+été abordés.  Ainsi,  plutôt que  de présenter une  conclusion  et des
+perspectives générales sur  ce travail, nous préférons détailler notre
+contribution par thème abordé.
+
+\section*{Objets discrets}
+
+\subsection*{Résumé}
+Dans cette partie,  nous avons tout  d'abord présenté  les différentes
+définitions des droites, plans et cercles discrets de la littérature.
+
+Dans le cas des droites discrètes, nous nous sommes surtout intéressés
+à une analyse   bibliographique avec une comparaison  des  différentes
+définitions et des  algorithmes permettant  la  reconnaissance.   Nous
+avons aussi présenté les différents outils permettant de segmenter une
+courbe discrète 2D ou 3D en morceaux de droites discrètes.  Concernant
+les plans discrets, après une  analyse bibliographique similaire, nous
+avons  montré un  résultat original sur  la  structure la  pré-image
+associée à un  morceau de plan discret.  En  conclusion de ces travaux
+sur les droites et plans discrets, nous avons proposé l'utilisation de
+la statistique  pour la reconnaissance de ces  objets. Pour cela, nous
+avons tout d'abord illustré les  liens entre les  droites et les plans
+discrets,  et  des    lois  classiques     en  statistique  (loi    de
+\aut{Bernoulli},  loi  empirique\ldots).  Nous  avons ensuite présenté
+quelques   pistes  d'utilisation   de ces  outils   statistiques  pour
+l'estimation de plans tangents discrets.
+
+Enfin, nous nous sommes intéressés aux  cercles discrets et nous avons
+présenté un algorithme original de  reconnaissance de cercles discrets
+basé sur une analyse  arithmétique du problème. Cet algorithme utilise
+des procédés très  simples de la géométrie  algorithmique et permet une
+segmentation incrémentale d'une courbe discrète en arcs de cercles.
+
+\subsection*{Perspectives}
+
+Concernant les   plans discrets, à  la   suite de notre   théorème  de
+structure de la  pré-image  d'un morceau  de plan vérifiant  certaines
+hypothèses, nous    avons conjecturé que   ce  résultat  est vrai  en
+relâchant  les hypothèses sur le morceau  de plan considéré. La preuve
+de cette conjecture est donc  une perspective importante à ce travail.
+De  plus, le point  de  vue statistique que  nous avons  présenté pour
+caractériser des droites ou plans discrets nous semble très prometteur
+dans de nombreuses applications.
+
+En ce qui concerne les cercles discrets,  nous avons présenté quelques
+pistes  pour l'utilisation   de l'algorithme  de  reconnaissance  pour
+calculer  le cercle osculateur discret  (plus long arc de cercle qu'il
+est possible de reconnaître centré sur le pixel considéré) en un point
+de la courbe discrète. Un problème intéressant consiste en une analyse
+incrémentale  de ce  calcul de cercle  osculateur en  tout point d'une
+courbe discrète.
+
+\section*{Transformée en distance et squelette de formes}
+\subsection*{Résumé}
+
+Nous   avons   tout d'abord  décrit   un  algorithme de calcul   de la
+transformée en distance  euclidienne sans erreur.  Cet algorithme  est
+optimal en temps quelle que soit la dimension de l'image.  Il utilise, en
+fait, une structure géométrique  appelée diagramme de Voronoï discret.
+Nous  avons proposé l'utilisation  directe  de  ce diagramme pour   le
+calcul du    squelette d'une forme.   Des  premières  analyses ont été
+faites dans le cas de formes en dimension 2.  Elles nous ont permis de
+proposer un algorithme d'extraction de squelette linéaire en le nombre
+de pixels de  la forme. Celui-ci  se base sur  le  calcul du diagramme
+et sur un   processus  de filtrage des   sommets  et des   arêtes de
+ce dernier.
+
+\subsection*{Perspectives}
+
+Une première  perspective à ce travail  consiste en une comparaison de
+la méthode d'extraction de squelette basée sur le diagramme de Voronoï
+discret en dimension 2  avec  les approches construisant l'axe  médian
+sur la transformée en distance.
+
+L'algorithme  d'extraction  du   diagramme  de Voronoï  discret  étant
+optimal  en  temps  quelle que soit   la   dimension, il  est   normal de
+s'intéresser à des constructions de squelettes, basés sur celui-ci, en
+dimension quelconque.
+
+\section*{Visibilité et chemin géodésique discrets}
+
+\subsection*{Résumé}
+Nous avons proposé une définition de la  visibilité, entre deux pixels
+dans un domaine  discret non-convexe, basée sur  la notion de  droites
+discrètes.  Nous avons  présenté un algorithme efficace  permettant de
+trouver  tous  les points  visibles   d'un pixel  donné   dans  un tel
+domaine.  Nous  avons, par la suite,  utilisé  ce calcul de visibilité
+pour la construction de chemins géodésiques discrets, ce qui permet de
+définir une métrique géodésique dans des domaines discrets.
+
+Nous avons ensuite discuté d'une généralisation de ces définitions aux
+objets tridimensionnels et avons donc proposé un premier algorithme de
+calcul de chemins géodésiques dans des domaines 3D non-convexes et sur
+des surfaces discrètes.
+
+\subsection*{Perspectives}
+Du  point  de  vue algorithmique,   une   perspective consiste  en une
+réduction de la complexité du  calcul de visibilité dans des  domaines
+3D.   Nous avons présenté quelques  pistes vers un algorithme efficace
+mais des recherches plus approfondies sont nécessaires.
+
+Enfin, que  ce   soit en  dimension   2  ou 3,  il   nous semble  très
+intéressant de comparer ces calculs  de fronts de propagation discrets
+aux algorithmes classiques se basant sur une résolution numérique d'un
+système d'équations aux dérivées partielles.
+
+\section*{Estimateurs de mesures euclidiennes}
+
+\subsection*{Résumé}
+Nous nous sommes intéressés  aux algorithmes permettant  d'estimer des
+mesures euclidiennes (longueur, aire, courbure\ldots) sur des contours
+2D  ou 3D  d'objets discrets.    Ces  différents algorithmes  ont  été
+analysés,  à chaque  fois  que cela  a  été  possible, dans  un  cadre
+pratique et théorique basé  sur la notion de convergence asymptotique.
+Nous  présentons   dans le   tableau   \ref{tab:estim} les  différents
+estimateurs  proposés  dans le  chapitre   \ref{chap-mesuresa}.   Pour
+chacun de  ces estimateurs,  nous indiquons leur   complexité et si la
+mesure converge asymptotiquement ou  pas ($n$ représente la taille des
+objets considérés et $d$ un paramètre fixe de l'algorithme).
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|c|c|p{1.8cm}|}
+    \hline
+     & Estimateur & Complexité & Convergence & paragraphe\\
+    \hline
+   Courbes discrètes 2D & Longueur & $O(n)$ & oui & \ref{sec:longueur}\\
+   \cline{2-5}
+   & Normales/Tangentes & $O(n)$ & oui& \ref{sec:tang}\\
+  \cline{2-5}
+  & Courbure & $O(n)$ &oui& \ref{sec:courb_conv_2d}\\
+    \hline
+  Courbes discrètes 3D & Longueur & $O(n)$ & oui & \ref{sec:longueur3D}\\
+   \cline{2-5}
+   & Tangentes & $O(n)$ & oui& \ref{sec:tang}\\
+  \cline{2-5}
+  & Courbure & $O(n)$ &oui& \ref{sec:courb_conv_3d}\\
+    \hline
+    Surfaces discrètes & Aire & $O(n)$ & oui & \ref{sec:estimation-daire-de}\\
+   \cline{2-5}  & Normales & $O(n)$ & oui & \ref{sec:estim-optim-en}\\
+   \cline{2-5}  & Courbure Moyenne & $O(dn)$ & non &\ref{sec:courbure-moyenne}\\
+   \cline{2-5}  & Courbure Gaussienne & $O(dn)$ & non & \ref{sec:courbure-gaussienne}\\
+    \hline
+  \end{tabular}
+  \caption{Estimateurs discrets de mesures euclidiennes.}
+  \label{tab:estim}
+\end{table}
+
+\subsection*{Perspectives}
+
+Lors  de  l'analyse    du  chapitre  \ref{chap-mesuresa},    seuls  les
+estimateurs de longueur  de  courbes discrètes 2D ont  bénéficié d'une
+ plate-forme de  tests suffisamment stable et complète  pour
+qu'elle soit diffusée à  la communauté. Une perspective importante est
+de construire une telle plate-forme pour toutes les autres mesures. Un
+travail préalable  consiste à mettre en \oe uvre, pour  la  mesure étudiée, un
+jeu  de  tests  significatifs et   multi-grilles   (pour une  évaluation
+asymptotique).
+
+D'un point  de vue théorique,   seules les estimations  des  courbures
+surfaciques ne possèdent pas encore d'algorithme ayant la propriété de
+convergence asymptotique. La poursuite de l'analyse de ces estimateurs
+est donc aussi une perspective à courte échéance.
+
+\section*{Applications}
+
+Nous  avons   présenté,  dans   l'annexe \ref{chap-app},   différentes
+applications dans lesquelles nous  avons utilisé nos algorithmes. Pour
+l'application ``Neige'', la poursuite  de cette collaboration avec les
+glacioloques du Centre d'étude de la Neige de Météo-France nous semble
+particulièrement intéressante.    En  effet, il  est  assez  rare,  en
+géométrie discrète, d'avoir des   données binaires autres  que  celles
+provenant  de  segmentations   d'images médicales.     De  plus,   les
+estimateurs proposés dans le chapitre \ref{chap-mesuresa} trouvent des
+utilisations concrètes.
+
+Enfin, l'application des  estimateurs aux modèles déformables discrets
+nous semble  très prometteuse.  
+
+
+
+\section*{Le mot  de la fin} 
+
+Ces  différentes recherches ont  souvent nécessité de mettre les mains
+dans le  {\it cambouis} informatique ou encore  de faire l'ermite avec
+un papier et  un  crayon.  Cependant, ce   sont toujours des  contacts
+humains avec d'autres personnes (chercheurs ou non) qui ont initié, ou
+fait avancer, ces recherches. Mes derniers mots vont à ces personnes.
+
+
+%%% Local Variables: 
+%%% mode: latex 
+%%% TeX-master: "these" 
+%%% End:

@@ -1,0 +1,1360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mychaptoc{Le cercle discret}\label{chap-cercles}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:cercles}
+
+\section{Introduction}
+
+Dans ce chapitre, nous nous intéressons au cercle discret. L'objectif
+étant non seulement d'analyser et de reconnaître un nouvel objet mais
+aussi d'offrir la possibilité d'estimer la courbure en un point d'une
+courbe discrète par l'utilisation
+de cercles osculateurs comme nous le verrons dans le chapitre
+\ref{chap-mesuresa}.
+
+Nous commençons notre analyse par les algorithmes classiques de tracé
+de cercles sur la grille discrète. Ensuite, nous nous intéressons aux
+différents algorithmes de reconnaissance de cercles discrets où nous
+proposerons un algorithme incrémental et simple à implémenter pour la
+segmentation d'une courbe discrète en morceaux d'arcs de cercles \citep{dcoeurjo_digitalarc}.
+
+
+\section{Synthèse et analyse du cercle discret}
+
+Une fois encore, une approche naturelle pour définir un cercle discret
+consiste à superposer un cercle réel sur une grille discrète et
+ensuite à choisir, en utilisant un processus de discrétisation donné,
+l'ensemble des pixels {\it concernés} par ce cercle. Le choix du
+processus du discrétisation se fait de façon à approximer {\it au
+  mieux} le cercle Euclidien.
+
+Par exemple, \cite{Nakamura} considèrent une discrétisation {\it au
+  plus proche} de type GIQ (figure \ref{fig:disc_cercles}-$(b)$) ou
+\cite{Kim84b} une discrétisation OBQ du cercle Euclidien (figure
+\ref{fig:disc_cercles}-$(c)$).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=14cm]{discretisation_cercles}
+  \caption[Discrétisation de cercles Euclidiens]{Discrétisation de
+    cercles Euclidiens~: $(a)$ cercle Euclidien superposé sur une
+    grille discrète, $(b)$ discrètisation GIQ de
+    \citeauthor{Nakamura} et $(c)$ discrétisation de \citeauthor{Kim84b}.}
+  \label{fig:disc_cercles}
+\end{figure}
+
+
+Dans une approche similaire au tracé de droite,
+\cite{Bresenham_circular} propose une définition de cercle et un
+algorithme de tracé  très simple. Celui-ci s'effectue dans
+le second octant ({\it i.e.} $y>x\geq 0$) et commence par le pixel
+$(0,R)$ pour un cercle de rayon $R$. En traçant le cercle en $x$
+croissant, nous avons à chaque étape le choix entre deux pixels~: le
+pixel $(x+1,y)$ ou le pixel $(x+1,y-1)$. Ce choix se fait en
+calculant la distance minimale au cercle Euclidien (voir algorithme
+\ref{alg:bres_cercle}).
+
+\begin{algorithm}[!ht]
+\caption{Tracé de cercle de \cite{Bresenham_circular}}
+\label{alg:bres_cercle}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Tracé\_\aut{Bresenham}$(R)$}
+\STATE $x=0$, $y=r$
+\STATE $d=5/4-R$
+\STATE \INTERNNAME{Affiche\_pixel}($x,y$)
+\WHILE{$y>x$}
+\IF{$d<0$}
+\STATE $d+=2x+3$
+\ELSE
+\STATE  $d+=2x-2y+5$
+\STATE $y-=1$
+\ENDIF
+\STATE \INTERNNAME{Affiche\_pixel}($x,y$)
+\STATE $x+=1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+Tous  les cercles discrets  présentés  ci-dessus  correspondent à  des
+approximations du  cercle réels.  Cependant,  la famille  des  cercles
+concentriques à  partir du point  $(0,0)$ peut  présenter des trous ou
+des chevauchements.    Ces  propriétés   peuvent   s'avérer
+essentielles pour certaines applications \citep{laurethese}.
+
+Une classe de cercles vérifiant ces propriétés a cependant été proposé
+par \cite{andresthese,Andres_circle}. Ces cercles sont appelés {\it cercles
+arithmétiques} et sont définis par l'ensemble des points $(x,y)$ de la
+grille vérifiant (voir figure \ref{fig:cercle_arith})~:
+\begin{displaymath}
+\left  (R-\frac{1}{2}\right )^2 \leq (x-x_0)^2+(y-y_0)^2 < \left
+  (R+\frac{1}{2}\right )^2
+\end{displaymath}
+avec $R,x_0,y_0\in\Z$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{cercle_arith}
+  \caption{Cercle arithmétique de rayon 8.}
+  \label{fig:cercle_arith}
+\end{figure}
+
+
+Par la suite, \cite{Andres_hypersphere} proposent une extension de ces
+cercles en  définissant des   hypersphères analytiques  discrètes  qui
+vérifient  les propriétés de pavage  de l'espace.  Ces hypersphères se
+caractérisent  par des coordonnées   des  centres, des rayons   et des
+épaisseurs non entiers.
+
+
+Nous terminons  notre  analyse   par   l'introduction du cercle     de
+\cite{pitteway} ainsi   que  des cercles  dérivés.   Considérons   les
+intersections d'un  cercle réel de rayon  $R$  avec la grille discrète
+donnée par le système~:
+\begin{displaymath}
+\left \{ \begin{array}{l}
+x^2+y^2=r^2\\
+x=R-k\\
+-R \leq k \leq R
+\end{array}
+\right.
+\end{displaymath}
+Dans le premier octant, nous obtenons le système suivant~:
+\begin{displaymath}
+\left \{ \begin{array}{l}
+y=\sqrt{2kx+k^2}\\
+x=R-k\\
+1 \leq k \leq R
+\end{array}
+\right.
+\end{displaymath}
+
+Nous définissons le champ de paraboles discrètes $\mathcal{H}_k$ comme
+étant  une  discrétisation       du  champ de      paraboles   réelles
+$y=\sqrt{2kx+k^2}$.  Ainsi,  si   nous  considérons  les   $y=\left  [
+\sqrt{2kx+k^2}\right]$, nous définissons le cercle \cite{pitteway}. De
+la même  manière, nous pouvons définir les  cercles {\it  plancher} et
+{\it plafond} en  considérant  respéctivement les paraboles   $y=\left
+\lfloor      \sqrt{2kx+k^2}\right\rfloor$      et   $y=\left    \lceil
+\sqrt{2kx+k^2}\right\rceil$ (voir \citealt{laurethese}).
+
+Le tracé de tel cercle se  fait dans le  premier octant et consiste en
+une succession  de pans verticaux  guidés par les  paraboles discrètes
+(voir         figure        \ref{fig:pitteway_oct}    et    algorithme
+\ref{alg:pitt_cercle}).
+
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics[width=8cm]{dis8bisbis}
+\caption{Exemple de construction d'un cercle de Pitteway plancher de
+  rayon 20.}
+\label{fig:pitteway_oct}
+\end{center}
+\end{figure}
+
+
+\begin{algorithm}[!ht]
+\caption{Tracé de cercle de \cite{pitteway}}
+\label{alg:pitt_cercle}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Tracé\_\aut{Pitteway}$(R)$}
+\STATE $x=r$, $y=0$
+\STATE $k=1$
+\WHILE{$y\leq x$}
+\WHILE{$y<\left  [ \sqrt{2kx+k^2}\right]-1$}
+\STATE \INTERNNAME{Afficher\_pixel}($x,y$)
+\STATE $y+=1$
+\ENDWHILE
+\STATE \INTERNNAME{Afficher\_pixel}($x,y$)
+\IF{$y= \left[ \sqrt{2kx+k^2}\right]$}
+\STATE \INTERNNAME{Afficher\_pixel}($x-1,y$)
+\ENDIF
+\STATE $k+=1$
+\STATE $x-=1$
+\STATE $y+=1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+Basée sur   cette analyse  en  paraboles discrètes,  \cite{laurethese}
+montre  qu'il est possible de  générer  de tels cercles sur  automates
+cellulaires et que   les  cercles de \aut{Bresenham} et    les cercles
+arithmétiques   peuvent   se construire  sur   le  même principe. Plus
+précisément,    le  faisceau   des  paraboles    associé   aux cercles
+arithmétiques est donné par~:
+
+\begin{displaymath}
+\left \{
+\begin{array}{l}
+y =\left [\sqrt{x(1+2k)-k^2+1/4} \right]\\
+x=R-k\\
+ 0\leq k \leq R
+\end{array} \right .
+\end{displaymath}
+
+
+
+\section{Reconnaissance et segmentation}
+
+
+\subsection{État de l'art}
+
+Dès  les  premières   applications  de   reconnaissance   de   formes,
+les estimations de circularité ou de compacité se sont avérées être
+des mesures importantes. Du point de vue  de la géométrie discrète, les
+premiers travaux sur la reconnaissance  de cercles ou de disques discrets
+sont apparus dès le début des années 80.
+
+D'une manière générale, on dira  qu'un ensemble de pixels appartient à
+un cercle discret  s'il  existe,     étant  donné un processus      de
+discrétisation, un   cercle  réel   dont la    discrétisation contient
+l'ensemble des   pixels.
+
+Une fois encore, deux problèmes distincts existent~:
+\begin{itemize}
+\item le premier consiste en un test de circularité, nous testons
+  juste l'existence d'un cercle réel solution~;
+\item le second consiste en une reconnaissance du cercle, c'est-à-dire
+  au calcul de l'ensemble des cercles réels solutions. Nous
+  définissons ainsi ce que l'on appellera  {\it la pré-image} de
+  l'ensemble de pixels.
+
+\end{itemize}
+
+
+Dans un premier temps, \cite{Nakamura} proposent un algorithme de test
+de circularité basé sur leur  définition de cercle discret.
+Les algorithmes proposés ont cependant une complexité exponentielle au pire cas
+(les auteurs donnent quelques pistent pour rendre les algorithmes polynomiaux dans
+la conclusion).
+
+La même année, \cite{Kim84b} propose un algorithme permettant de
+décider si un ensemble de pixels contenu dans une image $N\times N$
+est un disque discret. Cet algorithme initial a une complexité en
+$O(N^3)$ mais \cite{Anderson84c} optimisent ce calcul pour obtenir une
+complexité en $O(N^2)$.
+
+Par la suite, \cite{fisk} propose une reconnaissance de cercles
+discrets basée sur le principe de séparation de points par des cercles
+sur lequel nous reviendrons par la suite. Cet algorithme a une
+complexité en $O(n^2)$ où cette fois $n$ représente le nombre de
+pixels de la courbe discr{\`e}te.
+
+Pour le problème de test de circularité, \cite{sauer} propose un
+algorithme très complexe dont le coût en temps est linéaire ({\it i.e.}
+$O(n)$) en le nombre de pixels de la courbe discrète. Cet algorithme
+se ramène  à un problème de couverture par un cercle minimal dont la
+complexité linéaire a été montrée par \cite{Nimrod83a}. Cette approche
+n'est cependant pas adaptée au cas de morceaux de  cercle.
+
+\cite{damaschke} montre une réécriture du problème de test de
+circularité en un syst{\`e}me d'inéquations linéaires de dimension 3. Ainsi, en
+utilisant le théorème de \cite{megiddo} (voir théorème
+\ref{theo:megiddo}), nous obtenons un algorithme en temps lin{\'e}aire.
+
+\cite{worring_circular} proposent une estimation de circularité
+basée sur une construction de la pré-image de courbes de taille
+fixe. Plus précisément, ils proposent un calcul de l'ensemble des
+cercles réels solutions pour des morceaux de courbes de taille $r$,
+puis présentent un estimateur statistique permettant d'évaluer le
+rayon d'un cercle solution pour une courbe complète. La qualit\'e de
+cette approximation d\'epend bein \'evidemment du param\`etre $r$.
+
+Dernièrement, \cite{kovalevsky_arc} présente un algorithme de
+reconnaissance basé sur la séparation de deux ensembles de points par
+des cercles. Une fois encore, nous reviendrons plus en détail sur ce
+principe dans le paragraphe suivant. La complexité de cet algorithme
+n'est pas donné par l'auteur mais comme cette approche se ramène à
+un calcul d'intersection de $n^2$ inéquations en dimension 2, nous
+évaluons la complexité à $O(n^2log(n))$ en utilisant l'algorithme de
+\cite{P16} (voir paragraphe \ref{sec:kovalevsky}).
+
+Le tableau \ref{table:reco_cercle} résume les différentes approches
+présentées.
+
+\begin{table}[htbp]
+%\begin{table}[htbp]
+\begin{tabular}{|c|p{2cm}|p{2cm}|p{3cm}|}
+\hline
+ Algorithme & Complexité en temps & Incrémental  & Problème\\
+\hline
+ \cite{Nakamura} & -  & non & circularité\\
+\hline
+ \cite{Kim84b} & $O(N^3)$ (image $N\times N$) & non & circularité \\
+\hline
+\cite{Anderson84c} & $O(N^2)$& non & circularité\\
+\hline
+\cite{fisk} & $O(n^2)$ & non & reconnaissance\\
+\hline
+\cite{sauer} & $O(n)$& non & circularité\\
+\hline
+\cite{damaschke} & $O(n)$ & oui avec \cite{buzer} & circularité\\
+
+\hline
+\cite{worring_circular} & - & - & estimateur, circularité\\
+\hline
+\cite{kovalevsky_arc} & $O(n^2log(n))$ & oui & reconnaissance\\
+\hline
+\end{tabular}
+\label{table:reco_cercle}
+\caption{Algorithmes et complexités pour la reconnaissance de cercles discrets.}
+\end{table}
+
+\subsection{Approche basée sur l'analyse des paraboles discrètes}
+\label{sec:approche-paraboles}
+
+
+Durant mon stage de DEA \citep{dcoeurjo_DEA}, nous nous sommes intéressé à une
+représentation des cercles discrets par un codage lié aux paraboles
+discrètes. Nous avons aussi essayé de proposer un algorithme de
+reconnaissance sur ce codage mais sans succès. Nous présentons ici le
+codage proposé dont allons nous servir par la suite pour un estimateur
+de courbe discrète très rapide (voir paragraphe \ref{sec:courbure2d}).
+
+Nous  considérerons dans un premier temps une courbe discr{\`e}te $\{(x_i,y_i)\}_{i=1..n}$
+telle que $x_{i+1}\leq x_i$ et $y_{i+1}\geq y_i$ pour tout $i$. 
+
+Nous définissons sur cette courbe la notion point de rupture~:
+\begin{defi}[points de rupture]
+Un point $(x_i,y_i)$ est appelé
+point de rupture si et seulement si le point $(x_{i-1},y_{i-1})$ est
+tel que $x_i\neq x_{i-1}$.
+\end{defi}
+
+Il est clair que les points de rupture d'un arc de cercle discret de rayon
+$R$ dans le premier octant correspondent exactement aux intersections entre le champ de
+paraboles discrètes $\mathcal{H}_k$ et les droites verticales $x=R-k$. 
+
+Nous définissons également un code de rupture d'une courbe discrète~:
+\begin{defi}[code de rupture]
+Le code de
+rupture $B_c$ d'une courbe discr\`ete  est défini comme étant la hauteur en
+nombre de points  entre
+deux points de rupture consécutifs.
+\end{defi}
+
+Un exemple de points de rupture et de code de rupture est présenté
+en figure \ref{code}.
+
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics[width=2cm]{break}
+\caption{Un exemple de courbe discrète, en gris clair sont représentés
+  les points de rupture et le code de rupture de ce segment est : 2-2-1-3-2.}
+\label{code}
+\end{center}
+\end{figure}
+
+Nous proposons de construire un algorithme de reconnaissance de
+cercle basé sur le code de rupture. Pour cela, nous allons fixer le
+type de cercle discret {\`a} reconna{\^\i}tre en fixant le champ de paraboles
+discrètes. Nous considérons donc les paraboles~:
+\begin{align*}
+&y =\left [\sqrt{R(1+2k)-k^2+1/4} \right]\\
+&\text{avec } 0\leq k \leq R
+\end{align*}
+qui correspondent aux cercles arithmétiques. Cette
+formule s'obtient facilement en calculant les intersections entre la
+grille discrète et le cercle $x^2+y^2=(R+1/2)^2$.
+
+Nous pouvons maintenant lier les codes de rupture et les cercles
+arithmétiques~:
+\begin{prop}
+Soit $B_c$ un code de rupture d'un arc de cercle discret arithmétique
+de rayon $R$ dans le
+premier octant, nous avons alors~:
+\begin{displaymath}
+\sum_{i=0}^kB_c(i) = \left [\sqrt{R(1+2k)-k^2+1/4} \right]
+\end{displaymath}
+\end{prop}
+
+Basé sur cette proposition, nous pouvons inverser l'équation
+précédente pour obtenir le rayon du cercle discret, ou plut{\^o}t un
+intervalle de rayons possibles, en fonction d'un code de rupture~:
+
+\begin{prop}
+\label{prop:code}
+Soit $B_c$ un code de rupture d'un arc de cercle arithmétique de rayon $R$ dans le
+premier octant, notons $h$ la hauteur de la $k^{\text{ième}}$ parabole
+discrète ou de la hauteur du $k^{\text{ième}}$ point de rupture
+($h=\sum_{i=0}^kB_c(i)$), l'ensemble $\mathcal{R}_h$ des
+rayons des cercles discrets possibles ayant $B_c$ comme code de rupture
+jusqu'au $k^{\text{ième}}$ élément, est donné par la formule~:
+\begin{displaymath}
+\mathcal{R}_h=\left \{ \left \lceil \frac{(h-1/2)^2+k^2-1/4}{1+2k}
+  \right \rceil
+  ,\ldots ,
+ \left \lfloor\frac{(h+1/2)^2+k^2-1/4}{1+2k}
+\right \rfloor \right \}
+\end{displaymath}
+\end{prop}
+
+Par exemple, dans le cas du cercle de Pitteway plancher de la figure
+\ref{fig:pitteway_oct}, si l'on considère la première parabole
+$\mathcal{H}_0$, l'ensemble des rayons possibles pour une hauteur  $h=5$
+est $\{18\ldots 23\}$. Cette incertitude sur le rayon correspond 
+aux paliers des paraboles discrètes.
+
+Ainsi, si la courbe discrète  correspond {\`a} un arc
+de cercle arithmétique et  si nous sommes  sûr que le premier  élément
+dans le   code de  rupture   corresponde au   passage de  la  première
+parabole, nous pouvons  alors reconna{\^\i}tre  le cercle  discret  en
+calculant, par  l'équation    précédente,   l'ensemble   des   rayons
+possibles. Cet ensemble se réduit en un seul élément  si la courbe est
+exactement le  huitième  du cercle  arithmétique  (nous pouvons  alors
+reconstruire tout le cercle par symétrie de cette courbe).
+
+
+Pour obtenir un algorithme de reconnaissance de cercles arithmétiques
+{\`a} partir d'une courbe discrète quelconque, l'idée est de fixer le
+champ de paraboles en fonction du code de rupture, et ensuite {\`a} partir
+du champ de paraboles retrouver le ou les rayon(s) de cercle(s)
+arithmétique(s) possible(s). En fait, le problème peut se résumer de la
+fa{\c c}on suivante :  chaque élément du code de
+rupture est une fonction de deux paramètres, $R$ le rayon du cercle {\`a}
+retrouver et $k$ la parabole discrète auquel il correspond. Nous avons
+vu avec la proposition précédente que le calcul de ces paramètres 
+nécessite la connaissance d'un morceau de code de rupture qui
+correspondrait {\`a} un huitième de cercle. Dans le cas général, nous
+avons un morceau de code de rupture dont on ne sait pas {\`a} partir de
+quel indice de parabole il correspond.
+Pour pouvoir proposer un algorithme de reconnaissance, il nous faudrait~:
+
+\begin{itemize}
+\item Définir la notion de code de rupture dans tous les octants. 
+  Il faut pour cela détecter dans quel octant est susceptible de se
+  trouver l'arc de cercle et ensuite calculer la code de rupture
+  approprié.
+\item Trouver dans ce code de rupture toutes les sous-suites
+  monotones. En effet, il est clair que dans cas
+  d'un arc de cercle dans le premier octant, le code de rupture est
+  décroissant. Nous réduisons, par ce processus, l'ensemble des
+  sous-suites du code.
+\item Parmi ces sous-suites, trouver la plus longue en tout point qui vérifie la
+  proposition \ref{prop:code}, c'est-{\`a}-dire trouver les indices des paraboles
+  auxquels la sous-suite correspond.
+\item Extraire en tout point un rayon et un centre du cercle arithmétique estimés.
+\end{itemize}
+
+
+Cet algorithme reste encore très compliqué {\`a} mettre en {\oe}uvre et
+coûteux en terme de complexité. Nous verrons par  la suite (paragraphe
+\ref{sec:courbure2d}) l'utilité d'une telle analyse pour l'estimation
+de courbure en un point d'une courbe discr\`ete.
+
+\subsection{Le problème de séparation par arc}
+\label{sec:separating}
+
+
+En géométrie algorithmique, la séparation de
+deux ensembles de points par des cercles est un problème
+classique. Nous verrons par la suite d'intêret  de cet algorithme pour
+le cas des cercles discrets.
+
+\begin{defi}[Séparabilité par un cercle]
+Soient $S$ et $T$ deux ensembles finis de points dans le plan, $S$ est
+s\'eparable de $T$  par un cercle s'il existe un cercle réel de
+centre $\omega$ et de rayon $R$ tel que~:
+\begin{displaymath}
+\forall s\in S,~\forall t \in T\quad s\in D(\omega,R)\text{ et } t\not\in D(\omega,R)
+\end{displaymath}
+où $D(\omega,R)$ est le disque centré en $\omega$ et de rayon $R$.
+\end{defi}
+
+Dans la définition précédente, nous avons considéré sans perte de
+généralité que l'ensemble $S$ est intérieur au disque.
+
+
+Nous reprenons les notations de \cite{dcoeurjo_digitalarc} et
+définissons le polygone des solutions~:
+
+\begin{defi}[Domaine des centres des arcs]
+  Soient $S$ et $T$ deux ensembles finis de points tels que $S$ est
+séparable de $T$  par un cercle. Le
+  domaine des centres des arcs, noté $acd(S,T)$ (pour {\em arc center
+    domain}), est le lieu des centres $\omega$ des cercles séparant
+  $S$ de $T$.
+\end{defi}
+
+Il est clair qu'à partir de ce domaine et de $S$ et $T$, il est
+possible de retrouver les rayons $R$ des cercles séparant.
+
+
+
+Si un cercle sépare $S$ et $T$, son centre $\omega$ vérifie nécessairement
+l'inégalité~:
+
+\begin{displaymath}
+\forall s\in S, ~ \forall t \in T\quad dist(\omega,s)<dist(\omega,t) 
+\end{displaymath}
+où $dist(a,b)$ est la distance Euclidienne usuelle.
+
+Ainsi, le domaine des centres, ou $acd$, est un polygone convexe dans
+le plan (qui peut-être vide) qui correspond à l'intersection
+d'inéquations linéaires définies par des médiatrices entre points
+de $S$ et points de $T$~:
+
+\begin{lem}
+Soient $s\in S$ et $t\in T$ et $H(s,t)$ l'inéquation linéaire définie
+par la médiatrice du segment $[st]$ et telle qu'elle contient
+$s$. Nous avons alors~;
+\begin{displaymath}
+  acd(S,T)=\bigcap_{s \in S,t \in T}H(s,t)
+\end{displaymath}
+\end{lem}
+
+Un tel polygone convexe est aussi appelé {\it cellule de Voronoï
+  généralisée} (voir par exemple \citealt{P16} ou
+\citealt{deberg}). La figure \ref{fig:fig0r} montre un exemple d'$acd$
+entre deux ensembles de points.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=10cm]{fig1rr}
+    \caption{Exemple de domaine des centres des cercles séparant deux
+      ensembles de points du plan  construit par intersection de
+      contraintes issues des médiatrices.}
+    \label{fig:fig0r}
+  \end{center}
+\end{figure}
+
+
+Une fois encore, le problème de séparation par arc se ramène au calcul
+de l'espace des solutions dans un problème de programmation linéaire
+en dimension 2. Ainsi, nous avons choisi, dans ce qui suit,
+d'implementer ce calcul d'$acd$ par l'algorithme de \cite{P16} basé
+sur une transformation dans l'espace dual (voir
+annexe~\ref{chap:annexe_prog}). Nous rappelons les caractéristiques et
+avantages de cet algorithme~:
+
+\begin{itemize}
+\item calcul de l'espace des solutions de $n$ contraintes linéaires en
+  dimension 2 en $O(nlog(n))$ ce qui est optimal pour le problème~;
+\item implementation très simple basée sur des outils classiques de
+  géométrie algorithmique (dualité point/droite et enveloppe
+  convexe)~;
+\item mise à jour incrémental du domaine en $O(log(n))$.
+\end{itemize}
+
+En utilisant donc cet algorithme, le calcul du domaine des centres des
+cercles séparant $S$ de $T$ a une complexité en $O(|S||T|log(|S||T|)$.
+
+\subsection{Quelques optimisations au calcul de l'$acd$}
+
+
+Dans \cite{dcoeurjo_digitalarc}, certaines observations ont été faites
+concernant des optimisations au calcul de l'$acd$. Ces réductions ne
+permettent pas d'améliorer la complexité au pire cas de l'algorithme
+mais permettent d'en augmenter l'efficacité.
+
+\paragraph{Réduction de  $S$}~\ 
+\label{sec:reduction-de-s}
+
+Si un cercle sépare $S$ de $T$, celui-ci contient nécessairement
+l'enveloppe convexe de $S$. Ainsi, si nous remplaçons $S$ par
+l'ensemble des sommets de son enveloppe convexe, cela ne change pas la
+forme de l'$acd$.
+
+Cette optimisation a un coût en $O(|S|log(|S|))$. Étant donné que nous
+n'avons aucune hypothèse  sur $S$, nous  ne pouvons quantifier le gain
+de cette réduction puisque dans  le pire cas  (dans le cas où tous les
+points de $S$ sont sommets de l'enveloppe convexe de $S$), aucun point
+n'est enlevé.
+
+\paragraph{Réduction de $T$}~\
+\label{sec:reduction-de-t}
+
+Considérons deux points $t$ et $t'$ de
+$T$ et supposons  que l'enveloppe convexe des points $ S \cup \{t\}$ contient
+$t'$. Alors, s'il existe un cercle contenant $S$ mais qui ne contient
+pas $t'$, ce cercle ne contient pas $t$. En d'autres termes, le point
+$t$ peut être supprimé de $T$ (voir figure \ref{fig:optimi}-$(a)$).
+
+Nous obtenons donc le processus suivant~: pour tout les points $t$ de
+$T$, on construit l'enveloppe convexe de $S\cup \{t\}$. Si cette
+enveloppe convexe contient un autre point $t'$ de $T$, le point $t$
+est supprimé. 
+
+Finalement,  nous obtenons  un  algorithme  de   réduction  de  $T$ en
+$O(|T|log(|T|)$ mais une fois  encore, nous ne pouvons pas  quantifier
+le gain dans le cas général.
+
+En combinant ces deux réductions, nous obtenons la simplification
+illustrée dans la figure \ref{fig:optimi}-$(b)$.
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=4cm]{reduction_T}}
+  \subfigure[]{\includegraphics[width=8cm]{reduction_globale}}
+  \caption[Optimisation du calcul du cercle séparateur par réduction
+    des ensembles $S$ et $T$]{Optimisation du calcul du cercle séparateur par réduction
+    des ensembles $S$ et $T$~: les points de $S$ sont en noir et les
+    points de $T$ en blanc, $(a)$ illustration de la réduction de $T$,
+    dans ce cas, $t$ est supprimé et $(b)$ processus global avec les
+    deux réductions, les points restants sont uniquement les sommets
+    des deux polygones.}
+  \label{fig:optimi}
+\end{figure}
+
+
+\subsection{Approche arithmétique pour la reconnaissance de cercle discret}
+\label{sec:arith_rec_cerc}
+
+Dans cette partie, nous considérons des domaines $S$ et $T$ adaptés à
+notre problème de reconnaissance de cercle discret. Dans un premier
+temps, nous nous intéressons aux courbes polygonales quasi-ciruclaires
+(voir définition ci-dessous) sur la grille discrète et à leurs
+propriétés arithmétiques. Puis nous verrons les liens entre ces courbes
+et les cercles discrets.
+
+
+\subsubsection{Ligne polygonale quasi-circulaire dans $\mathbb{Z}^2$}
+
+Pour simplifier les explications et sans pertes de généralités, nous
+considérons deux points discrets notés $p$ et $q$ tels que le segment
+$[pq]$ est dans le premier octant. De plus supposons  qu'il existe les entiers $a$,
+$b$ (avec $pgcd(a,b)=1$), tels que~:
+\begin{displaymath}
+  \vec{pq}= (a,b)^T
+\end{displaymath}
+On notera $\vec{u}=(a,b)^T$.
+
+
+Nous supposons aussi connu un vecteur de \aut{Bezout}, noté $\vec{v}$,
+associé à $(a,b)^T$ (voir paragraphe \ref{sec:bezout} pour plus de
+détail sur ce vecteur) tel que~:
+\begin{displaymath}
+  det(\vec{u},\vec{v})=1
+\end{displaymath}
+
+
+Avant de continuer, nous définissons une famille de points discrets
+très important pour notre problème~:
+
+\begin{defi}[Points de de \aut{Bezout}]
+On appelle {\em points de \aut{Bezout}} associés aux vecteurs $\vec{u}$
+et  $\vec{v}$,
+l'ensemble des points discrets $\mathcal{B}$ tels que~:
+\begin{displaymath}
+\overrightarrow{p\mathcal{B}} = \overrightarrow{v}+k\overrightarrow{u}
+\end{displaymath}
+avec $k\in\Z$.
+\end{defi}
+
+\begin{figure}[htbp]
+\begin{center}
+    \includegraphics[width=10cm]{bez_avant}
+    \caption{Illustration des différentes définitions~: un segment
+      discret de vecteur directeur $\vec{u}$ dans le premier octant, le vecteur de \aut{Bezout}
+      $\vec{v}$ et les points de \aut{Bezout} qui se trouvent sur la
+      droite en pointillé et qui sont générés par $\vec{u}$.}
+    \label{fig:middle}
+  \end{center}
+\end{figure}
+
+
+Cette notion de points de \aut{Bezout} d'un segment $[pq]$ est proche
+de la notion de {\it points faiblement extérieurs}
+associés aux droites discrètes \citep{debledthese}.
+La figure \ref{fig:middle} illustre les différentes définitions.
+
+
+Considérons maintenant le  problème de séparation  par un cercle entre
+les pixels au dessus de  $[pq]$, formant l'ensemble  $T$, de ceux sous
+ce    segment (ensemble  $S$).    Cet  exemple  est  illustré   figure
+\ref{fig:one_segment}-$(a)$.  Dans    ce  cas,  nous  pouvons  réduire
+l'ensemble des   points $S$ aux points   $p$ et  $q$  pour les raisons
+exposés dans le paragraphe \ref{sec:reduction-de-s}. De même, nous avons le théorème suivant~:
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=5cm]{Fig/one_segment_a}}
+    \subfigure[]{\includegraphics[width=6cm]{Fig/one_segment_b}}
+    \caption{$(a)$ séparation du segment $[pq]$ de tous les pixels au
+      dessus grâce au point de \aut{Bezout} (en gris) et $(b)$ points
+      de \aut{Bezout} associés à une courbe polygonale convexe.}
+    \label{fig:one_segment}
+  \end{center}
+\end{figure}
+
+
+\begin{theo}
+Considérons le triangle formé  de $p$, $q$ et  d'un point $t$ de  $T$,
+les seuls points  $t$ tels que  le triangle  $(p,q,t)$ (arêtes incluses) ne
+contienne aucun  point  discret sont les   points de  \aut{Bezout}  de
+$[pq]$.
+\end{theo}
+
+\begin{mapreuve}
+Dans un premier temps,   nous montrons que  le  triangle associé à  un
+point de \aut{Bezout}  ne contient aucun point  discret.  Ce point est
+trivial   puisque que $\vec{u}$  et  $\vec{v}$ sont uni-modulaires (le
+déterminant est  nul) et donc  il n'y  a  aucun point discret dans  le
+parallélogramme     formé  de ces       vecteurs  (voir   par  exemple
+\citealt{hardy}). Ainsi, il ne peut  y  avoir de point dans le
+triangle $(p,q,t)$   qui correspond au  parallélogramme ci-dessus
+coupé par une diagonale.
+
+Ensuite, supposons un point $t$ qui ne soit pas un point de
+\aut{Bezout}, donné par~:
+\begin{displaymath}
+  \vec{pt}=k\vec{u}+k'\vec{v}
+\end{displaymath}
+avec $k,k'\in\Z$ et $k'>1$.
+
+Nous utilisons le théorème de \aut{Pick} classique en théorie des
+nombres \citep{hardy} qui lie le nombre points $I$ intérieur à un
+polygone discret au nombre de points $B$ sur le bord du polygone et
+l'aire $A$ ce celui-ci par la formule~:
+\begin{displaymath}
+  I=A-\frac{B}{2}+1
+\end{displaymath}
+
+Dans notre cas, l'aire du triangle est donné par le déterminant~:
+\begin{displaymath}
+  A=\frac{|det(\vec{pt},\vec{pq})|}{2}
+\end{displaymath}
+
+Et donc~:
+\begin{align*}
+  2I&=|det(\vec{pt},\vec{pq})|-B+2\\
+  &=|k||k'||det(\vec{u},\vec{v})|-B+2\\
+  &=|k||k'|-B+2\\
+\end{align*}
+
+
+Si un point discret $t'$ est sur une arête du triangle $(p,q,t)$, nous
+ne satisfaisons pas l'hypothèse du théorème qui inclus les arêtes des
+bords dans l'enumération des points intérieurs. Nous pouvons donc
+affecter à $B$ la valeur 3~:
+\begin{displaymath}
+  2I\geq |k||k'|-1
+\end{displaymath}
+
+Or $k$ est est nécessairement différent de $0$, sinon nous aurions au
+moins un point $t'$ sur l'arête $[pt]$.
+Si maintenant $|k'|>2$, le problème est résolu puisque nous avons~:
+\begin{displaymath}
+  2I\geq 3|k|-1
+\end{displaymath}
+avec $|k|>0$.
+
+Considérons maintenant le cas $k'=2$. Si $k=1$, nous avons alors un point
+$t'$ sur $[qt]$ et enfin, pour $k=-1$, nous avons aussi un point sur
+$[qt]$. Ceci implique finalement que $|k|>1$ et dans ce cas~:
+\begin{displaymath}
+  2I\geq 3
+\end{displaymath}
+ce qui prouve le théorème puisque nous avons au moins un point $t'x$
+dans $(p,q,t)$.
+\end{mapreuve}
+
+
+Nous avons donc le corollaire suivant~:
+
+\begin{coro}
+Étant donné un segment $[pq]$ dans le premier octant, l'ensemble des cercles, séparant ce
+segment de tous les points qui sont au-dessus de celui-ci, est donné
+uniquement par~:
+\begin{displaymath}
+  acd(\{p,q\},\{\mathcal{B}\})
+\end{displaymath}
+où $\mathcal{B}$ est le point de \aut{Bezout} le plus proche de la médiatrice de $[pq]$.
+\end{coro}
+
+
+En utilisant le principe de réduction de $T$ du paragraphe
+\ref{sec:reduction-de-t}, la preuve de ce corollaire est directement induite du théorème
+ci-dessus. Le point de \aut{Bezout} $\mathcal{B}$ est choisi en fonction de sa
+distance à la médiatrice de $[pq]$ puisque c'est le point de plus
+contraignant. En effet, si un cercle sépare $p$ et $q$ de $\mathcal{B}$, il
+sépare tous les autres points de \aut{Bezout} de $[pq]$.
+
+En  d'autres termes, pour pour  résoudre  le problème de séparation de
+$[pq]$ de tous les pixels au dessus par un arc de cercle, il suffit de
+considérer   uniquement deux  contraintes  linéaires  générées par les
+points     $p$,    $q$      et     $\mathcal{B}$      (voir     figure
+\ref{fig:one_segment}-$(a)$).
+
+
+Dans le cas où, $[pq]=k(a,b)^T$ avec $k\in\Z$, $k>1$ et $pgcd(a,b)=1$,
+il nous  suffit de considérer le point  \aut{Bezout} le plus proche de
+la médiatrice   (voir  figure \ref{fig:middle_bis}). Dans ce   cas, le
+théorème précédent peut être  prouvé en utilisant exactement les mêmes
+techniques.
+
+
+\begin{figure}[htbp]
+\begin{center}
+    \psfig{file=Fig/bez,width=8cm}
+    \caption{Illustration du choix du point de \aut{Bezout} quand la
+      pente de $[pq]$ n'est pas une fraction irréductible.}
+    \label{fig:middle_bis}
+  \end{center}
+\end{figure}
+
+Remarquons que l'hypothèse selon laquelle $[pq]$ doit être dans le
+premier octant peut-être maintenant relâchée. En effet, quelque soit
+l'orientation de $[pq]$, on  peut associé deux points de \aut{Bezout}
+à ce segment, le premier  permettant d'exclure les points supérieurs et
+le second les points inférieurs à $[pq]$. Ces deux points sont
+calculés par  deux vecteurs $\vec{v}$ de \aut{Bezout} vérifiant~:
+\begin{displaymath}
+det(\vec{u},\vec{v})=\pm 1 
+\end{displaymath}
+
+
+ La généralisation pour ce
+cas de ce qui est présenté ci-dessus est immédiate.
+
+
+Considérons maintenant une courbe polygonale convexe dont les sommets
+sont sur la grille discrète. Nous définissons la propriété de
+quasi-circularité de la manière suivante~:
+
+\begin{defi}
+ Une     courbe  polygonale    convexe     dans   $\mathbb{Z}^2$   est
+ quasi-circulaire   si nous  pouvons   séparer    tous les pixels    à
+ l'intérieur de   l'enveloppe convexe   de  cette  courbe  de   pixels
+ extérieurs par un cercle.
+\end{defi}
+
+D'après le corollaire ci-dessus, nous avons (voir illustration figure \ref{fig:one_segment}-$(b)$)~:
+
+\begin{prop}
+Une courbe polygonale convexe  $\Gamma=\{v_i\}_{i=1..n}$ est
+quasi-circulaire si et seulement si~:
+\begin{displaymath}
+  acd(\{v_i\}_{i=1..n},\{\mathcal{B}(v_i,v_{i+1})\}_{i=1..n-1}) \neq \emptyset
+\end{displaymath}
+où $\mathcal{B}(v_i,v_{i+1})$ représente le point de \aut{Bezout}
+associé à l'arête $[v_i,v_{i+1}]$ à l'extérieur de $\Gamma$.
+\label{prop_poly}
+\end{prop}
+
+
+\subsubsection{Cercle discret et quasi-circularité}
+
+
+Nous pouvons définir la même propriété de {\it quasi-circularité} pour
+des courbes discrètes. Tout  d'abord, la proposition suivante illustre
+le lien   entre  les cercles  discrets  et le   problème de séparation
+d'ensembles de points par un cercle~:
+
+\begin{prop}
+  Une courbe discrète convexe est la discrétisation d'un arc de cercle
+  avec le processus OBQ si et seulement si nous pouvons séparer les
+  pixels ce cette courbe des pixels extérieurs par un arc de cercle.
+\end{prop}
+
+Dans ce qui suit, nous diront qu'on objet discret $S$ est convexe s'il
+existe une région convexe $R$ de $\R^2$ telle que \citep{Kim81,kim-rosenfeld82a}~:
+\begin{displaymath}
+  S=\Z^2\cap R
+\end{displaymath}
+Nous définissons une courbe discrète convexe comme étant un morceau du
+bord  d'un   objet discret  convexe.   
+
+
+D'après la proposition \ref{prop_poly}, nous avons~:
+\begin{theo}
+\label{theocercle_cvx}
+  Les propriétés suivantes sont équivalentes~:
+\begin{itemize}
+\item une courbe discrète, morceau de contour d'un objet discret  convexe, est la discrétisation d'un
+  arc de cercle Euclidien
+\item la ligne polygonale    $\Gamma=\{v_i\}_{i=1..n}$ définie par
+  l'enveloppe convexe de la courbe discrète est quasi-circulaire
+\item $acd(\{v_i\}_{i=1..n},\{\mathcal{B}(v_i,v_{i+1})\}_{i=1..n-1}) \neq \emptyset$
+\end{itemize}
+\end{theo}
+
+La  preuve de  ce  théorème est directement  induite  des propositions
+précédentes. Notons  que l'enveloppe convexe  utilisée correspond à la
+partie évidente de l'enveloppe convexe classique de la courbe discrète
+pour notre problème (voir figure \ref{fig:cercle_env_cvx}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5cm]{cercle_env_cvx}
+  \caption{L'enveloppe convexe considérée dans le théorème
+    \ref{theocercle_cvx} ne contient pas l'arête marquée d'une croix.}
+  \label{fig:cercle_env_cvx}
+\end{figure}
+
+
+\subsubsection{Algorithmes de Reconnaissance et segmentation}
+
+
+Dans ce paragraphe,   nous    présentons différents   algorithmes   de
+reconnaissance ou de segmentation d'une courbe discrète en morceaux de
+cercle  discret.  
+
+
+Étant donnée  une courbe  discrète qui correspond au
+contour d'un objet discret, la première étape consiste en un calcul de
+la courbe polygonale $\Gamma$.
+
+Si  la  courbe est convexe, il   nous suffit de construire l'enveloppe
+convexe des pixels et ensuite de supprimer l'arête indésirable dans le
+cas  où la courbe n'est  pas fermée (figure \ref{fig:cercle_env_cvx}).
+Si cette  courbe n'est pas convexe,  nous effectuons un pré-traitement
+qui consiste en une segmentation de la  courbe en morceaux strictement
+convexes ou concaves (SCoC   dans la suite).   Cette  pré-segmentation
+s'effectue grâce aux algorithmes classiques de segmentation en droites
+discrètes (voir paragraphe \ref{sec:de-la-reconnaissance} et \citealt{debled_cvxhull}).  En effet,
+en analysant  la segmentation en   droites discrètes de  la courbe, on
+peut trivialement  extraire  ces  morceaux  SCoC.  Remarquons qu'étant
+donné   que la segmentation  en droite  utilisée n'est  pas optimal en
+nombre de morceaux, la segmentation en SCoC n'est qu'une segmentation {\it
+gloutonne} et n'offre    aucune  garantie  d'optimalité.   La   figure
+\ref{fig:scoc}-$(a)$ illustre ce processus.
+
+Ensuite, une enveloppe  convexe est calculée  sur chaque  morceau SCoC
+nous  permettant de  construire la   courbe  polygonale $\Gamma$   par
+concaténation  des enveloppes convexes de  chaque morceau (voir figure
+\ref{fig:scoc}).
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=5cm,angle=270]{S}}
+    \subfigure[]{\includegraphics[width=5cm,angle=270]{S_polyline}}
+    \caption{Exemple de segmentation en morceaux SCoC d'une courbe
+      discrète~: $(a)$ courbe discrète après segmentation et $(b)$
+      construction de la courbe polygonale $\Gamma$.}
+    \label{fig:scoc}
+  \end{center}
+\end{figure}
+
+Revenons sur le calcul de l'enveloppe convexe.
+
+\paragraph{Enveloppe convexe arithmétique}\ 
+
+
+En géométrie algorithmique classique, le calcul de l'enveloppe convexe
+de $n$ points dans  le plan se fait en  $O(nlog(n))$ (voir par exemple
+\citealt{P16,deberg}). Dans le cas où  les points issus d'une courbe discrète,
+des algorithmes existent pour construire une telle enveloppe en $O(n)$
+\citep{voss}.  
+Le coût de  la  segmentation en droite discrète   étant
+linéaire au nombre de points,  la construction de la courbe polygonale
+$\Gamma$ à  partir d'une courbe discrète quelconque   s'effectue en $O(n)$ où
+$n$ est le nombre de pixels de la courbe.
+
+Cependant, pour notre calcul de l'$acd$, nous avons besoin d'avoir une
+écriture   de   chaque    pente  d'arête  sous    forme   de  fraction
+irréductible. Nous appelons un tel objet une {\it enveloppe convexe
+  arithmétique}.
+
+
+
+Une approche naïve pour le calcul d'une telle enveloppe consiste en
+une réduction des fractions par l'algorithme d'\aut{Euclide} après un
+algorithme classique d'enveloppe convexe. Cette
+solution n'est pas très intéressante sur le plan algorithmique puisque
+le coût de celle-ci est en $O(nlog(t))$ où $t$ est la taille
+arithmétique des fractions à résoudre \citep{hardy}. Cependant, si nous
+utilisons l'algorithme d'\aut{Euclide} étendu, nous calculons dans le
+même temps le vecteur de \aut{Bezout} associé à chaque arête.
+
+Nous pouvons  cependant  calculer une telle enveloppe  arithmétique en
+$O(n)$. Cet algorithme  se base sur   la construction préalable  d'une
+segmentation en  droite discrète de la courbe  et sur  les liens entre
+cette segmentation et l'enveloppe convexe. Considérons dans un premier
+temps  une droite discrète   de pente $(a,b)\in\mathbb{Z}^2$ telle que
+$pgcd(a,b)=1$.    L'algorithme    \ref{alg:env_cvx_arith} retourne les
+sommets  inférieurs    au segment   $[0,0],[b,a]$  avec   $b>a>0$. Cet
+algorithme   est  une variante  de la  construction    du diagramme de
+\aut{Klein} \citep{hardy} qui   est elle-même basée  sur  l'algorithme
+classique de   division  d'\aut{Euclide}.  En effet,  les   sommets de
+l'enveloppe convexe inférieure de ce segment se  calculent à partir la
+décomposition   en  fraction continue   de $\frac{b}{a}$. Le processus
+utilisé pour construire ces sommets à partir de la division entière de
+$\frac{b}{a}$  se base sur des   propriétés de symétrie associées  aux
+droites discrètes  et  au  diagramme de   \aut{Klein} classique  (voir
+figure \ref{fig:ex_env_cvx}\footnote{merci  à J.P  Reveillès pour  son
+implémentation Maple.}).
+
+
+
+
+\sloppy Cet  algorithme nous permet donc  de construire l'ensemble des
+sommets de  l'enveloppe  convexe associé à   un segment de  droite (le
+sommets  supérieurs  sont   construit  trivialement par symétrie)   en
+$O(log(min(a,b))$  au  lieu de  $O(max(a,b))$  si  nous avions utilisé
+l'algorithme de \cite{voss} par exemple.  À partir de ce processus, nous
+pouvons   facilement étendre ce  calcul  aux  segments  de  droites de
+plusieurs   périodes. Il suffit dans    ce cas de  répéter les  arêtes
+correspondant aux pointillés d'appui.
+
+Bien évidement, tous les vecteurs définis par deux points consécutifs
+de l'enveloppe convexe ont une pente donnée sous forme
+irréductible. De plus, avec une modification de l'algorithme
+\ref{alg:env_cvx_arith} similaire aux modifications entre la divsion
+d'\aut{Euclide} et sa version étendue, nous pouvons extraire le
+vecteur de \aut{Bezout} associé à chaque arête.
+
+
+
+\begin{algorithm}[!ht]
+\caption{Enveloppe convexe arithmétique d'un segment de droite
+  discrète $[0,0],[b,a]$}
+\label{alg:env_cvx_arith}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Enveloppe\_convexe\_arithmétique$(a,b)$}
+\STATE $a'=a$, $b'=b$
+\STATE $V_0=[0,1]$, $V_1=[1,0]$
+\STATE $L_0=V_0$, $L_1=[b,a]-V_1$, $Liste=Vrai$
+\WHILE{$a'>1$}
+\STATE $q=b'/a'$\COMMENT{Division entière}
+\STATE $r=b'-qa'$
+\STATE $b'=a'$, $a'=r$
+\STATE $V=V_0+qV_1$, $V_0=V_1$, $V_1=V$
+\IF{$Liste=Vrai$}
+\STATE $L_0=L_0 \oplus \{V_1\}$\COMMENT{l'opérateur $\oplus$ est une
+  concatenation de listes}
+\ELSE
+\STATE $L_1=\{[b,a]-V_1\} \oplus L_1$
+\ENDIF 
+\STATE $Liste=non(Liste)$
+\ENDWHILE
+\ \\ 
+\COMMENT{Translation de $(0,-1)$ des sommets}
+\FOR{point dans $[L_0,L_1]$}
+\STATE $Liste\_Sommets= \{point-[0,1]\} \oplus Liste\_Sommets$
+\ENDFOR
+\STATE \RETURN{ $Liste\_Sommets$}
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=6cm,angle=270]{ex_env_cvx_arith}
+  \caption{Exemple de calcul d'enveloppe convexe arithmétique
+    inférieure d'un segment de droite discrète de paramètres $(17,28)$.}
+  \label{fig:ex_env_cvx}
+\end{figure}
+
+
+Enfin, pour passer  de ce calcul  d'enveloppe convexe arithmétique des
+segments   discrets au calcul   plus général  sur  des bords  d'objets
+discrets,     nous   utilisons      une    approche    similaire     à
+\cite{debled_cvxhull}   qui  consiste à calculer   une segmentation en
+droite discrète, puis nous calculons les   sommets   et vecteurs  de
+\aut{Bezout} sur chaque segment avec l'algorithme présenté ci-dessus.
+
+
+
+Pour conclure sur ce calcul, nous avons  une construction de la courbe
+polygonale $\Gamma$ avec les points  de \aut{Bezout} associés à chaque
+arête en un temps borné par $O(n)$.
+
+
+
+\paragraph{Reconnaissance de globale de cercle}\ 
+
+Dans un premier temps, nous nous intéressons au problème suivant~:
+étant donnée une courbe discrète, est-ce que celle-ci est un morceau
+d'arc de cercle discret ? Bien évidement, si la réponse est positive,
+nous souhaitons avoir le domaine des solutions ou $acd$.
+
+Nous supposons connu la fonction $acd(S,T)$ qui permet de construire
+l'$acd$ avec l'algorithme de \cite{P16} (voir annexe
+\ref{chap:annexe_prog}). L'algorithme \ref{alg:reco_globale} présente
+le processus de reconnaissance qui consiste à construire simplement
+les ensembles $S$ et $T$ à partir d'une courbe discrète et qui
+retourne le domaine des solutions correspondant.
+
+\begin{algorithm}[!ht]
+\caption{Reconnaissance globale de cercle discret \citep{dcoeurjo_digitalarc}}
+\label{alg:reco_globale}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Reconnaissance\_cercle\_global$(C)$}
+\COMMENT{$C$ est une courbe discrète}
+\STATE $S=\emptyset$
+\STATE $T=\emptyset$
+\STATE Construction de $\Gamma$
+\IF{$\Gamma$ est composée de plus d'un morceau SCoC}
+\STATE {\RETURN{ $\emptyset$}} \COMMENT{si la courbe n'est pas SCoC, ce
+  n'est pas un morceau de cercle}
+\ELSE
+\FOR{toutes les arêtes $[v_iv_{i+1}]$ de $\Gamma$}
+\STATE Soit $\mathcal{B}$ le point de \aut{Bezout} de $[v_iv_{i+1}]$
+\STATE $S=S + \{v_i,v_{i+1}\}$
+\STATE $T=T + \{\mathcal{B}\}$
+\ENDFOR
+\STATE \RETURN{ $acd(S,T)$}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+
+Si $N$ représente le nombre d'arêtes de la courbe $\Gamma$, nous
+obtenons $N$ points de \aut{Bezout} et $N+1$ sommets. Lors de l'appel
+$acd(S,T)$ nous devons donc calculer l'intersection de $O(N^2)$
+contraintes. Nous reviendrons plus tard sur l'analyse de complexité.
+
+\paragraph{Segmentation en arcs de cercle}\ 
+
+Nous cherchons maintenant à segmenter notre courbe en arcs de
+cercle. De plus, nous souhaitons un description complète de l'ensemble
+des solutions pour chaque arc (voir algorithme \ref{alg:segm_cercle}).
+
+Nous transformons pour cela l'algorithme précédent en une version
+incrémentale. Nous supposons aussi que l'implémentation de la fonction
+$acd(S,T)$ est aussi incrémentale, ce qui est le cas dans l'algorithme
+basé sur la dualité point-droite de \cite{P16}.
+
+\begin{algorithm}[!ht]
+\caption{Segmentation en arcs de cercle \citep{dcoeurjo_digitalarc}}
+\label{alg:segm_cercle}
+\begin{algorithmic}[1]
+\EXTERNNAME \INTERNNAME{Segmentation\_arc$(C)$}
+\COMMENT{$C$ est une courbe discrète}
+\STATE $S=\emptyset$, $T=\emptyset$
+\STATE $Resultat=\emptyset$
+\STATE Construction de $\Gamma$
+\FOR{chaque morceau SCoC notée $C_i$ de $\Gamma$}
+\FOR{toutes les arêtes $[v_jv_{j+1}]$ de $C_i$}
+\STATE Soit $\mathcal{B}$ le point de \aut{Bezout} de $[v_jv_{j+1}]$
+\STATE $S=S + \{v_j,v_{j+1}\}$
+\STATE $T=T + \{\mathcal{B}\}$
+\STATE $temp_{acd}=acd(S,T)$
+\IF{$temp_{acd}=\emptyset$}
+\STATE $S=\emptyset$, $T=\emptyset$ \COMMENT{nouvel arc de cercle}
+\STATE $Resultat= \{prev_{acd}\} \oplus Resulat$\COMMENT{l'opérateur
+  $\oplus$ permet de concaténer les différents $acd$}
+\ELSE
+\STATE $prev_{acd}=temp_{acd}$
+\ENDIF
+\ENDFOR
+\STATE $Resultat= \{prev_{acd}\} \oplus Resulat$
+\ENDFOR
+\STATE \RETURN{ $Resultat$}
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\subsubsection{Analyse de complexité}
+
+Nous évaluons maintenant la complexité des différents
+algorithmes. Comme nous l'avons vu précédemment, l'élément qu'il nous
+faut estimer est le nombre d'arêtes $N$ de la courbe $\Gamma$ en
+fonction du nombre de pixels de la courbe.
+
+Pour cela, nous reprenons le théorème de \cite{acketa}~:
+
+\begin{theo}[\citeauthor{acketa}]
+Soit une courbe convexe discrète dans une grille $m\times m$, le nombre
+maximale d'arêtes $e(m)$ de cette courbe est donné par~:
+\begin{displaymath}
+ e(m)= \frac{12}{(4\pi^2)^{1/3}}m^{2/3}+O(m^{1/3}log(m))
+\end{displaymath}
+\end{theo}
+
+Grâce à cette borne, nous pouvons calculé la complexité des
+algorithmes présentés.
+Pour cela, nous adaptons le théorème précédent à notre étude~:
+
+\begin{coro}
+Soit un cercle discret de $n$ pixels, le nombre d'arêtes de son
+enveloppe convexe est en $O(n^{2/3})$
+\end{coro}
+
+Il nous suffit de considérer le cas des cercles discrets puisqu'ils
+représentent les {\it pires cas} pour la reconnaissance.
+
+\paragraph{Reconnaissance globale}\ 
+
+Pour  le   processus    globale, nous   avons    montré  qu'un  calcul
+d'intersection de $N^2$ contraintes est nécessaire où
+$N=|\Gamma|$. Or, avec le corollaire précédent et étant donné que
+l'algorithme de calcul de l'$acd$ est en $O(|S||T|log(|S||T|))$, le
+coût de l'algorithme \ref{alg:reco_globale} est de $O(n^{4/3}log(n))$.
+
+\paragraph{Segmentation en arcs de cercle}\ 
+
+Étant donné que les outils utilisés pour calculer l'$acd$ sont des
+outils classiques en géométrie algorithmique, nous pouvons utiliser
+toutes les optimisations qui ont été proposées pour ces derniers.
+ 
+Ainsi, l'algorithme de \cite{P16} s'implémente sans difficulté sous
+forme incrémentale avec un coût logarithmique à chaque insertion de
+contrainte. De plus, étant donné que d'un morceau SCoC à l'autre
+l'ensemble des contraintes est remis à zéro, le coût de cet algorithme
+est exactement le même que le précédent, à savoir  $O(n^{4/3}log(n))$
+pour une courbe de $n$ pixels.
+
+
+
+
+\subsection{Quelques résultats}
+
+Dans un premier    temps, nous considérons  une courbe   discrète  qui
+correspond à   un cercle  discret.  Nous   calculons donc   la  courbe
+polygonale    $\Gamma$ de cette courbe  et   nous souhaitons analyser  le
+comportement de l'$acd$ lors d'une reconnaissance incrémentale.
+
+Ainsi, en fonction du nombre d'arêtes considéré de $\Gamma$, nous
+analysons la forme de l'$acd$ avec les mesures suivantes~: centre de
+gravité du polygone et écart type de la position des sommets. Ces
+mesures sont données une fois que le domaine $acd$ est borné.
+
+Nous considérons donc un cercle discret de rayon 100. Le premier
+résultat obtenu est que dans tous les cas, le centre  $(0,0)$ du cercle 
+est toujours dans le domaine des solutions. Nous remarquons aussi que
+la forme du polygone des solutions converge très vite vers une bonne
+approximation du centre du cercle Euclidien sous-jacent. Le graphe de la figure
+\ref{fig:graphe_cercle} trace la distance Euclidienne entre le centre
+de gravité de l'$acd$ et le centre du cercle, en fonction du nombre
+d'arêtes considérées de $\Gamma$.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=7cm,angle=270]{Fig/res_cercle}
+    \caption{Distance Euclidienne entre le centre du cercle et le
+      centre de gravité de l'$acd$ en fonction du nombre d'arêtes de
+      $\Gamma$ considérées pour un cercle de rayon 100.}
+    \label{fig:graphe_cercle}
+  \end{center}
+\end{figure}
+
+Le tableau \ref{tab:cercle_tableau} présente quelques résultats
+numériques sur le cercle discret de rayon 100. Nous voyons ainsi un
+très bonne localisation du centre exacte avec peu d'arêtes de
+$\Gamma$. La figure \ref{fig6bis} illusre la forme du domaine en
+fonction du nombre d'arête.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Nombre d'arêtes & $\bar{x}$ & $\bar{y}$ & $\sigma_{x}$ &$\sigma_y$\\
+\hline\hline
+5 & 0.338444 & .328996 &  2.772722 & 17.091599\\
+\hline
+20 & 0.005424& 0.001096& 0.000383& 6.653609e-05\\
+\hline
+30 & 0.004237 & 0.000741&  1.511038e-05& 7.513850e-06\\
+\hline
+40 & 0.005606 & -0.000490 & 1.710540e-05 & 1.949764e-06\\
+\hline
+\end{tabular}
+\caption{Résultats numériques sur la reconnaissance de cercle 
+  sur un cercle discret de rayon 100.}
+\label{tab:cercle_tableau}
+\end{center}
+\end{table}
+
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=4cm]{Fig/sigma1}
+    \includegraphics[width=4cm]{Fig/sigma2}
+    \includegraphics[width=4cm]{Fig/sigma3}
+    \caption{Exemples d'évolution de l'$acd$ sur un cercle de rayon
+      100 quand considère un nombre croissant d'arêtes de $\Gamma$.}
+   \label{fig6bis}
+  \end{center}
+\end{figure}
+
+
+
+Les   figure  \ref{segm}  et   \ref{segm_detail}  présentent  quelques
+exemples de segmentation de courbes discrètes. Notons que la courbe en
+$S$  est construite à  partir de deux morceaux  d'arc de cercle. Étant
+donné que le processus de segmentation est {\it glouton}, en aucun cas
+nous ne garantissons  un nombre minimal de  morceaux d'arc. C'est pour
+cela que la segmentation  du $S$ génère un  morceau non souhaitable et
+que la segmentation de la parabole n'est pas symétrique.
+
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \subfigure[]{\includegraphics[width=4.5cm]{Fig/S_segm}}
+    \subfigure[]{\includegraphics[width=7.5cm]{Fig/Para_segm}}
+    \caption{Exemple de segmentation en arc de cercle~: $(a)$
+      segmentation d'une courbe en $S$ et $(b)$ segmentation d'une parabole.}
+    \label{segm}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+     \subfigure[]{\includegraphics[width=3cm]{Fig/Sdom1_Sbis}}\hspace*{2cm}
+     \subfigure[]{\includegraphics[width=3cm]{Fig/Sdom2_Sbis}}\hspace*{2cm}
+     \subfigure[]{\includegraphics[width=3cm]{Fig/Sdom3_Sbis}}
+     \subfigure[]{\includegraphics[width=5cm]{Fig/Sdom1}}
+     \subfigure[]{\includegraphics[width=5cm]{Fig/Sdom3}}
+    \caption[Détails de la segmentation de la courbe en $S$]{Détails
+      de la segmentation de la courbe en $S$~: $(a)-(c)$ illustration
+      des contraintes utilisées pour chaque morceau et $(d)-(e)$ zoom
+      sur l'$acd$ du premier et du dernier morceau. Notons que les
+      centres exactes sont respectivement $(12,12)$ et $(12,36)$.}
+    \label{segm_detail}
+  \end{center}
+\end{figure}
+
+\subsection{Comparaison avec \cite{kovalevsky_arc}}
+\label{sec:kovalevsky}
+
+Nous terminons ce chapitre avec une brève comparaison avec l'approche de
+\cite{kovalevsky_arc}. Cette approche se base aussi sur un calcul
+d'$acd$ mais tous les pixels extérieurs doivent être considérés  (voir figure
+\ref{fig:kova_nous}). \citeauthor{kovalevsky_arc} présente cependant
+une optimisation à son calcul de contraintes mais aucune borne ne peut
+être donnée~: dans le pire cas, la complexité reste la même, c'est à
+dire $O(n^2log(n))$ (au mieux en utilisant \citealt{P16}). Rappelons
+la borne de notre algorithme qui permet en plus une segmentation en
+arc~: $O(n^{4/3}log(n))$.
+
+
+\begin{figure}[htbp]
+  \centering
+  \subfigure[]{\includegraphics[width=6cm]{cercle_kova}}\hspace*{1cm}
+  \subfigure[]{\includegraphics[width=6cm]{cercle_coeurjo}}
+  \caption[Comparaison entre notre approche et celle de
+    \cite{kovalevsky_arc}]{Comparaison entre notre approche et celle de
+     \cite{kovalevsky_arc}~: $(a)$ points à considérer pour l'approche
+    de \aut{Kovalevsky} et $(b)$ dans notre approche, seuls les sommets
+    de la courbe polygonale et les pixels noirs sont à considérer.}
+  \label{fig:kova_nous}
+\end{figure}
+
+
+\section{Conclusion}
+
+Dans ce chapitre, nous avons présenter un algorithme de reconnaissance
+de cercle  permettant la description complète du domaine de l'espace
+de solutions, représenté par le polygone $acd$.
+
+Cet algorithme se base sur des propriétés arithmétiques de la grille discrète
+et sur l'interprétation géométrique de théorèmes classiques en
+théorie des nombres (théorème de \aut{Bezout}).
+
+De plus, l'utilisation d'outils de géométrie algorithmique très simple
+(enveloppe convexe et dualité point-droite) nous a permis de proposer
+un algorithme de segmentation d'une courbe discrète en morceaux d'arc
+de cercle, avec pour chaque morceau un description complète des
+solutions.
+
+
+De nombreux problèmes connexes à ce travail apparaissent~: comment
+segmenter une courbe discrète en un nombre minimal de sommet ? Peut-on
+généraliser ce travail à d'autres formes géométriques comme des
+ellipses ou encore des sphères en dimension 3 ?
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "these"
+%%% TeX-master: "these"
+%%% End: 

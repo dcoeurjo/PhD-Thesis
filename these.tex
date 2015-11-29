@@ -1,0 +1,96 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,twoside]{book}
+\input{babelbst.tex}
+\input{config.tex}
+
+\title{Algorithmique et géométrie discrète pour la caractérisation des
+  courbes et des surfaces}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%\maketitle
+
+
+
+\dominitoc
+\doparttoc
+\setlength{\parskip}{2mm} % Espace inter par ici pour que TOC soit OK 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+\input{couverture.tex}
+\input{merci.tex}
+\input{resume.tex}
+
+
+
+\setlength{\parskip}{1mm} % Espace inter par ici pour que TOC soit OK 
+\tableofcontents
+\listoffigures
+\listoftables
+\listofalgorithms
+%%%%%%%%%%%%%%%%%%%%%
+\input{intro.tex}
+
+\stepcounter{mtc} %pour eviter l{\'\i}ntro
+
+\part[G{\'e}om{\'e}trie discr{\`e}te et objets
+discrets]{G{\'e}om{\'e}trie discr{\`e}te et objets discrets \\
+  \vspace*{2cm} \protect\includegraphics[width=4cm]{CUBE} \\
+  \protect\flushright{\it {\LARGE Ceci est~:~~~~~\hspace*{5cm}} \\{\large un morceau de droites
+    discrètes\\un morceau de plan discret\\ un morceau de cercle
+    discret\\parfois un simple cube mais c'est plus rare\ldots}}}
+%\part{Objets}
+
+\input{notionsbase.tex}
+%
+\input{droites.tex}
+\input{cercles.tex}
+%\input{plans}
+%\input{geoalgo}
+
+\part[Analyse d'objets et mesures]{Analyse d'objets et mesures \\
+  \vspace*{2cm} \protect\includegraphics[width=4cm]{analyse} \\
+  \protect\flushright{{\it \large longueur~: 9.658543\\courbure moyenne~: 0.02324\\variance de la courbure~: 0.0003422\\mmhhh... ça doit être un cercle...\\à moins que ce ne soit un carré ?}}}
+\setcounter{chapter}{3}
+\input{metriques.tex}
+\input{mesures.tex}
+
+%\part{Applications}
+%\setcounter{chapter}{6}
+%\input{applications}
+
+
+
+\input{conclu.tex}
+\stepcounter{mtc} 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\part{Annexes}
+ \renewcommand{\ptctitle}{Contenu des annexes}
+ \renewcommand{\ptifont}{\flushright \huge\rm}
+\vspace{5cm}
+\parttoc[l]
+%\input{annexe_arithmetique.tex}
+\input{annexe_applications.tex}
+\input{annexe_multigrille.tex}
+\input{annexe_preparata.tex}
+\chapter{Index des auteurs cités}\label{chap-index}
+\begin{multicols}{2}
+\printauthorindex
+\end{multicols}
+
+%\input{dos-de-couverture.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Pour index auteurs avec NatBib
+%\printindex
+%\citeindexfalse
+
+
+
+\bibliography{Bib/global,Bib/globalbis}   %Bib/tout,Bib/dea,Bib/dam,Bib/geodesiques,Bib/mybiblio,Bib/longueur}
+
+\end{document}
