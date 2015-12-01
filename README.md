@@ -23,7 +23,6 @@ The PDF version of the manuscript and defense slides can de downloaded [here](ht
     	title = {Algorithmique et géométrie discrète pour la caractérisation des
         courbes et des surfaces}, 
         year = {2002},
-        month=dec
     }
 
 ## Abstract
