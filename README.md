@@ -12,7 +12,7 @@ The
 [Presentation](https://github.com/dcoeurjo/PhD-Thesis/tree/master/Presentation) folder
 contains the source files of the PhD defense.
 
-The PDF version of the manuscript and defense slides can de downloaded [here](http://liris.cnrs.fr/david.coeurjolly/phd.html).
+The PDF version of the manuscript and defense slides can de downloaded [here](http://liris.cnrs.fr/david.coeurjolly/#phd).
 
 ## Bibtex entry
 
